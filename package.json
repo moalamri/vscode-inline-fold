@@ -1,0 +1,145 @@
+{
+	"name": "inline-fold",
+	"displayName": "Inline fold",
+	"description": "A custom decorator that \"fold\" matching content in single line",
+	"icon": "res/icon.png",
+	"version": "0.0.6",
+	"publisher": "moalamri",
+	"homepage": "https://github.com/moalamri/vscode-inline-fold",
+	"bugs": "https://github.com/moalamri/vscode-inline-fold/issues",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/moalamri/vscode-inline-fold"
+	},
+	"engines": {
+		"vscode": "^1.53.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onStartupFinished"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"configuration": {
+			"type": "object",
+			"title": "Inline fold settings",
+			"properties": {
+				"inlineFold.supportedLanguages": {
+					"type": "array",
+					"order": 0,
+					"description": "Supported languages",
+					"items": {
+						"type": "string",
+						"description": "language names in lowercase"
+					},
+					"minItems": 1,
+					"default": [
+						"html",
+						"svelte"
+					]
+				},
+				"inlineFold.regex": {
+					"type": "string",
+					"order": 1,
+					"description": "Regex to match",
+					"default": "class=\"([a-zA-Z0-9-\\s]+)(?=\")",
+					"examples": [
+							"class=\"([a-zA-Z0-9-\\s]+)(?=\")",
+							"id=\"([a-zA-Z0-9-\\s]+)(?=\")"
+						]
+				},
+				"inlineFold.regexFlags": {
+					"type": "string",
+					"order": 2,
+					"description": "Regex flags",
+					"default": "g",
+					"examples": [
+							"g",
+							"gi"
+					]
+				},
+				"inlineFold.regexGroup": {
+					"type": "string",
+					"order": 3,
+					"description": "Regex matched group number that will be folded",
+					"default": "1",
+					"examples": [
+							"1",
+							"2"
+					]
+				},
+				"inlineFold.maskChar": {
+					"type": "string",
+					"order": 4,
+					"description": "The mask that covers the folded text",
+					"default": "◦◦◦",
+					"examples": [
+							"◦◦◦",
+							"▶▶▶",
+							"..."
+					]
+				},
+				"inlineFold.maskColor": {
+					"type": "string",
+					"order": 5,
+					"description": "the color of the covering mask in hex",
+					"default": "#68D7AC",
+					"examples": [
+							"#68D7AC",
+							"#FF0000"
+					]
+				},
+				"inlineFold.unfoldedOpacity": {
+					"type": "number",
+					"order": 6,
+					"description": "The opacity of the unfolded text in css style from 0.0 to 1.0",
+					"default": 0.8,
+					"enum": [
+						0.0,
+						0.1,
+						0.2,
+						0.3,
+						0.4,
+						0.5,
+						0.6,
+						0.7,
+						0.8,
+						0.9,
+						1.0
+					]
+				},
+				"inlineFold.after": {
+					"type": "string",
+					"order": 7,
+					"description": "(Optional) Add any character to be added after the folded content",
+					"default": "",
+					"examples": [
+							"",
+							"<-",
+							"<<"
+					]
+				}
+			},
+			"required": [
+				"inlineFold.regex",
+				"inlineFold.regexFlags",
+				"inlineFold.regexGroup",
+				"inlineFold.maskChar",
+				"inlineFold.supportedLanguages"
+			]
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "pnpm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./"
+	},
+	"devDependencies": {
+		"@types/vscode": "1.67.0",
+		"@types/node": "^17.0.33",
+		"typescript": "4.6.4"
+	}
+}
