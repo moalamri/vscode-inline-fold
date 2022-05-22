@@ -5,11 +5,11 @@
 		"target": "es6",
 		"outDir": "out",
 		"lib": [
-			"esnext"
+			"es6"
 		],
 		"sourceMap": true,
 		"rootDir": "src",
-		"strict": true
+		"strict": false
 	},
 	"exclude": [
 		"node_modules"
