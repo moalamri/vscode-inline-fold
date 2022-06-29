@@ -6,10 +6,10 @@ export class Decorator {
   configs!: WorkspaceConfiguration;
   unfoldedDecoration!: TextEditorDecorationType;
   maskDecoration!: TextEditorDecorationType;
-  editor: TextEditor | undefined;
+  editor: TextEditor;
   supportedLanguages: string[] = [];
 
-  set activeEditor(textEditor: TextEditor | undefined) {
+  set activeEditor(textEditor: TextEditor) {
     if(textEditor) {
       this.editor = textEditor;
     }
@@ -40,10 +40,10 @@ export class Decorator {
       return;
     }
 
-    let regEx: RegExp | null = RegExp(this.configs.get(configs.regex) as string, this.configs.get(configs.regexFlags));
-    let text: string | null = this.editor.document.getText();
-    let regexGroup: number | null = this.configs.get(configs.regexGroup) as number | 1;
-    let decorators: DecorationOptions[] | null = [];
+    let regEx: RegExp = RegExp(this.configs.get(configs.regex) as string, this.configs.get(configs.regexFlags));
+    let text: string = this.editor.document.getText();
+    let regexGroup: number = this.configs.get(configs.regexGroup) as number | 1;
+    let decorators: DecorationOptions[] = [];
     let match;
     while (match = regEx.exec(text)) {
       let matched = match[regexGroup];
@@ -70,7 +70,7 @@ export class Decorator {
     );
   }
 
-  constructor(editor: TextEditor | undefined) {
+  constructor(editor: TextEditor) {
     this.editor = editor;
   }
 }

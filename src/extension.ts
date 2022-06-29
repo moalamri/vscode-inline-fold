@@ -6,9 +6,9 @@ import { Decorator } from "./decorator";
 export function activate(context: ExtensionContext) {
   console.log('inline-fold is activated');
 
-  let timeout: NodeJS.Timer | undefined = undefined;
-  let activeEditor: TextEditor | undefined = window.activeTextEditor;
-  let config: WorkspaceConfiguration = workspace.getConfiguration(configs.identifier);
+  let timeout: NodeJS.Timer = undefined;
+  const activeEditor: TextEditor = window.activeTextEditor;
+  const config: WorkspaceConfiguration = workspace.getConfiguration(configs.identifier);
 
   const decorator = new Decorator(activeEditor);
   decorator.updateConfigs(config);
