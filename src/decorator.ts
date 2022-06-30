@@ -1,9 +1,7 @@
-import { DecorationOptions, DecorationRangeBehavior, Position, Range, TextEditor, TextEditorDecorationType, WorkspaceConfiguration } from "vscode";
-import { window } from "vscode";
-import { configs } from "./enum";
-import { IDecorator, VisibleRange } from "./global";
+import { DecorationOptions, DecorationRangeBehavior, Position, Range, TextEditor, TextEditorDecorationType, window, WorkspaceConfiguration } from "vscode";
+import { configs, VisibleRange } from ".";
 
-export class Decorator implements IDecorator {
+export class Decorator {
   Configs: WorkspaceConfiguration;
   UnfoldedDecoration: TextEditorDecorationType;
   MaskDecoration: TextEditorDecorationType;
