@@ -10,10 +10,6 @@ export function activate(context: ExtensionContext) {
    console.log("inline-fold is activated");
    decorator.updateConfigs(config);
 
-   context.subscriptions.forEach((ctx) => {
-      ctx.dispose()
-   });
-
    function triggerUpdateDecorations() {
       decorator.init();
    }
