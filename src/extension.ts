@@ -1,5 +1,5 @@
 import { ExtensionContext, TextEditor, window, workspace, WorkspaceConfiguration } from "vscode";
-import { configs, Decorator } from ".";
+import { configs, Decorator } from "./index.d";
 
 const activeEditor: TextEditor = window.activeTextEditor;
 const config: WorkspaceConfiguration = workspace.getConfiguration(configs.identifier);
@@ -18,7 +18,7 @@ export function activate(context: ExtensionContext) {
       (editor) => {
          if (!editor) return;
          decorator.activeEditor(editor);
-         setImmediate(()=> decorator.init())
+         setImmediate(()=> triggerUpdateDecorations())
       },
       null,
       context.subscriptions
@@ -26,7 +26,7 @@ export function activate(context: ExtensionContext) {
 
    window.onDidChangeTextEditorVisibleRanges(
       () => {
-         decorator.init();
+         triggerUpdateDecorations();
       },
       null,
       context.subscriptions
@@ -34,7 +34,7 @@ export function activate(context: ExtensionContext) {
 
    window.onDidChangeTextEditorSelection(
       () => {
-         decorator.init();
+         triggerUpdateDecorations();
       },
       null,
       context.subscriptions

@@ -1,5 +1,5 @@
 import { DecorationOptions, DecorationRangeBehavior, Position, Range, TextEditor, TextEditorDecorationType, window, WorkspaceConfiguration } from "vscode";
-import { configs, VisibleRange } from ".";
+import { configs, VisibleRange } from "./index.d";
 
 export class Decorator {
   Configs: WorkspaceConfiguration;
@@ -65,6 +65,8 @@ export class Decorator {
 
       //TODO: Apply decoration to lines visible in the editor
 
+      console.log(startPosition, endPostion);
+
       const decoration = {
         range,
         hoverMessage: `Full Text **${matched}**`,
@@ -94,6 +96,7 @@ export class Decorator {
   }
 
   constructor (editor: TextEditor) {
+    console.log('class Decorator is created');
     this.CurrentEditor = editor;
   }
 }
