@@ -1,34 +1,48 @@
-import { DecorationOptions, DecorationRangeBehavior, Range, TextEditor, TextEditorDecorationType,  WorkspaceConfiguration } from "vscode";
+import { DecorationOptions, DecorationRangeBehavior, Position, Range, TextEditor, TextEditorDecorationType, WorkspaceConfiguration } from "vscode";
 import { window } from "vscode";
 import { configs } from "./enum";
+import { IDecorator, VisibleRange } from "./global";
 
-export class Decorator {
-  configs!: WorkspaceConfiguration;
-  unfoldedDecoration!: TextEditorDecorationType;
-  maskDecoration!: TextEditorDecorationType;
-  editor: TextEditor;
-  supportedLanguages: string[] = [];
+export class Decorator implements IDecorator {
+  Configs: WorkspaceConfiguration;
+  UnfoldedDecoration: TextEditorDecorationType;
+  MaskDecoration: TextEditorDecorationType;
+  CurrentEditor: TextEditor;
+  SupportedLanguages: string[] = [];
+  VisibleRange: VisibleRange;
+  Range: Range;
 
-  set activeEditor(textEditor: TextEditor) {
-    if(textEditor) {
-      this.editor = textEditor;
+  activeEditor(textEditor: TextEditor) {
+    if (textEditor) {
+      this.CurrentEditor = textEditor;
     }
   }
-  
-  updateConfigs(conf: WorkspaceConfiguration) {
-    this.configs = conf;
-    this.supportedLanguages = conf.get(configs.supportedLanguages) || [];
-    this.unfoldedDecoration = window.createTextEditorDecorationType({
+
+  init() {
+    this.Range = this.CurrentEditor.visibleRanges[0];
+    if (this.CurrentEditor && !this.Range) {
+      this.VisibleRange = {
+        StartLine: this.Range.start.line,
+        EndLine: this.Range.end.line
+      };
+      this.updateDecorations()
+    }
+  }
+
+  updateConfigs(extConfs: WorkspaceConfiguration) {
+    this.Configs = extConfs;
+    this.SupportedLanguages = extConfs.get(configs.supportedLanguages) || [];
+    this.UnfoldedDecoration = window.createTextEditorDecorationType({
       rangeBehavior: DecorationRangeBehavior.ClosedClosed,
-      opacity: conf.get(configs.unfoldedOpacity),
+      opacity: extConfs.get(configs.unfoldedOpacity),
     });
-    this.maskDecoration = window.createTextEditorDecorationType({
+    this.MaskDecoration = window.createTextEditorDecorationType({
       before: {
-        contentText: conf.get(configs.maskChar),
-        color: conf.get(configs.maskColor),
+        contentText: extConfs.get(configs.maskChar),
+        color: extConfs.get(configs.maskColor),
       },
       after: {
-        contentText: conf.get(configs.after),
+        contentText: extConfs.get(configs.after),
       },
       letterSpacing: "-1ch",
       textDecoration: "none; display: none;"
@@ -36,41 +50,52 @@ export class Decorator {
   }
 
   updateDecorations() {
-    if (!this.editor || !this.supportedLanguages || !this.supportedLanguages.includes(this.editor.document.languageId)) {
+    if (!this.VisibleRange || !this.SupportedLanguages || !this.SupportedLanguages.includes(this.CurrentEditor.document.languageId)) {
       return;
     }
-
-    let regEx: RegExp = RegExp(this.configs.get(configs.regex) as string, this.configs.get(configs.regexFlags));
-    let text: string = this.editor.document.getText();
-    let regexGroup: number = this.configs.get(configs.regexGroup) as number | 1;
-    let decorators: DecorationOptions[] = [];
+    const regEx: RegExp = RegExp(this.Configs.get(configs.regex), this.Configs.get(configs.regexFlags));
+    const text: string = this.CurrentEditor.document.getText();
+    const regexGroup: number = this.Configs.get(configs.regexGroup) as number | 1;
+    const decorators: DecorationOptions[] = [];
     let match;
     while (match = regEx.exec(text)) {
-      let matched = match[regexGroup];
-      let startIndex = match[0].indexOf(matched);
-      const startPosition = this.editor.document.positionAt(
-        match.index + startIndex
-      );
-      const endPostion = this.editor.document.positionAt(
-        match.index + startIndex + matched.length
-      );
+      const matched = match[regexGroup];
+      const startIndex = match[0].indexOf(matched);
+      const startPosition = this.startPositionLine(match.index, startIndex);
+      const endPostion = this.endPositionLine(match.index, startIndex, matched.length);
+      const range = new Range(startPosition, endPostion);
+
+      //TODO: Apply decoration to lines visible in the editor
+
       const decoration = {
-        range: new Range(startPosition, endPostion),
-        hoverMessage: "Full Text **" + matched + "**",
+        range,
+        hoverMessage: `Full Text **${matched}**`,
       };
       decorators.push(decoration);
     }
 
-    this.editor.setDecorations(this.unfoldedDecoration, decorators);
-    this.editor.setDecorations(
-      this.maskDecoration,
+    this.CurrentEditor.setDecorations(this.UnfoldedDecoration, decorators);
+    this.CurrentEditor.setDecorations(
+      this.MaskDecoration,
       decorators
         .map(({ range }) => range)
-        .filter((i) => i.start.line !== this.editor!.selection.start.line)
+        .filter((i) => i.start.line !== this.CurrentEditor.selection.start.line)
     );
   }
 
-  constructor(editor: TextEditor) {
-    this.editor = editor;
+  startPositionLine(matchIndex: number, startIndex: number): Position {
+    return this.CurrentEditor.document.positionAt(
+      matchIndex + startIndex
+    );
+  }
+
+  endPositionLine(matchIndex: number, startIndex: number, length: number): Position {
+    return this.CurrentEditor.document.positionAt(
+      matchIndex + startIndex + length
+    );
+  }
+
+  constructor (editor: TextEditor) {
+    this.CurrentEditor = editor;
   }
 }
