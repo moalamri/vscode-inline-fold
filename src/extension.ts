@@ -1,6 +1,5 @@
 import { ExtensionContext, TextEditor, window, workspace, WorkspaceConfiguration } from "vscode";
-import { configs } from "./enum";
-import { Decorator } from "./decorator";
+import { configs, Decorator } from ".";
 
 const activeEditor: TextEditor = window.activeTextEditor;
 const config: WorkspaceConfiguration = workspace.getConfiguration(configs.identifier);
