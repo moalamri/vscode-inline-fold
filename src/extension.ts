@@ -1,13 +1,14 @@
 import { ExtensionContext, TextEditor, window, workspace, WorkspaceConfiguration } from "vscode";
-import { configs, Decorator } from "./index.d";
-
-const activeEditor: TextEditor = window.activeTextEditor;
-const config: WorkspaceConfiguration = workspace.getConfiguration(configs.identifier);
-const decorator = new Decorator(activeEditor);
+import { Decorator } from "./decorator";
+import { EnumConfigs } from "./enums";
 
 // this method is called when vs code is activated
 export function activate(context: ExtensionContext) {
-   console.log("inline-fold is activated");
+   const activeEditor: TextEditor = window.activeTextEditor;
+   const config: WorkspaceConfiguration = workspace.getConfiguration(EnumConfigs.identifier);
+   const decorator = new Decorator(activeEditor);
+
+   console.log("inline-fold extension is activated");
    decorator.updateConfigs(config);
 
    function triggerUpdateDecorations() {
@@ -18,14 +19,14 @@ export function activate(context: ExtensionContext) {
       (editor) => {
          if (!editor) return;
          decorator.activeEditor(editor);
-         setImmediate(()=> triggerUpdateDecorations())
+         throttle(triggerUpdateDecorations(), 500);
       },
       null,
       context.subscriptions
    );
 
    window.onDidChangeTextEditorVisibleRanges(
-      () => {
+      (editor) => {
          triggerUpdateDecorations();
       },
       null,
@@ -41,9 +42,32 @@ export function activate(context: ExtensionContext) {
    );
 
    workspace.onDidChangeConfiguration((event) => {
-      if (event.affectsConfiguration(configs.identifier)) {
-         decorator.updateConfigs(workspace.getConfiguration(configs.identifier));
+      if (event.affectsConfiguration(EnumConfigs.identifier)) {
+         decorator.updateConfigs(workspace.getConfiguration(EnumConfigs.identifier));
       }
    });
 
+   function throttle(callback, limit: number) {
+      let isWaiting = false;
+      return function () {
+         if (isWaiting) return;
+         callback.apply(this, arguments);
+         isWaiting = true;
+         setTimeout(() => {
+            isWaiting = false;
+         }, limit);
+      };
+   }
+
+   function newThrottle(fn: Function, wait: number) {
+      let isCalled = false;
+      return (...args) => {
+         if (isCalled) return;
+         fn(...args);
+         isCalled = true;
+         setTimeout(() => {
+            isCalled = false;
+         }, wait);
+      };
+   }
 }
