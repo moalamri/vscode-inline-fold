@@ -1,5 +1,6 @@
-import { DecorationOptions, DecorationRangeBehavior, Position, Range, TextEditor, TextEditorDecorationType, window, WorkspaceConfiguration } from "vscode";
-import { configs, VisibleRange } from ".";
+import { DecorationOptions, DecorationRangeBehavior, Position, Range, TextEditor, TextEditorDecorationType, TextLine, window, WorkspaceConfiguration } from "vscode";
+import { EnumConfigs } from "./enums";
+import { VisibleRange } from "./types";
 
 export class Decorator {
   Configs: WorkspaceConfiguration;
@@ -8,7 +9,6 @@ export class Decorator {
   CurrentEditor: TextEditor;
   SupportedLanguages: string[] = [];
   VisibleRange: VisibleRange;
-  Range: Range;
 
   activeEditor(textEditor: TextEditor) {
     if (textEditor) {
@@ -17,30 +17,34 @@ export class Decorator {
   }
 
   init() {
-    this.Range = this.CurrentEditor.visibleRanges[0];
-    if (this.CurrentEditor && !this.Range) {
-      this.VisibleRange = {
-        StartLine: this.Range.start.line,
-        EndLine: this.Range.end.line
-      };
-      this.updateDecorations()
+    if (!this.CurrentEditor && !this.CurrentEditor.visibleRanges) {
+      return;
     }
+    if(this.CurrentEditor.visibleRanges.length != 0) {
+        this.CurrentEditor.visibleRanges.forEach((value) => {
+          this.VisibleRange = {
+            StartLine: value.start.line,
+            EndLine: value.end.line,
+          }
+        })
+    }
+    this.updateDecorations()
   }
 
   updateConfigs(extConfs: WorkspaceConfiguration) {
     this.Configs = extConfs;
-    this.SupportedLanguages = extConfs.get(configs.supportedLanguages) || [];
+    this.SupportedLanguages = extConfs.get(EnumConfigs.supportedLanguages) || [];
     this.UnfoldedDecoration = window.createTextEditorDecorationType({
       rangeBehavior: DecorationRangeBehavior.ClosedClosed,
-      opacity: extConfs.get(configs.unfoldedOpacity),
+      opacity: extConfs.get(EnumConfigs.unfoldedOpacity),
     });
     this.MaskDecoration = window.createTextEditorDecorationType({
       before: {
-        contentText: extConfs.get(configs.maskChar),
-        color: extConfs.get(configs.maskColor),
+        contentText: extConfs.get(EnumConfigs.maskChar),
+        color: extConfs.get(EnumConfigs.maskColor),
       },
       after: {
-        contentText: extConfs.get(configs.after),
+        contentText: extConfs.get(EnumConfigs.after),
       },
       letterSpacing: "-1ch",
       textDecoration: "none; display: none;"
@@ -51,9 +55,9 @@ export class Decorator {
     if (!this.VisibleRange || !this.SupportedLanguages || !this.SupportedLanguages.includes(this.CurrentEditor.document.languageId)) {
       return;
     }
-    const regEx: RegExp = RegExp(this.Configs.get(configs.regex), this.Configs.get(configs.regexFlags));
+    const regEx: RegExp = RegExp(this.Configs.get(EnumConfigs.regex), this.Configs.get(EnumConfigs.regexFlags));
     const text: string = this.CurrentEditor.document.getText();
-    const regexGroup: number = this.Configs.get(configs.regexGroup) as number | 1;
+    const regexGroup: number = this.Configs.get(EnumConfigs.regexGroup) as number | 1;
     const decorators: DecorationOptions[] = [];
     let match;
     while (match = regEx.exec(text)) {
@@ -63,13 +67,13 @@ export class Decorator {
       const endPostion = this.endPositionLine(match.index, startIndex, matched.length);
       const range = new Range(startPosition, endPostion);
 
-      //TODO: Apply decoration to lines visible in the editor
-
-      const decoration = {
+      if(!(this.VisibleRange.StartLine <= range.start.line && range.end.line <= this.VisibleRange.EndLine)) {
+        continue;
+      }
+      decorators.push({
         range,
         hoverMessage: `Full Text **${matched}**`,
-      };
-      decorators.push(decoration);
+      });
     }
 
     this.CurrentEditor.setDecorations(this.UnfoldedDecoration, decorators);

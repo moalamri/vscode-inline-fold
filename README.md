@@ -1,12 +1,17 @@
 <p align="center">
-    <img src="./res/icon.png" style="width: 128px" />
+    <img src="./res/icon.png" width="128" />
 </p>
 
 <p align="center"> 
 <a href="https://marketplace.visualstudio.com/items?itemName=moalamri.inline-fold"> Download</a>
 </p>
 
-## INLINE FOLD
+<p align="center">
+    <img src="./res/carbon.png" />
+</p>
+
+
+## VSCode Inline Fold Extension
 
 This extension miminc the folding experiance but for inline code folding.
 It also expand/unfold the code when clicking or selecting the code block. 
@@ -23,13 +28,8 @@ Useful when you work on utility classes in a framework like tailwind css, this w
 
 ### Notes!
 - Use settings UI to configure the extension.
-- This is a one day work so i expect alot to be improved.
 - No registered commands yet.
-- Also it's not language scoped yet, if someone could implement that I welcome any contribution.
 - I would love to hear some suggesions :)
 
 
-## Example of default settings:
-<p align="center">
-    <img src="./res/carbon.png" />
-</p>
+<a href="CHANGELOG.md"> Change log</a>

@@ -1,18 +1,15 @@
 import { ExtensionContext, TextEditor, window, workspace, WorkspaceConfiguration } from "vscode";
-import { configs, Decorator } from ".";
-
-const activeEditor: TextEditor = window.activeTextEditor;
-const config: WorkspaceConfiguration = workspace.getConfiguration(configs.identifier);
-const decorator = new Decorator(activeEditor);
+import { Decorator } from "./decorator";
+import { EnumConfigs } from "./enums";
 
 // this method is called when vs code is activated
 export function activate(context: ExtensionContext) {
-   console.log("inline-fold is activated");
-   decorator.updateConfigs(config);
+   const activeEditor: TextEditor = window.activeTextEditor;
+   const config: WorkspaceConfiguration = workspace.getConfiguration(EnumConfigs.identifier);
+   const decorator = new Decorator(activeEditor);
 
-   context.subscriptions.forEach((ctx) => {
-      ctx.dispose()
-   });
+   console.log("inline-fold extension is activated");
+   decorator.updateConfigs(config);
 
    function triggerUpdateDecorations() {
       decorator.init();
@@ -22,15 +19,15 @@ export function activate(context: ExtensionContext) {
       (editor) => {
          if (!editor) return;
          decorator.activeEditor(editor);
-         setImmediate(()=> decorator.init())
+         throttle(triggerUpdateDecorations(), 500);
       },
       null,
       context.subscriptions
    );
 
    window.onDidChangeTextEditorVisibleRanges(
-      () => {
-         decorator.init();
+      (editor) => {
+         triggerUpdateDecorations();
       },
       null,
       context.subscriptions
@@ -38,16 +35,27 @@ export function activate(context: ExtensionContext) {
 
    window.onDidChangeTextEditorSelection(
       () => {
-         decorator.init();
+         triggerUpdateDecorations();
       },
       null,
       context.subscriptions
    );
 
    workspace.onDidChangeConfiguration((event) => {
-      if (event.affectsConfiguration(configs.identifier)) {
-         decorator.updateConfigs(workspace.getConfiguration(configs.identifier));
+      if (event.affectsConfiguration(EnumConfigs.identifier)) {
+         decorator.updateConfigs(workspace.getConfiguration(EnumConfigs.identifier));
       }
    });
 
+   function throttle(callback, limit: number) {
+      let isWaiting = false;
+      return function () {
+         if (isWaiting) return;
+         callback.apply(this, arguments);
+         isWaiting = true;
+         setTimeout(() => {
+            isWaiting = false;
+         }, limit);
+      };
+   }
 }
