@@ -58,16 +58,4 @@ export function activate(context: ExtensionContext) {
          }, limit);
       };
    }
-
-   function newThrottle(fn: Function, wait: number) {
-      let isCalled = false;
-      return (...args) => {
-         if (isCalled) return;
-         fn(...args);
-         isCalled = true;
-         setTimeout(() => {
-            isCalled = false;
-         }, wait);
-      };
-   }
 }

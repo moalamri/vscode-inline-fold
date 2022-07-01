@@ -22,7 +22,6 @@ export class Decorator {
     }
     if(this.CurrentEditor.visibleRanges.length != 0) {
         this.CurrentEditor.visibleRanges.forEach((value) => {
-          console.log(value.start.line, value.end.line);
           this.VisibleRange = {
             StartLine: value.start.line,
             EndLine: value.end.line,
@@ -99,7 +98,6 @@ export class Decorator {
   }
 
   constructor (editor: TextEditor) {
-    console.log('class Decorator is created');
     this.CurrentEditor = editor;
   }
 }
