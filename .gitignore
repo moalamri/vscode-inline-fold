@@ -3,3 +3,4 @@ node_modules
 .pnpm-debug.log
 .pnpm-lock.yaml
 .vscode/settings.json
+inline-fold-0.0.8.vsix

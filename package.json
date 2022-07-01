@@ -134,6 +134,8 @@
 	},
 	"scripts": {
 		"vscode:prepublish": "pnpm run compile",
+		"vscode:package": "vsce package",
+		"vscode:publish": "vsce publish",
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./"
 	},
