@@ -1,6 +1,7 @@
-import { DecorationOptions, DecorationRangeBehavior, Position, Range, TextEditor, TextEditorDecorationType, TextLine, window, WorkspaceConfiguration } from "vscode";
+import { DecorationOptions, Position, Range, TextEditor, TextEditorDecorationType, WorkspaceConfiguration } from "vscode";
 import { EnumConfigs } from "./enums";
 import { VisibleRange } from "./types";
+import { maskDecorationOptions, unfoldedDecorationOptions } from "./decoration";
 
 export class Decorator {
   Configs: WorkspaceConfiguration;
@@ -34,21 +35,8 @@ export class Decorator {
   updateConfigs(extConfs: WorkspaceConfiguration) {
     this.Configs = extConfs;
     this.SupportedLanguages = extConfs.get(EnumConfigs.supportedLanguages) || [];
-    this.UnfoldedDecoration = window.createTextEditorDecorationType({
-      rangeBehavior: DecorationRangeBehavior.ClosedClosed,
-      opacity: extConfs.get(EnumConfigs.unfoldedOpacity),
-    });
-    this.MaskDecoration = window.createTextEditorDecorationType({
-      before: {
-        contentText: extConfs.get(EnumConfigs.maskChar),
-        color: extConfs.get(EnumConfigs.maskColor),
-      },
-      after: {
-        contentText: extConfs.get(EnumConfigs.after),
-      },
-      letterSpacing: "-1ch",
-      textDecoration: "none; display: none;"
-    });
+    this.UnfoldedDecoration = unfoldedDecorationOptions(extConfs);
+    this.MaskDecoration = maskDecorationOptions(extConfs);
   }
 
   updateDecorations() {
