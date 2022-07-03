@@ -95,10 +95,10 @@
 				"inlineFold.unfoldedOpacity": {
 					"type": "number",
 					"order": 6,
-					"description": "The opacity of the unfolded text in css style from 0.0 to 1.0",
+					"description": "The opacity of the unfolded text from 0.0 to 1.0",
 					"default": 0.8,
 					"enum": [
-						0.0,
+						0,
 						0.1,
 						0.2,
 						0.3,
@@ -108,16 +108,16 @@
 						0.7,
 						0.8,
 						0.9,
-						1.0
+						1
 					]
 				},
 				"inlineFold.after": {
 					"type": "string",
 					"order": 7,
-					"description": "(Optional) Add any character to be added after the folded content",
+					"description": "(Optional) Add any character to be appended to the folded content",
 					"default": "",
 					"examples": [
-						"",
+						"+",
 						"<-",
 						"<<"
 					]
@@ -148,6 +148,9 @@
 		"id": "4dc4b505-dda3-4ac6-b839-397f8cf0adcc",
 		"publisherDisplayName": "Mohammed Alamri",
 		"publisherId": "41376028-10e6-4784-aff4-9c6be1c5c66e",
-		"isPreReleaseVersion": false
+		"isPreReleaseVersion": false,
+		"targetPlatform": "undefined",
+		"updated": false,
+		"preRelease": false
 	}
 }
