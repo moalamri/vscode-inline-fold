@@ -32,7 +32,7 @@ export function activate(context: ExtensionContext) {let activeEditor: TextEdito
    // The current event fires twice when the editor tab is opened.
    window.onDidChangeTextEditorVisibleRanges((e) => {
       console.log('onDidChangeTextEditorVisibleRanges is fired');
-   }), null, context.subscriptions;
+   }, null, context.subscriptions);
 
    window.onDidChangeTextEditorSelection(
       (event) => {
