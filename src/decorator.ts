@@ -10,6 +10,7 @@ export class Decorator {
   CurrentEditor: TextEditor;
   SupportedLanguages: string[] = [];
   VisibleRange: VisibleRange;
+  Active: boolean = true;
 
   activeEditor(textEditor: TextEditor) {
     if (textEditor) {
@@ -17,7 +18,12 @@ export class Decorator {
     }
   }
 
-  init() {
+  toggle() {
+    this.Active = !this.Active;
+    console.log(`Decorator is ${this.Active ? 'active' : 'inactive'}`);
+    this.updateDecorations();
+  }
+    if(!this.Active) return
     if (!this.CurrentEditor && !this.CurrentEditor.visibleRanges) {
       return;
     }
@@ -54,6 +60,11 @@ export class Decorator {
       const startPosition = this.startPositionLine(match.index, startIndex);
       const endPostion = this.endPositionLine(match.index, startIndex, matched.length);
       const range = new Range(startPosition, endPostion);
+
+      if(!this.Active) {
+        this.CurrentEditor.setDecorations(this.UnfoldedDecoration, []);
+        break;
+      }
 
       if(!(this.VisibleRange.StartLine <= range.start.line && range.end.line <= this.VisibleRange.EndLine)) {
         continue;

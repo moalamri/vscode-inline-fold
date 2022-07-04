@@ -23,6 +23,12 @@
 	],
 	"main": "./out/extension.js",
 	"contributes": {
+		"commands": [
+			{
+				"command": "inlineFold.toggle",
+				"title": "Toggle inline fold"
+			}
+		],
 		"configuration": {
 			"type": "object",
 			"title": "Inline fold settings",
@@ -33,12 +39,13 @@
 					"description": "Supported languages",
 					"items": {
 						"type": "string",
-						"description": "language names in lowercase"
+						"description": "Language Ids: https://code.visualstudio.com/docs/languages/identifiers#_known-language-identifiers"
 					},
 					"minItems": 1,
 					"default": [
 						"html",
-						"svelte"
+						"svelte",
+						"typescriptreact"
 					]
 				},
 				"inlineFold.regex": {
@@ -85,7 +92,7 @@
 				"inlineFold.maskColor": {
 					"type": "string",
 					"order": 5,
-					"description": "the color of the covering mask in hex",
+					"description": "The color of the covering mask in hex",
 					"default": "#68D7AC",
 					"examples": [
 						"#68D7AC",

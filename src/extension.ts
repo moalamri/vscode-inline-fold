@@ -1,6 +1,6 @@
-import { ExtensionContext, TextEditor, window, workspace, WorkspaceConfiguration } from "vscode";
+import { commands, ExtensionContext, TextEditor, window, workspace, WorkspaceConfiguration } from "vscode";
 import { Decorator } from "./decorator";
-import { EnumConfigs } from "./enums";
+import { EnumCommands, EnumConfigs } from "./enums";
 
 // this method is called when vs code is activated
 export function activate(context: ExtensionContext) {let activeEditor: TextEditor = window.activeTextEditor;
@@ -9,6 +9,11 @@ export function activate(context: ExtensionContext) {let activeEditor: TextEdito
 
    console.log("inline-fold extension is activated");
    decorator.updateConfigs(config);
+
+   commands.registerCommand(EnumCommands.InlineFoldToggle, () => {
+      console.log('fired command inlineFold.toggle');
+      decorator.toggle();
+   })
 
    function triggerUpdateDecorations() {
       decorator.start();
