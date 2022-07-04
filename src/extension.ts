@@ -3,8 +3,7 @@ import { Decorator } from "./decorator";
 import { EnumConfigs } from "./enums";
 
 // this method is called when vs code is activated
-export function activate(context: ExtensionContext) {
-   const activeEditor: TextEditor = window.activeTextEditor;
+export function activate(context: ExtensionContext) {let activeEditor: TextEditor = window.activeTextEditor;
    const config: WorkspaceConfiguration = workspace.getConfiguration(EnumConfigs.identifier);
    const decorator = new Decorator(activeEditor);
 
@@ -12,29 +11,35 @@ export function activate(context: ExtensionContext) {
    decorator.updateConfigs(config);
 
    function triggerUpdateDecorations() {
-      decorator.init();
+      decorator.start();
    }
+
+   workspace.onDidOpenTextDocument((e) => {
+      console.log('onDidOpenTextDocument is fired');
+      triggerUpdateDecorations()
+   }, null, context.subscriptions);
 
    window.onDidChangeActiveTextEditor(
       (editor) => {
-         if (!editor) return;
-         decorator.activeEditor(editor);
-         throttle(triggerUpdateDecorations(), 500);
+         if(!editor) return
+         console.log('onDidChangeActiveTextEditor is fired');
+          decorator.activeEditor(editor);
       },
       null,
       context.subscriptions
    );
 
-   window.onDidChangeTextEditorVisibleRanges(
-      (editor) => {
-         triggerUpdateDecorations();
-      },
-      null,
-      context.subscriptions
-   );
+   // The current event fires twice when the editor tab is opened.
+   window.onDidChangeTextEditorVisibleRanges((e) => {
+      console.log('onDidChangeTextEditorVisibleRanges is fired');
+   }), null, context.subscriptions;
 
    window.onDidChangeTextEditorSelection(
-      () => {
+      (event) => {
+         // event.kind is undefined when the selection change happens from tab switch
+         // good to limit the number of times the decoration is updated.
+         console.log('onDidChangeTextEditorSelection is fired');
+         if(!event.kind) return 
          triggerUpdateDecorations();
       },
       null,
@@ -47,15 +52,4 @@ export function activate(context: ExtensionContext) {
       }
    });
 
-   function throttle(callback, limit: number) {
-      let isWaiting = false;
-      return function () {
-         if (isWaiting) return;
-         callback.apply(this, arguments);
-         isWaiting = true;
-         setTimeout(() => {
-            isWaiting = false;
-         }, limit);
-      };
-   }
 }
