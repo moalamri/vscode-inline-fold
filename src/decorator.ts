@@ -1,4 +1,4 @@
-import { DecorationOptions, Position, Range, TextEditor, TextEditorDecorationType, WorkspaceConfiguration } from "vscode";
+import { DecorationOptions, Position, Range, TextEditor, TextEditorDecorationType, window, workspace, WorkspaceConfiguration } from "vscode";
 import { EnumConfigs } from "./enums";
 import { VisibleRange } from "./types";
 import { maskDecorationOptions, unfoldedDecorationOptions } from "./decoration";
@@ -10,6 +10,7 @@ export class Decorator {
   CurrentEditor: TextEditor;
   SupportedLanguages: string[] = [];
   VisibleRange: VisibleRange;
+  Offset: number = 3;
   Active: boolean = true;
 
   activeEditor(textEditor: TextEditor) {
@@ -23,19 +24,18 @@ export class Decorator {
     console.log(`Decorator is ${this.Active ? 'active' : 'inactive'}`);
     this.updateDecorations();
   }
-    if(!this.Active) return
+
+  start() {
     if (!this.CurrentEditor && !this.CurrentEditor.visibleRanges) {
       return;
     }
-    if(this.CurrentEditor.visibleRanges.length != 0) {
-        this.CurrentEditor.visibleRanges.forEach((value) => {
-          this.VisibleRange = {
-            StartLine: value.start.line,
-            EndLine: value.end.line,
-          }
-        })
+    if(this.CurrentEditor.visibleRanges.length > 0) {
+      this.VisibleRange = {
+        StartLine: this.CurrentEditor.visibleRanges[0].start.line - this.Offset,
+        EndLine: this.CurrentEditor.visibleRanges[0].end.line + this.Offset,
+      };
+      this.updateDecorations()
     }
-    this.updateDecorations()
   }
 
   updateConfigs(extConfs: WorkspaceConfiguration) {
