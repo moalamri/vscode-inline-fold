@@ -52,8 +52,9 @@
 					"type": "string",
 					"order": 1,
 					"description": "Regex to match",
-					"default": "class=\"([a-zA-Z0-9-\\s]+)(?=\")",
+					"default": "(class|className)=\"([^\"]*)\"",
 					"examples": [
+						"(class|className)=\"([^\"]*)\"",
 						"class=\"([a-zA-Z0-9-\\s]+)(?=\")",
 						"id=\"([a-zA-Z0-9-\\s]+)(?=\")"
 					]
@@ -71,8 +72,8 @@
 				"inlineFold.regexGroup": {
 					"type": "string",
 					"order": 3,
-					"description": "Regex matched group number that will be folded",
-					"default": "1",
+					"description": "Regex capturing group number that will be folded",
+					"default": "2",
 					"examples": [
 						"1",
 						"2"
@@ -102,7 +103,7 @@
 				"inlineFold.unfoldedOpacity": {
 					"type": "number",
 					"order": 6,
-					"description": "The opacity of the unfolded text from 0.0 to 1.0",
+					"description": "The opacity of the unfolded text (from 0 to 1)",
 					"default": 0.8,
 					"enum": [
 						0,
@@ -121,7 +122,7 @@
 				"inlineFold.after": {
 					"type": "string",
 					"order": 7,
-					"description": "(Optional) Add any character to be appended to the folded content",
+					"description": "(Optional) Add any character to be appended to the folded text",
 					"default": "",
 					"examples": [
 						"+",
