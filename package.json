@@ -38,7 +38,11 @@
 					"minItems": 1,
 					"default": [
 						"html",
-						"svelte"
+						"svelte",
+						"javascript",
+						"typescript",
+						"javascriptreact",
+						"typescriptreact"
 					]
 				},
 				"inlineFold.regex": {
