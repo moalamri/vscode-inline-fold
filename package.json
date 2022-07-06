@@ -45,6 +45,10 @@
 					"default": [
 						"html",
 						"svelte",
+						"vue",
+						"javascript",
+						"typescript",
+						"javascriptreact",
 						"typescriptreact"
 					]
 				},
@@ -87,7 +91,7 @@
 					"examples": [
 						"◦◦◦",
 						"▶▶▶",
-						"..."
+						"⌨"
 					]
 				},
 				"inlineFold.maskColor": {
@@ -101,10 +105,10 @@
 					]
 				},
 				"inlineFold.unfoldedOpacity": {
-					"type": "number",
+					"type": "string",
 					"order": 6,
 					"description": "The opacity of the unfolded text (from 0 to 1)",
-					"default": 0.8,
+					"default": 0.7,
 					"enum": [
 						0,
 						0.1,
