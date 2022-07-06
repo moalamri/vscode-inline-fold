@@ -1,5 +1,8 @@
 ## Change log:
 
+### 0.1.1:
+    - (hotfix) Fixed issue that could cause the extension to crash.
+
 ### 0.1.0
     - Added offsets to the visible part of the editor.
     - Registered toggle command (#1)

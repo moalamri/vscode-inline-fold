@@ -56,9 +56,9 @@
 					"type": "string",
 					"order": 1,
 					"description": "Regex to match",
-					"default": "(class|className)=\"([^\"]*)\"",
+					"default": "(class|className)=['{\"]([^'\"}]*)['\"}]",
 					"examples": [
-						"(class|className)=\"([^\"]*)\"",
+						"(class|className)=['{\"]([^'\"}]*)['\"}]",
 						"class=\"([a-zA-Z0-9-\\s]+)(?=\")",
 						"id=\"([a-zA-Z0-9-\\s]+)(?=\")"
 					]
@@ -162,7 +162,8 @@
 		"publisherId": "41376028-10e6-4784-aff4-9c6be1c5c66e",
 		"isPreReleaseVersion": false,
 		"targetPlatform": "undefined",
-		"updated": false,
-		"preRelease": false
+		"updated": true,
+		"preRelease": false,
+		"installedTimestamp": 1657117103571
 	}
 }

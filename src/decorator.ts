@@ -9,7 +9,7 @@ export class Decorator {
   NoDecorations: TextEditorDecorationType;
   CurrentEditor: TextEditor;
   SupportedLanguages: string[] = [];
-  Offset: number = 15;
+  Offset: number = 30;
   Active: boolean = true;
   StartLine: number = 0;
   EndLine: number = 0;
@@ -20,7 +20,7 @@ export class Decorator {
    * because somethimes it return as undefined.
    * @param textEditor TextEditor
    */
-  set activeEditor(textEditor: TextEditor) {
+  activeEditor(textEditor: TextEditor) {
     if (!textEditor) {
       return;
     }
@@ -33,6 +33,7 @@ export class Decorator {
    * @param n number
    */
   startLine(n: number) {
+    if(!n) return
     this.StartLine = n - this.Offset <= 0 ? 0 : n - this.Offset;
   }
 
@@ -41,15 +42,8 @@ export class Decorator {
    * @param n number
    */
   endLine(n: number) {
-    this.EndLine = n + this.Offset >= this.CurrentEditor?.document.lineCount ? this.CurrentEditor.document?.lineCount : n + this.Offset;
-  }
-
-  /**
-   * Unlike set activeEditor, this method is a trigger for a guaranteed
-   * active editor.
-   */
-  activeEditorChanged() {
-    this.activeEditor = window.activeTextEditor;
+    if(!n) return
+    this.EndLine = n + this.Offset >= window.activeTextEditor.document.lineCount ? window.activeTextEditor.document.lineCount : n + this.Offset;
   }
 
   /**
@@ -64,16 +58,16 @@ export class Decorator {
    * Do some checking before triggering the decoration update.
    */
   start() {
-    if (!this.CurrentEditor && !this.CurrentEditor.visibleRanges) {
+    if (!this.CurrentEditor) {
       return;
     }
     this.updateDecorations()
   }
 
   /**
-   * This method gets triggered when the extension settings are changed
-   * @param extConfs: Workspace configs
-   */
+  * This method gets triggered when the extension settings are changed
+  * @param extConfs: Workspace configs
+  */
   updateConfigs(extConfs: WorkspaceConfiguration) {
     this.WorkspaceConfigs = extConfs;
     this.SupportedLanguages = extConfs.get(Configs.supportedLanguages) || [];
@@ -90,7 +84,7 @@ export class Decorator {
     const text: string = this.CurrentEditor.document.getText();
     const regexGroup: number = this.WorkspaceConfigs.get(Configs.regexGroup) as number | 1;
     const decorators: DecorationOptions[] = [];
-    let match: string[] | any = [];
+    let match;
     while (match = regEx.exec(text)) {
       const matched = match[regexGroup];
       const startIndex = match[0].indexOf(matched);
@@ -124,11 +118,11 @@ export class Decorator {
   }
 
   /**
-   * 
-   * @param matchIndex number
-   * @param startIndex number
-   * @returns position
-   */
+  * 
+  * @param matchIndex number
+  * @param startIndex number
+  * @returns position
+  */
   startPositionLine(matchIndex: number, startIndex: number): Position {
     return this.CurrentEditor.document.positionAt(
       matchIndex + startIndex
@@ -136,11 +130,11 @@ export class Decorator {
   }
 
   /**
-   * 
-   * @param matchIndex number
-   * @param startIndex number
-   * @returns position
-   */
+  * 
+  * @param matchIndex number
+  * @param startIndex number
+  * @returns position
+  */
   endPositionLine(matchIndex: number, startIndex: number, length: number): Position {
     return this.CurrentEditor.document.positionAt(
       matchIndex + startIndex + length
@@ -148,9 +142,10 @@ export class Decorator {
   }
 
   constructor (editor?: TextEditor) {
-    this.startLine(editor.visibleRanges[0].start.line)
-    this.endLine(editor.visibleRanges[0].end.line)
-    this.activeEditorChanged();
+    if(!editor) return
+    this.startLine(window.activeTextEditor.visibleRanges[0].start.line)
+    this.endLine(window.activeTextEditor.visibleRanges[0].end.line)
+    this.activeEditor(editor)
   }
 
 }
