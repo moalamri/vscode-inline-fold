@@ -31,9 +31,7 @@ The characters used as a mask can be configured in the settings and you can upda
 - `inlineFold.after` an optional text/character that will be appended to the end of folded code
 
 ### Notes!
-- Use settings UI to configure the extension.
-- No registered commands yet.
-- I would love to hear some suggestions :)
+- Use settings UI to configure the extension, it's better that way so VS Code can automatically escape your regex.
 
 
 <a href="CHANGELOG.md">Changelog</a>
