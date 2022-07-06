@@ -23,6 +23,12 @@
 	],
 	"main": "./out/extension.js",
 	"contributes": {
+		"commands": [
+			{
+				"command": "inlineFold.toggle",
+				"title": "Toggle inline fold"
+			}
+		],
 		"configuration": {
 			"type": "object",
 			"title": "Inline fold settings",
@@ -33,20 +39,26 @@
 					"description": "Supported languages",
 					"items": {
 						"type": "string",
-						"description": "language names in lowercase"
+						"description": "Language Ids: https://code.visualstudio.com/docs/languages/identifiers#_known-language-identifiers"
 					},
 					"minItems": 1,
 					"default": [
 						"html",
-						"svelte"
+						"svelte",
+						"vue",
+						"javascript",
+						"typescript",
+						"javascriptreact",
+						"typescriptreact"
 					]
 				},
 				"inlineFold.regex": {
 					"type": "string",
 					"order": 1,
 					"description": "Regex to match",
-					"default": "class=\"([a-zA-Z0-9-\\s]+)(?=\")",
+					"default": "(class|className)=\"([^\"]*)\"",
 					"examples": [
+						"(class|className)=\"([^\"]*)\"",
 						"class=\"([a-zA-Z0-9-\\s]+)(?=\")",
 						"id=\"([a-zA-Z0-9-\\s]+)(?=\")"
 					]
@@ -64,8 +76,8 @@
 				"inlineFold.regexGroup": {
 					"type": "string",
 					"order": 3,
-					"description": "Regex matched group number that will be folded",
-					"default": "1",
+					"description": "Regex capturing group number that will be folded",
+					"default": "2",
 					"examples": [
 						"1",
 						"2"
@@ -79,13 +91,13 @@
 					"examples": [
 						"◦◦◦",
 						"▶▶▶",
-						"..."
+						"⌨"
 					]
 				},
 				"inlineFold.maskColor": {
 					"type": "string",
 					"order": 5,
-					"description": "the color of the covering mask in hex",
+					"description": "The color of the covering mask in hex",
 					"default": "#68D7AC",
 					"examples": [
 						"#68D7AC",
@@ -95,10 +107,10 @@
 				"inlineFold.unfoldedOpacity": {
 					"type": "number",
 					"order": 6,
-					"description": "The opacity of the unfolded text in css style from 0.0 to 1.0",
-					"default": 0.8,
+					"description": "The opacity of the unfolded text (from 0 to 1)",
+					"default": 0.7,
 					"enum": [
-						0.0,
+						0,
 						0.1,
 						0.2,
 						0.3,
@@ -108,16 +120,16 @@
 						0.7,
 						0.8,
 						0.9,
-						1.0
+						1
 					]
 				},
 				"inlineFold.after": {
 					"type": "string",
 					"order": 7,
-					"description": "(Optional) Add any character to be added after the folded content",
+					"description": "(Optional) Add any character to be appended to the folded text",
 					"default": "",
 					"examples": [
-						"",
+						"+",
 						"<-",
 						"<<"
 					]
@@ -148,6 +160,9 @@
 		"id": "4dc4b505-dda3-4ac6-b839-397f8cf0adcc",
 		"publisherDisplayName": "Mohammed Alamri",
 		"publisherId": "41376028-10e6-4784-aff4-9c6be1c5c66e",
-		"isPreReleaseVersion": false
+		"isPreReleaseVersion": false,
+		"targetPlatform": "undefined",
+		"updated": false,
+		"preRelease": false
 	}
 }
