@@ -105,7 +105,7 @@
 					]
 				},
 				"inlineFold.unfoldedOpacity": {
-					"type": "string",
+					"type": "number",
 					"order": 6,
 					"description": "The opacity of the unfolded text (from 0 to 1)",
 					"default": 0.7,
