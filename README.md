@@ -11,25 +11,29 @@
 </p>
 
 
-## VSCode Inline Fold Extension
+## VS Code Inline Fold Extension
 
-This extension miminc the folding experiance but for inline code folding.
-It also expand/unfold the code when clicking or selecting the code block. 
-Useful when you work on utility classes in a framework like tailwind css, this would allow to see the code in cleaner view. It can be configured to select what part of the line code that should be folded.
+VS Code Inline Fold extension mimics VS Code's [folding](https://code.visualstudio.com/docs/editor/codebasics#_folding) experience for inline code.
+
+The extension works great with utility-first CSS framework such as Tailwind CSS. It makes your code more readable by masking long strings of CSS classes.
+
+The code can be folded/unfolded by clicking on or selecting the code block mask.
+
+The characters used as a mask can be configured in the settings and you can update the regex expression to match any code pattern you want.
 
 ### Available Settings:
-- `inlineFold.regex` regex to match the code line
+- `inlineFold.regex` regex pattern that will be used to mask the code block
 - `inlineFold.regexFlags` regex flags
 - `inlineFold.regexGroup` regex group that match the code that should be folded
-- `inlineFold.unfoldedOpacity` opacity of the unfolded code when is clicked by mouse or being selected
+- `inlineFold.unfoldedOpacity` opacity of the masked code block when unfolded or highlighted
 - `inlineFold.maskChar` text/character to mask the code when it is folded
-- `inlineFold.maskColor` color of the mask character
-- `inlineFold.after` an optional text/character to append to the end of folded code
+- `inlineFold.maskColor` color of the mask character(s)
+- `inlineFold.after` an optional text/character that will be appended to the end of folded code
 
 ### Notes!
 - Use settings UI to configure the extension.
 - No registered commands yet.
-- I would love to hear some suggesions :)
+- I would love to hear some suggestions :)
 
 
-<a href="CHANGELOG.md"> Change log</a>
+<a href="CHANGELOG.md">Changelog</a>
