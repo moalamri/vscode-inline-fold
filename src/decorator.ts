@@ -92,7 +92,7 @@ export class Decorator {
       const endPostion = this.endPositionLine(match.index, startIndex, matched.length);
       const range = new Range(startPosition, endPostion);
 
-      if (!this.Active) {
+      if (!this.Active || range.isEmpty) {
         this.CurrentEditor.setDecorations(this.NoDecorations, []);
         break;
       }
