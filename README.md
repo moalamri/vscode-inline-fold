@@ -29,15 +29,19 @@ The extension also enables folding of attribute values within HTML/JSX tags. It 
 - `inlineFold.after` an optional text/character that will be appended to the end of folded code
 - `inlineFold.supportedLanguages` a list of targeted language Ids
 
-If the extension doesn't work for your language out of the box, you can add it from the settings under `inlineFold.supportedLanguages`:
+If the extension doesn't work for your language out of the box, you can add it from the settings under `inlineFold.supportedLanguages` using the specific language Id.
+
+Examples:
+- `vue`
+- `html`
+- `svelte`
+- `vue-html`
 - `javascript`
 - `typescript`
 - `javascriptreact`
 - `typescriptreact`
-- `vue`
-- `vue-html`
-- `html`
-- etc . . . *Check here for <a href="https://code.visualstudio.com/docs/languages/identifiers#_known-language-identifiers">more options</a>*
+
+*Check here for <a href="https://code.visualstudio.com/docs/languages/identifiers#_known-language-identifiers">more options</a>*
 
 ### Running the extension
 You can install the extension <a href="https://marketplace.visualstudio.com/items?itemName=moalamri.inline-fold"> in the marketplace here</a>. If you encounter any issue or would like to contribute, <a href="https://github.com/moalamri/vscode-inline-fold">visit the GitHub page</a>.

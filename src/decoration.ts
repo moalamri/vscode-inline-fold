@@ -1,4 +1,4 @@
-import { window, DecorationRangeBehavior, WorkspaceConfiguration, TextEditorDecorationType, ThemableDecorationAttachmentRenderOptions } from "vscode";
+import { window, DecorationRangeBehavior, WorkspaceConfiguration, TextEditorDecorationType, ThemableDecorationAttachmentRenderOptions, ThemeIcon } from "vscode";
 import { Configs } from "./enums";
 
 /**
@@ -25,7 +25,7 @@ export const maskDecorationOptions = (extConfs: WorkspaceConfiguration): TextEdi
     contentText: extConfs.get(Configs.after),
   },
   letterSpacing: "-1ch",
-  textDecoration: "none; display: none;",
+  textDecoration: "none; display: none;"
 });
 
 /**

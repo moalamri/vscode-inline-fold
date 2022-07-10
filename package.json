@@ -3,7 +3,7 @@
 	"displayName": "Inline fold",
 	"description": "A custom decorator that \"fold\" matching content in single line",
 	"icon": "res/icon.png",
-	"version": "0.1.2",
+	"version": "0.1.4",
 	"publisher": "moalamri",
 	"homepage": "https://github.com/moalamri/vscode-inline-fold",
 	"bugs": "https://github.com/moalamri/vscode-inline-fold/issues",
@@ -16,6 +16,7 @@
 		"vscode": "^1.68.1"
 	},
 	"categories": [
+		"Visualization",
 		"Other"
 	],
 	"activationEvents": [
@@ -56,9 +57,9 @@
 					"type": "string",
 					"order": 1,
 					"description": "Regex to match",
-					"default": "(class|className)=[`'{\"]([^`'\"}]*)[`'\"}]",
+					"default": "(class|className)=[`'{\"]([^`'\"}]+)[`'\"}]",
 					"examples": [
-						"(class|className)=[`'{\"]([^`'\"}]*)[`'\"}]",
+						"(class|className)=[`'{\"]([^`'\"}]+)[`'\"}]",
 						"class=\"([a-zA-Z0-9-\\s]+)(?=\")",
 						"id=\"([a-zA-Z0-9-\\s]+)(?=\")"
 					]

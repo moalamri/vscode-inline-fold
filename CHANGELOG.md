@@ -1,5 +1,10 @@
 ## Change log:
 
+### 0.1.4:
+    - fixed [#19](https://github.com/moalamri/vscode-inline-fold/issues/19)
+    - fixed [#17](https://github.com/moalamri/vscode-inline-fold/issues/17)
+    - optimized events debouncing.
+
 ### 0.1.2:
     - fixed [#17](https://github.com/moalamri/vscode-inline-fold/issues/17)
 

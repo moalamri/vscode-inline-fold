@@ -1,6 +1,6 @@
-import { DecorationOptions, Position, Range, Selection, TextDocument, TextEditor, TextEditorDecorationType, window, workspace, WorkspaceConfiguration } from "vscode";
+import { DecorationOptions, Position, Range, TextEditor, TextEditorDecorationType, WorkspaceConfiguration } from "vscode";
+import { maskDecorationOptions, noDecoration, unfoldedDecorationOptions } from "./decoration";
 import { Configs } from "./enums";
-import { maskDecorationOptions, unfoldedDecorationOptions, noDecoration } from "./decoration";
 
 export class Decorator {
   WorkspaceConfigs: WorkspaceConfiguration;
@@ -15,53 +15,41 @@ export class Decorator {
   EndLine: number = 0;
 
   /**
-   * To set/update the current working text editor.
-   * It's neccessary to call this method when the active editor changes
-   * because somethimes it return as undefined.
-   * @param textEditor TextEditor
-   */
+  * To set/update the current working text editor.
+  * It's neccessary to call this method when the active editor changes
+  * because somethimes it return as undefined.
+  * @param textEditor TextEditor
+  */
   activeEditor(textEditor: TextEditor) {
-    if (!textEditor) {
-      return;
-    }
-    if (this.StartLine === 0 && this.EndLine === 0) return
+    if (!textEditor) return;
     this.CurrentEditor = textEditor;
-  }
-
-  /**
-   * Set the number of the starting line of the targeted text.
-   * @param n number
-   */
-  startLine(n: number) {
-    if(!n) return
-    this.StartLine = n - this.Offset <= 0 ? 0 : n - this.Offset;
-  }
-
-  /**
-   * Set the number of the ending line of the targeted text.
-   * @param n number
-   */
-  endLine(n: number) {
-    if(!n) return
-    this.EndLine = n + this.Offset >= window.activeTextEditor.document.lineCount ? window.activeTextEditor.document.lineCount : n + this.Offset;
-  }
-
-  /**
-   * Set the active state of the decorator (used for command)
-   */
-  toggle() {
-    this.Active = !this.Active;
+    this.startLine(textEditor.visibleRanges[0].start.line);
+    this.endLine(textEditor.visibleRanges[0].end.line);
     this.updateDecorations();
   }
 
   /**
-   * Do some checking before triggering the decoration update.
-   */
-  start() {
-    if (!this.CurrentEditor) {
-      return;
-    }
-    this.updateDecorations()
+  * Set the number of the starting line of where the decoration should be applied.
+  * @param n number
+  */
+  startLine(n: number) {
+    this.StartLine = n - this.Offset <= 0 ? 0 : n - this.Offset;
+  }
+
+  /**
+  * Set the number of the ending line of where the decoration should be applied.
+  * @param n number
+  */
+  endLine(n: number) {
+    this.EndLine = n + this.Offset >= this.CurrentEditor.document.lineCount ? this.CurrentEditor.document.lineCount : n + this.Offset;
+  }
+
+  /**
+  * Set the active state of the decorator (used for command)
+  */
+  toggle() {
+    this.Active = !this.Active;
+    this.updateDecorations();
   }
 
   /**
@@ -92,7 +80,7 @@ export class Decorator {
       const endPostion = this.endPositionLine(match.index, startIndex, matched.length);
       const range = new Range(startPosition, endPostion);
 
-      if (!this.Active || range.isEmpty) {
+      if (!this.Active) {
         this.CurrentEditor.setDecorations(this.NoDecorations, []);
         break;
       }
@@ -103,7 +91,7 @@ export class Decorator {
 
       decorators.push({
         range,
-        hoverMessage: `Full Text **${matched}**`,
+        hoverMessage: `Full text **${matched}**`
       });
     }
 
@@ -141,11 +129,5 @@ export class Decorator {
     );
   }
 
-  constructor (editor?: TextEditor) {
-    if(!editor) return
-    this.startLine(window.activeTextEditor.visibleRanges[0].start.line)
-    this.endLine(window.activeTextEditor.visibleRanges[0].end.line)
-    this.activeEditor(editor)
-  }
-
+  constructor () {}
 }
