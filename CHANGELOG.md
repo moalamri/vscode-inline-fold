@@ -1,5 +1,8 @@
 ## Change log:
 
+### 0.1.5:
+    - cleaned up debugging code & removed unused imports
+
 ### 0.1.4:
     - fixed [#19](https://github.com/moalamri/vscode-inline-fold/issues/19)
     - fixed [#17](https://github.com/moalamri/vscode-inline-fold/issues/17)
