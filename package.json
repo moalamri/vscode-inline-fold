@@ -62,7 +62,8 @@
 						"(class|className)=[`'{\"]([^`'\"}]+)[`'\"}]",
 						"class=\"([a-zA-Z0-9-\\s]+)(?=\")",
 						"id=\"([a-zA-Z0-9-\\s]+)(?=\")"
-					]
+					],
+					"scope": "language-overridable"
 				},
 				"inlineFold.regexFlags": {
 					"type": "string",
@@ -72,7 +73,8 @@
 					"examples": [
 						"g",
 						"gi"
-					]
+					],
+					"scope": "language-overridable"
 				},
 				"inlineFold.regexGroup": {
 					"type": "string",
@@ -82,7 +84,8 @@
 					"examples": [
 						"1",
 						"2"
-					]
+					],
+					"scope": "language-overridable"
 				},
 				"inlineFold.maskChar": {
 					"type": "string",
@@ -93,7 +96,8 @@
 						"◦◦◦",
 						"▶▶▶",
 						"⌨"
-					]
+					],
+					"scope": "language-overridable"
 				},
 				"inlineFold.maskColor": {
 					"type": "string",
@@ -103,7 +107,8 @@
 					"examples": [
 						"#68D7AC",
 						"#FF0000"
-					]
+					],
+					"scope": "language-overridable"
 				},
 				"inlineFold.unfoldedOpacity": {
 					"type": "number",
@@ -122,7 +127,8 @@
 						0.8,
 						0.9,
 						1
-					]
+					],
+					"scope": "language-overridable"
 				},
 				"inlineFold.after": {
 					"type": "string",
@@ -133,7 +139,8 @@
 						"+",
 						"<-",
 						"<<"
-					]
+					],
+					"scope": "language-overridable"
 				}
 			},
 			"required": [
