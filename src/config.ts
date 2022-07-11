@@ -1,18 +1,23 @@
-import { WorkspaceConfiguration, window, workspace } from "vscode";
+import { WorkspaceConfiguration, workspace, ConfigurationScope } from "vscode";
 import { Configs } from "./enums";
 
-export class ConfigsManager {
-  private workspaceConfig: WorkspaceConfiguration = workspace.getConfiguration(Configs.identifier);
+export class ExtensionConfig {
+  private workspaceConfig: WorkspaceConfiguration;
 
-  public getConfig(section: Configs): string {
-    return this.workspaceConfig.get(section).toString();
+  public getConfig(_section: Configs, _languageid: string) {
+    const languageConfig = this.getLanguageScopedConfig(_section, _languageid);
+    return languageConfig ? languageConfig : this.workspaceConfig.get(_section);
   }
 
-  public getLanguageConfig(section: Configs): string {
-    return this.workspaceConfig.inspect(section).defaultLanguageValue?.toString();
+  private getLanguageScopedConfig(_section: Configs, _languageid: string) {
+    const scope: ConfigurationScope = { 
+      languageId: _languageid
+    };
+    const languageConfig = workspace.getConfiguration(Configs.identifier, scope);
+    return languageConfig.get(_section);
   }
 
   constructor() {
-
+    this.workspaceConfig = workspace.getConfiguration(Configs.identifier);
   }
 }
