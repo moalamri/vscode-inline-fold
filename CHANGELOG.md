@@ -1,5 +1,8 @@
 ## Change log:
 
+### 0.2.0:
+    - Added support for language scoped settings.
+
 ### 0.1.4:
     - fixed [#19](https://github.com/moalamri/vscode-inline-fold/issues/19)
     - fixed [#17](https://github.com/moalamri/vscode-inline-fold/issues/17)
