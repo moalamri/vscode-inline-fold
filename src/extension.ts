@@ -14,7 +14,6 @@ export function activate(context: ExtensionContext) {
    function triggerUpdateDecorations(): void {
       const textEditor = window.activeTextEditor;
       if (!textEditor) return
-      console.count('I was fired')
       decorator.activeEditor(textEditor);
    }
 

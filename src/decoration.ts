@@ -1,4 +1,4 @@
-import { window, DecorationRangeBehavior, WorkspaceConfiguration, TextEditorDecorationType, ThemableDecorationAttachmentRenderOptions, ThemeIcon } from "vscode";
+import { window, DecorationRangeBehavior, WorkspaceConfiguration, TextEditorDecorationType } from "vscode";
 import { Configs } from "./enums";
 
 /**
