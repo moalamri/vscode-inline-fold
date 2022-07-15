@@ -129,5 +129,5 @@ export class Decorator {
     );
   }
 
-  constructor () {}
+  constructor () { }
 }
