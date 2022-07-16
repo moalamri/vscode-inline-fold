@@ -6,7 +6,7 @@ export enum Configs {
    regex = "regex",
    regexFlags = "regexFlags",
    regexGroup = "regexGroup",
-   onlyMatchAfter = "onlyMatchAfter",
+   matchAfter = "matchAfter",
    maskChar = "maskChar",
    maskColor = "maskColor",
    unfoldedOpacity = "unfoldedOpacity",

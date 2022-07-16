@@ -23,6 +23,7 @@ The extension also enables folding of attribute values within HTML/JSX tags. It 
 - `inlineFold.regex` regex to match the code line
 - `inlineFold.regexFlags` regex flags
 - `inlineFold.regexGroup` regex group that match the code that should be folded
+- `inlineFold.matchAfter` string inside the match after which folds will happen. Prevents attributes folding when the to-be-folded value starts with the same characters as the attribute.
 - `inlineFold.unfoldedOpacity` opacity of the unfolded code when it's clicked or is selected
 - `inlineFold.maskChar` text/character to mask the code when it is folded
 - `inlineFold.maskColor` color of the mask character(s)
