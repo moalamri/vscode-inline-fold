@@ -72,13 +72,19 @@ export class Decorator {
     const text: string = this.CurrentEditor.document.getText();
     const regexGroup: number = this.WorkspaceConfigs.get(Configs.regexGroup) as number | 1;
     const decorators: DecorationOptions[] = [];
+    const matchAfter: string = this.WorkspaceConfigs.get(Configs.onlyMatchAfter);
     let match;
+
     while (match = regEx.exec(text)) {
       const matched = match[regexGroup];
-      const startIndex = match[0].indexOf(matched);
-      const startPosition = this.startPositionLine(match.index, startIndex);
-      const endPostion = this.endPositionLine(match.index, startIndex, matched.length);
-      const range = new Range(startPosition, endPostion);
+      
+      const skip = matchAfter.length == 0 ? 0 : match[0].indexOf(matchAfter) + matchAfter.length;
+      const foldIndex = match[0].substring(skip).indexOf(matched) + skip;
+
+      const startPosition = this.startPositionLine(match.index, foldIndex);
+      const endPosition = this.endPositionLine(match.index, foldIndex, matched.length);
+
+      const range = new Range(startPosition, endPosition);
 
       if (!this.Active) {
         this.CurrentEditor.setDecorations(this.NoDecorations, []);
