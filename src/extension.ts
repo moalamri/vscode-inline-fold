@@ -1,20 +1,25 @@
 import { commands, ExtensionContext, window, workspace, WorkspaceConfiguration } from "vscode";
+import { ExtensionConfigs } from "./config";
 import { Decorator } from "./decorator";
 import { Commands, Configs } from "./enums";
 import { EventsLimit } from "./utils";
 
 export function activate(context: ExtensionContext) {
-   const config: WorkspaceConfiguration = workspace.getConfiguration(Configs.identifier);
+   const workspaceConfig: WorkspaceConfiguration = workspace.getConfiguration(Configs.identifier);
    const decorator = new Decorator();
    const elimit = new EventsLimit();
-   decorator.updateConfigs(config);
+   updateConfigs(workspaceConfig);
    elimit.Register(triggerUpdateDecorations)
    elimit.Lead();
+
+   function updateConfigs(_config: WorkspaceConfiguration) {
+      ExtensionConfigs.UpdateConfigs(_config);
+      decorator.updateConfigs(_config);
+   }
 
    function triggerUpdateDecorations(): void {
       const textEditor = window.activeTextEditor;
       if (!textEditor) return
-      console.count('I was fired')
       decorator.activeEditor(textEditor);
    }
 
@@ -33,7 +38,7 @@ export function activate(context: ExtensionContext) {
          // good to limit the number of times the decoration is updated, so no need 
          // to wrap the event.
          if (!e.kind || !e.textEditor) return
-         elimit.Lead()
+         triggerUpdateDecorations();
       }, null, context.subscriptions
    );
 
@@ -44,8 +49,7 @@ export function activate(context: ExtensionContext) {
 
    workspace.onDidChangeConfiguration((event) => {
       if (event.affectsConfiguration(Configs.identifier)) {
-         decorator.updateConfigs(workspace.getConfiguration(Configs.identifier));
+         updateConfigs(workspace.getConfiguration(Configs.identifier));
       }
    }, null, context.subscriptions);
-
 }
