@@ -1,7 +1,10 @@
 ## Change log:
 
 ### 0.2.0:
-    - Added support for language scoped settings.
+    - Added: support for language scoped settings.
+    - Added: custom cache for the decorations per languageid (to avoid re-rendering the decorations when the language changes).
+    - Fixed: [#23](https://github.com/moalamri/vscode-inline-fold/issues/23)
+    - Exposed some DecorationInstanceRenderOptions to allow for customizating the decoration.
 
 ### 0.1.4:
     - fixed [#19](https://github.com/moalamri/vscode-inline-fold/issues/19)

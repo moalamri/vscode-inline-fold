@@ -57,9 +57,9 @@
 					"type": "string",
 					"order": 1,
 					"description": "Regex to match",
-					"default": "(class|className)=[`'{\"]([^`'\"}]+)[`'\"}]",
+					"default": "(className|class)=({`(?:.+)`}|\"(?:[^`{}=\"]+)\")",
 					"examples": [
-						"(class|className)=[`'{\"]([^`'\"}]+)[`'\"}]",
+						"(className|class)=({`(?:.+)`}|\"(?:[^`{}=\"]+)\")",
 						"class=\"([a-zA-Z0-9-\\s]+)(?=\")",
 						"id=\"([a-zA-Z0-9-\\s]+)(?=\")"
 					],
@@ -85,6 +85,79 @@
 						"1",
 						"2"
 					],
+					"scope": "language-overridable"
+				},
+				"inlineFold.decoration.options": {
+					"type": "object",
+					"description": "Folded content surrounding marks",
+					"properties": {
+						"before": {
+							"type": "object",
+							"description": "Properties of the prefix character of the folded content",
+							"properties": {
+								"contentText": "",
+								"contentIconPath": "",
+								"border": "",
+								"borderColor": "",
+								"fontStyle": "",
+								"fontWeight": "",
+								"textDecoration": "",
+								"color": "",
+								"backgroundColor": "",
+								"margin": "",
+								"width": "",
+								"height": ""
+							},
+							"default": {
+								"contentText": "⟨",
+								"contentIconPath": "",
+								"border": "",
+								"borderColor": "",
+								"fontStyle": "",
+								"fontWeight": "",
+								"textDecoration": "",
+								"color": "#F3722C",
+								"backgroundColor": "",
+								"margin": "",
+								"width": "",
+								"height": ""
+							},
+							"scope": "language-overridable"
+						},
+						"after": {
+							"type": "object",
+							"description": "Properties of the suffix character of the folded content",
+							"properties": {
+								"contentText": "",
+								"contentIconPath": "",
+								"border": "",
+								"borderColor": "",
+								"fontStyle": "",
+								"fontWeight": "",
+								"textDecoration": "",
+								"color": "",
+								"backgroundColor": "",
+								"margin": "",
+								"width": "",
+								"height": ""
+							},
+							"default": {
+								"contentText": "⟩",
+								"contentIconPath": "",
+								"border": "",
+								"borderColor": "",
+								"fontStyle": "",
+								"fontWeight": "",
+								"textDecoration": "",
+								"color": "#F3722C",
+								"backgroundColor": "",
+								"margin": "",
+								"width": "",
+								"height": ""
+							},
+							"scope": "language-overridable"
+						}
+					},
 					"scope": "language-overridable"
 				},
 				"inlineFold.maskChar": {
