@@ -1,8 +1,10 @@
 export enum Commands {
    InlineFoldToggle = "inlineFold.toggle",
 }
+
 export enum Configs {
    identifier = "inlineFold",
+   languageId = "languageId",
    regex = "regex",
    regexFlags = "regexFlags",
    regexGroup = "regexGroup",
@@ -10,5 +12,17 @@ export enum Configs {
    maskColor = "maskColor",
    unfoldedOpacity = "unfoldedOpacity",
    after = "after",
-   supportedLanguages = "supportedLanguages"
+   supportedLanguages = "supportedLanguages",
+   decorationOptions = "decoration.options"
+}
+
+export enum DecorationConfigs {
+   options = "decoration.options",
+   before = "decoration.options.before",
+   after = "decoration.options.after",
+   contentText = "contentText",
+   color = "color",
+   textDecoration = "textDecoration",
+   letterSpacing = "letterSpacing",
+
 }
