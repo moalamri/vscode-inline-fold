@@ -1,16 +1,14 @@
-import { DecorationOptions, Position, Range, TextEditor, TextEditorDecorationType, WorkspaceConfiguration } from "vscode";
-import { maskDecorationOptions, noDecoration, unfoldedDecorationOptions } from "./decoration";
+import { DecorationOptions, Position, Range, TextEditor, WorkspaceConfiguration } from "vscode";
+import { ExtensionConfigs } from "./config";
+import { DecoratorTypeOptions } from "./decoration";
 import { Configs } from "./enums";
 
 export class Decorator {
-  WorkspaceConfigs: WorkspaceConfiguration;
-  UnfoldedDecoration: TextEditorDecorationType;
-  MaskDecoration: TextEditorDecorationType;
-  NoDecorations: TextEditorDecorationType;
+  TextDecorationOptions = new DecoratorTypeOptions();
   CurrentEditor: TextEditor;
   SupportedLanguages: string[] = [];
-  Offset: number = 30;
   Active: boolean = true;
+  Offset: number = 30;
   StartLine: number = 0;
   EndLine: number = 0;
 
@@ -57,21 +55,26 @@ export class Decorator {
   * @param extConfs: Workspace configs
   */
   updateConfigs(extConfs: WorkspaceConfiguration) {
-    this.WorkspaceConfigs = extConfs;
-    this.SupportedLanguages = extConfs.get(Configs.supportedLanguages) || [];
-    this.UnfoldedDecoration = unfoldedDecorationOptions(extConfs);
-    this.MaskDecoration = maskDecorationOptions(extConfs);
-    this.NoDecorations = noDecoration();
+    ExtensionConfigs.UpdateConfigs(extConfs);
+    this.SupportedLanguages = ExtensionConfigs.GetSupportedLanguages();
+    this.TextDecorationOptions.ClearCache();
   }
 
   updateDecorations() {
     if (!this.SupportedLanguages || !this.SupportedLanguages.includes(this.CurrentEditor.document.languageId)) {
       return;
     }
-    const regEx: RegExp = RegExp(this.WorkspaceConfigs.get(Configs.regex), this.WorkspaceConfigs.get(Configs.regexFlags));
+
+    const langId: string = this.CurrentEditor.document.languageId;
+    const regEx: RegExp = RegExp(ExtensionConfigs.get<RegExp>(Configs.regex, langId), ExtensionConfigs.get<string>(Configs.regexFlags, langId));
     const text: string = this.CurrentEditor.document.getText();
-    const regexGroup: number = this.WorkspaceConfigs.get(Configs.regexGroup) as number | 1;
-    const decorators: DecorationOptions[] = [];
+    const regexGroup: number = ExtensionConfigs.get<number>(Configs.regexGroup, langId) as number | 1;
+    const matchDecorationType = this.TextDecorationOptions.MaskDecorationTypeCache(langId);
+    const unfoldDecorationType = this.TextDecorationOptions.UnfoldDecorationTypeCache(langId);
+    const plainDecorationType = this.TextDecorationOptions.PlainDecorationTypeCache(langId);
+    const unfoldDecorationOptions: DecorationOptions[] = [];
+    const matchDecorationOptions: DecorationOptions[] = [];
+
     let match;
     while (match = regEx.exec(text)) {
       const matched = match[regexGroup];
@@ -81,7 +84,7 @@ export class Decorator {
       const range = new Range(startPosition, endPostion);
 
       if (!this.Active) {
-        this.CurrentEditor.setDecorations(this.NoDecorations, []);
+        this.CurrentEditor.setDecorations(plainDecorationType, []);
         break;
       }
 
@@ -89,20 +92,16 @@ export class Decorator {
         continue;
       }
 
-      decorators.push({
-        range,
-        hoverMessage: `Full text **${matched}**`
-      });
+      // The only possible way to fix tooltip hover flickering
+      if(this.CurrentEditor.selection.contains(range) || this.CurrentEditor.selections.find(s => range.contains(s))) {
+        unfoldDecorationOptions.push(this.TextDecorationOptions.UnfoldedDecorationOptions(range, matched));
+      } else {
+        matchDecorationOptions.push(this.TextDecorationOptions.MatchedDecorationOptions(range, langId));
+      }
     }
 
-    this.CurrentEditor.setDecorations(this.UnfoldedDecoration, decorators);
-    this.CurrentEditor.setDecorations(
-      this.MaskDecoration,
-      decorators
-        .map(({ range }) => range)
-        .filter((r) => !r.contains(this.CurrentEditor.selection) && !this.CurrentEditor.selection.contains(r))
-        .filter((r) => !this.CurrentEditor.selections.find((s) => r.contains(s)))
-    )
+    this.CurrentEditor.setDecorations(unfoldDecorationType, unfoldDecorationOptions);
+    this.CurrentEditor.setDecorations(matchDecorationType, matchDecorationOptions);
   }
 
   /**
