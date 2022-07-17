@@ -16,7 +16,7 @@ The extension also enables folding of attribute values within HTML/JSX tags. It 
 <br />
 
 <p align="center">
-    <img src="./res/carbon.png" />
+    <img width="650" alt="preview" src="https://user-images.githubusercontent.com/964077/179401349-4b217316-3099-47d0-a8b0-10fb2381d105.png">
 </p>
 
 ### Available Settings
@@ -53,4 +53,7 @@ Use settings UI to configure the extension (better for regex escaping).
 See the project's <a href="CHANGELOG.md"> changelog</a> here.
 
 ### Contributors
-[Thanks to you](https://github.com/moalamri/vscode-inline-fold/graphs/contributors)
+[Thank you](https://github.com/moalamri/vscode-inline-fold/graphs/contributors)
+<p></p>
+
+Screenshot by [Cody](https://github.com/ccccooooddddyyyy)
