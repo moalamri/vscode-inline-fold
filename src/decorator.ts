@@ -74,14 +74,15 @@ export class Decorator {
     const plainDecorationType = this.TextDecorationOptions.PlainDecorationTypeCache(langId);
     const unfoldDecorationOptions: DecorationOptions[] = [];
     const matchDecorationOptions: DecorationOptions[] = [];
-
     let match;
     while (match = regEx.exec(text)) {
+      
       const matched = match[regexGroup];
-      const startIndex = match[0].indexOf(matched);
-      const startPosition = this.startPositionLine(match.index, startIndex);
-      const endPostion = this.endPositionLine(match.index, startIndex, matched.length);
-      const range = new Range(startPosition, endPostion);
+      const skip = match[0].indexOf(matched.replace(match[regexGroup])) + 1;
+      const foldIndex = match[0].substring(skip).indexOf(matched) + skip;
+      const startPosition = this.startPositionLine(match.index, foldIndex);
+      const endPosition = this.endPositionLine(match.index, foldIndex, matched.length);
+      const range = new Range(startPosition, endPosition);
 
       if (!this.Active) {
         this.CurrentEditor.setDecorations(plainDecorationType, []);
