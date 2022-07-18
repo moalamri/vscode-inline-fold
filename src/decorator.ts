@@ -8,6 +8,7 @@ export class Decorator {
   MaskDecoration: TextEditorDecorationType;
   NoDecorations: TextEditorDecorationType;
   CurrentEditor: TextEditor;
+  ParsedRegexString: string;
   SupportedLanguages: string[] = [];
   Offset: number = 30;
   Active: boolean = true;
@@ -62,36 +63,53 @@ export class Decorator {
     this.UnfoldedDecoration = unfoldedDecorationOptions(extConfs);
     this.MaskDecoration = maskDecorationOptions(extConfs);
     this.NoDecorations = noDecoration();
+    this.ParsedRegexString = this.parseRegexString(extConfs.get(Configs.regex), extConfs.get(Configs.regexGroup) || 1);
   }
 
+
   updateDecorations() {
-    if (!this.SupportedLanguages || !this.SupportedLanguages.includes(this.CurrentEditor.document.languageId)) {
+    if (
+      !this.SupportedLanguages ||
+      !this.ParsedRegexString ||
+      !this.SupportedLanguages.includes(this.CurrentEditor.document.languageId)) {
       return;
     }
-    const regEx: RegExp = RegExp(this.WorkspaceConfigs.get(Configs.regex), this.WorkspaceConfigs.get(Configs.regexFlags));
+
+    const regexGroup: number = parseInt(this.WorkspaceConfigs.get(Configs.regexGroup)) || 1;
+    const regEx: RegExp = RegExp(this.ParsedRegexString, this.WorkspaceConfigs.get(Configs.regexFlags));
     const text: string = this.CurrentEditor.document.getText();
-    const regexGroup: number = this.WorkspaceConfigs.get(Configs.regexGroup) as number | 1;
     const decorators: DecorationOptions[] = [];
+
     let match;
     while (match = regEx.exec(text)) {
-      const matched = match[regexGroup];
-      const startIndex = match[0].indexOf(matched);
-      const startPosition = this.startPositionLine(match.index, startIndex);
-      const endPostion = this.endPositionLine(match.index, startIndex, matched.length);
-      const range = new Range(startPosition, endPostion);
+      if (match.length <= regexGroup + 1) {
+        console.error("The regex was wrong");
+        break;
+      }
+      const foldIndex = match[1].length;
+      const foldEndIndex = match[1 + regexGroup].length;
 
+      // match.index is the start of the entire match
+      const startFoldPosition = this.startPositionLine([match.index, foldIndex])
+      const endFoldPosition = this.endPositionLine([match.index, foldIndex + foldEndIndex])
+      /* Creating a new range object from the calculated positions. */
+      const range = new Range(startFoldPosition, endFoldPosition);
+
+      /* Checking if the toggle command is active or not. If it is not active, it will remove all decorations. */
       if (!this.Active) {
         this.CurrentEditor.setDecorations(this.NoDecorations, []);
         break;
       }
 
+      /* Checking if the range is within the visible area of the editor plus a specified offset for a head decoration. */
       if (!(this.StartLine <= range.start.line && range.end.line <= this.EndLine)) {
         continue;
       }
 
+      /* Pushing the range and the hoverMessage to the decorators array to apply later. */
       decorators.push({
         range,
-        hoverMessage: `Full text **${matched}**`
+        hoverMessage: `Full text **${match[regexGroup + 1]}**`
       });
     }
 
@@ -106,28 +124,42 @@ export class Decorator {
   }
 
   /**
-  * 
-  * @param matchIndex number
-  * @param startIndex number
-  * @returns position
-  */
-  startPositionLine(matchIndex: number, startIndex: number): Position {
+   * Parse the regex in such a way that the to-be-folded group is always group number 2.
+   */
+  parseRegexString(reg: string, regexGroup: number): string {
+    // find the start of the to-be-folded group
+    const foldStart = reg.split('(', regexGroup).join('(').length;
+
+    // place a ( at the front and a ) before the to-be-folded group
+    reg = '(' + reg.substring(0, foldStart) + ')' + reg.substring(foldStart);
+    return reg;
+  }
+
+  /**
+   * It sums an array of numbers and returns a Position object that 
+   * represents the end position of the matched column.
+   * 
+   * @param totalOffset number[]
+   * @return The position of the cursor in the document.
+   */
+  startPositionLine(totalOffset: any): Position {
     return this.CurrentEditor.document.positionAt(
-      matchIndex + startIndex
+      totalOffset.reduce((partialSum: number, a: number) => partialSum + a, 0)
     );
   }
 
   /**
-  * 
-  * @param matchIndex number
-  * @param startIndex number
-  * @returns position
-  */
-  endPositionLine(matchIndex: number, startIndex: number, length: number): Position {
+   * It takes an array of numbers, and returns a Position object that 
+   * represents the end position of the matched column.
+   * 
+   * @param totalOffset number[]
+   * @return The position of the end of the line.
+   */
+  endPositionLine(totalOffset: any): Position {
     return this.CurrentEditor.document.positionAt(
-      matchIndex + startIndex + length
+      totalOffset.reduce((thisSum: number, next: number) => thisSum + next, 0)
     );
   }
 
-  constructor () {}
+  constructor () { }
 }

@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="./res/icon.png" width="128" />
+    <img width="128" alt="preview" src="https://user-images.githubusercontent.com/964077/179586355-6d90c66a-6812-4ab7-9657-4596dd1b2a62.png">
 </p>
 <br />
 
