@@ -8,6 +8,7 @@ export class Decorator {
   MaskDecoration: TextEditorDecorationType;
   NoDecorations: TextEditorDecorationType;
   CurrentEditor: TextEditor;
+  ParsedRegexString: string;
   SupportedLanguages: string[] = [];
   Offset: number = 30;
   Active: boolean = true;
@@ -62,16 +63,20 @@ export class Decorator {
     this.UnfoldedDecoration = unfoldedDecorationOptions(extConfs);
     this.MaskDecoration = maskDecorationOptions(extConfs);
     this.NoDecorations = noDecoration();
+    this.parseRegexString(extConfs.get(Configs.regex), extConfs.get(Configs.regexGroup) || 1);
   }
 
+
   updateDecorations() {
-    if (!this.SupportedLanguages || !this.SupportedLanguages.includes(this.CurrentEditor.document.languageId)) {
+    if (
+      !this.SupportedLanguages ||
+      !this.ParsedRegexString ||
+      !this.SupportedLanguages.includes(this.CurrentEditor.document.languageId)) {
       return;
     }
 
     const regexGroup: number = parseInt(this.WorkspaceConfigs.get(Configs.regexGroup)) || 1;
-    const parsedRegexStr = this.parseRegexString(this.WorkspaceConfigs.get(Configs.regex), regexGroup);
-    const regEx: RegExp = RegExp(parsedRegexStr, this.WorkspaceConfigs.get(Configs.regexFlags));
+    const regEx: RegExp = RegExp(this.ParsedRegexString, this.WorkspaceConfigs.get(Configs.regexFlags));
     const text: string = this.CurrentEditor.document.getText();
     const decorators: DecorationOptions[] = [];
 
@@ -104,7 +109,7 @@ export class Decorator {
       /* Pushing the range and the hoverMessage to the decorators array to apply later. */
       decorators.push({
         range,
-        hoverMessage: `Full text **${match[2]}**`
+        hoverMessage: `Full text **${match[regexGroup + 1]}**`
       });
     }
 
@@ -121,14 +126,13 @@ export class Decorator {
   /**
    * Parse the regex in such a way that the to-be-folded group is always group number 2.
    */
-  parseRegexString(reg: string, regexGroup: number): string {
-
+  parseRegexString(reg: string, regexGroup: number) {
     // find the start of the to-be-folded group
     const foldStart = reg.split('(', regexGroup).join('(').length;
 
     // place a ( at the front and a ) before the to-be-folded group
     reg = '(' + reg.substring(0, foldStart) + ')' + reg.substring(foldStart);
-    return reg;
+    this.ParsedRegexString = reg;
   }
 
   /**
