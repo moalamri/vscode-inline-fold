@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="./res/icon.png" width="128" />
+    <img width="128" alt="preview" src="https://user-images.githubusercontent.com/964077/179586355-6d90c66a-6812-4ab7-9657-4596dd1b2a62.png">
 </p>
 <br />
 
@@ -16,14 +16,13 @@ The extension also enables folding of attribute values within HTML/JSX tags. It 
 <br />
 
 <p align="center">
-    <img src="./res/carbon.png" />
+    <img width="650" alt="preview" src="https://user-images.githubusercontent.com/964077/179401349-4b217316-3099-47d0-a8b0-10fb2381d105.png">
 </p>
 
 ### Available Settings
 - `inlineFold.regex` regex to match the code line
 - `inlineFold.regexFlags` regex flags
 - `inlineFold.regexGroup` regex group that match the code that should be folded
-- `inlineFold.matchAfter` string inside the match after which folds will happen. Prevents attributes folding when the to-be-folded value starts with the same characters as the attribute.
 - `inlineFold.unfoldedOpacity` opacity of the unfolded code when it's clicked or is selected
 - `inlineFold.maskChar` text/character to mask the code when it is folded
 - `inlineFold.maskColor` color of the mask character(s)
@@ -54,4 +53,7 @@ Use settings UI to configure the extension (better for regex escaping).
 See the project's <a href="CHANGELOG.md"> changelog</a> here.
 
 ### Contributors
-[Thanks to you](https://github.com/moalamri/vscode-inline-fold/graphs/contributors)
+[Thank you](https://github.com/moalamri/vscode-inline-fold/graphs/contributors)
+<p></p>
+
+Screenshot by [Cody](https://github.com/ccccooooddddyyyy)

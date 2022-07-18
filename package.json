@@ -34,11 +34,6 @@
 			"type": "object",
 			"title": "Inline fold settings",
 			"properties": {
-				"inlineFold.matchAfter": {
-					"type": "string",
-					"default": "=",
-					"description": "string inside the match after which folds will happen. Default is ="
-				},
 				"inlineFold.supportedLanguages": {
 					"type": "array",
 					"order": 0,

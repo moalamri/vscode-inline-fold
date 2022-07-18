@@ -72,7 +72,7 @@ export class Decorator {
     const text: string = this.CurrentEditor.document.getText();
     const regexGroup: number = this.WorkspaceConfigs.get(Configs.regexGroup) as number | 1;
     const decorators: DecorationOptions[] = [];
-    const matchAfter: string = this.WorkspaceConfigs.get(Configs.matchAfter);
+
     let match;
     while (match = regEx.exec(text)) {
       const matched = match[regexGroup];
