@@ -53,7 +53,8 @@ Use settings UI to configure the extension (better for regex escaping).
 See the project's <a href="CHANGELOG.md"> changelog</a> here.
 
 ### Contributors
-[Thank you](https://github.com/moalamri/vscode-inline-fold/graphs/contributors)
-<p></p>
+<a href="https://github.com/moalamri/vscode-inline-fold/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=moalamri/vscode-inline-fold" />
+</a>
 
 Screenshot by [Cody](https://github.com/ccccooooddddyyyy)
