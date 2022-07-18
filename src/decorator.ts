@@ -68,25 +68,25 @@ export class Decorator {
     if (!this.SupportedLanguages || !this.SupportedLanguages.includes(this.CurrentEditor.document.languageId)) {
       return;
     }
-    const regEx: RegExp = RegExp(this.WorkspaceConfigs.get(Configs.regex), this.WorkspaceConfigs.get(Configs.regexFlags));
+
+    const regexGroup: number = parseInt(this.WorkspaceConfigs.get(Configs.regexGroup)) || 1;
+    const parsedRegexStr = this.parseRegexString(this.WorkspaceConfigs.get(Configs.regex), regexGroup);
+    const regEx: RegExp = RegExp(parsedRegexStr, this.WorkspaceConfigs.get(Configs.regexFlags));
     const text: string = this.CurrentEditor.document.getText();
-    const regexGroup: number = this.WorkspaceConfigs.get(Configs.regexGroup) as number | 1;
     const decorators: DecorationOptions[] = [];
 
     let match;
     while (match = regEx.exec(text)) {
-      const matched = match[regexGroup];
-      const fullMatch = match[0]
-      const endsWithIndex = fullMatch.length - 1
-      const endsWithChar = fullMatch.charAt(endsWithIndex);
-      const startWithIndex = fullMatch.indexOf(endsWithChar)
-      const startWithChar = fullMatch.charAt(startWithIndex)
-      const fullStartWith = fullMatch.substr(0, startWithIndex)
-      const contentToFoldLength = matched.length
-      const startWithCharLength = startWithChar.length
-      const startFoldPosition = this.startPositionLine([match.index, fullStartWith.length + startWithCharLength])
-      const endFoldPosition = this.endPositionLine([match.index, fullStartWith.length + startWithCharLength + contentToFoldLength])
+      if (match.length <= regexGroup + 1) {
+        console.error("The regex was wrong");
+        break;
+      }
+      const foldIndex = match[1].length;
+      const foldEndIndex = match[1 + regexGroup].length;
 
+      // match.index is the start of the entire match
+      const startFoldPosition = this.startPositionLine([match.index, foldIndex])
+      const endFoldPosition = this.endPositionLine([match.index, foldIndex + foldEndIndex])
       /* Creating a new range object from the calculated positions. */
       const range = new Range(startFoldPosition, endFoldPosition);
 
@@ -104,7 +104,7 @@ export class Decorator {
       /* Pushing the range and the hoverMessage to the decorators array to apply later. */
       decorators.push({
         range,
-        hoverMessage: `Full text **${matched}**`
+        hoverMessage: `Full text **${match[2]}**`
       });
     }
 
@@ -116,6 +116,19 @@ export class Decorator {
         .filter((r) => !r.contains(this.CurrentEditor.selection) && !this.CurrentEditor.selection.contains(r))
         .filter((r) => !this.CurrentEditor.selections.find((s) => r.contains(s)))
     )
+  }
+
+  /**
+   * Parse the regex in such a way that the to-be-folded group is always group number 2.
+   */
+  parseRegexString(reg: string, regexGroup: number): string {
+
+    // find the start of the to-be-folded group
+    const foldStart = reg.split('(', regexGroup).join('(').length;
+
+    // place a ( at the front and a ) before the to-be-folded group
+    reg = '(' + reg.substring(0, foldStart) + ')' + reg.substring(foldStart);
+    return reg;
   }
 
   /**
