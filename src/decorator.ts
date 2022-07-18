@@ -74,32 +74,34 @@ export class Decorator {
     const decorators: DecorationOptions[] = [];
     const matchAfter: string = this.WorkspaceConfigs.get(Configs.matchAfter);
     let match;
-
     while (match = regEx.exec(text)) {
       const matched = match[regexGroup];
-      
-      const skip = matchAfter.length == 0 ? 0 : match[0].indexOf(matchAfter) + matchAfter.length;
+      const fullMatch = match[0]
+      const endsWithIndex = fullMatch.length - 1
+      const endsWithChar = fullMatch.charAt(endsWithIndex);
+      const startWithIndex = fullMatch.indexOf(endsWithChar)
+      const startWithChar = fullMatch.charAt(startWithIndex)
+      const fullStartWith = fullMatch.substr(0, startWithIndex)
+      const contentToFoldLength = matched.length
+      const startWithCharLength = startWithChar.length
+      const startFoldPosition = this.startPositionLine([match.index, fullStartWith.length + startWithCharLength])
+      const endFoldPosition = this.endPositionLine([match.index, fullStartWith.length + startWithCharLength + contentToFoldLength])
 
-      // the matchAfter string was not found
-      if (skip == matchAfter.length)
-        continue;
+      /* Creating a new range object from the calculated positions. */
+      const range = new Range(startFoldPosition, endFoldPosition);
 
-      const foldIndex = match[0].substring(skip).indexOf(matched) + skip;
-
-      const startPosition = this.startPositionLine(match.index, foldIndex);
-      const endPosition = this.endPositionLine(match.index, foldIndex, matched.length);
-
-      const range = new Range(startPosition, endPosition);
-
+      /* Checking if the toggle command is active or not. If it is not active, it will remove all decorations. */
       if (!this.Active) {
         this.CurrentEditor.setDecorations(this.NoDecorations, []);
         break;
       }
 
+      /* Checking if the range is within the visible area of the editor plus a specified offset for a head decoration. */
       if (!(this.StartLine <= range.start.line && range.end.line <= this.EndLine)) {
         continue;
       }
 
+      /* Pushing the range and the hoverMessage to the decorators array to apply later. */
       decorators.push({
         range,
         hoverMessage: `Full text **${matched}**`
@@ -117,28 +119,30 @@ export class Decorator {
   }
 
   /**
-  * 
-  * @param matchIndex number
-  * @param startIndex number
-  * @returns position
-  */
-  startPositionLine(matchIndex: number, startIndex: number): Position {
+   * It sums an array of numbers and returns a Position object that 
+   * represents the end position of the matched column.
+   * 
+   * @param totalOffset number[]
+   * @return The position of the cursor in the document.
+   */
+  startPositionLine(totalOffset: any): Position {
     return this.CurrentEditor.document.positionAt(
-      matchIndex + startIndex
+      totalOffset.reduce((partialSum: number, a: number) => partialSum + a, 0)
     );
   }
 
   /**
-  * 
-  * @param matchIndex number
-  * @param startIndex number
-  * @returns position
-  */
-  endPositionLine(matchIndex: number, startIndex: number, length: number): Position {
+   * It takes an array of numbers, and returns a Position object that 
+   * represents the end position of the matched column.
+   * 
+   * @param totalOffset number[]
+   * @return The position of the end of the line.
+   */
+  endPositionLine(totalOffset: any): Position {
     return this.CurrentEditor.document.positionAt(
-      matchIndex + startIndex + length
+      totalOffset.reduce((thisSum: number, next: number) => thisSum + next, 0)
     );
   }
 
-  constructor () {}
+  constructor () { }
 }
