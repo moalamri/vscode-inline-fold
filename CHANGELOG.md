@@ -2,7 +2,7 @@
     # Language: markdown
     # Path: CHANGELOG.md
 > ### 0.1.6:
-- fixed [#24](https://github.com/moalamri/vscode-inline-fold/issues/24) by @JasperSurmont
+- fixed [#24](https://github.com/moalamri/vscode-inline-fold/issues/24) by [@JasperSurmont](https://github.com/JasperSurmont)
 
 > ### 0.1.5:
 - cleaned up debugging code & removed unused imports
