@@ -63,7 +63,7 @@ export class Decorator {
     this.UnfoldedDecoration = unfoldedDecorationOptions(extConfs);
     this.MaskDecoration = maskDecorationOptions(extConfs);
     this.NoDecorations = noDecoration();
-    this.parseRegexString(extConfs.get(Configs.regex), extConfs.get(Configs.regexGroup) || 1);
+    this.ParsedRegexString = this.parseRegexString(extConfs.get(Configs.regex), extConfs.get(Configs.regexGroup) || 1);
   }
 
 
@@ -126,13 +126,13 @@ export class Decorator {
   /**
    * Parse the regex in such a way that the to-be-folded group is always group number 2.
    */
-  parseRegexString(reg: string, regexGroup: number) {
+  parseRegexString(reg: string, regexGroup: number): string {
     // find the start of the to-be-folded group
     const foldStart = reg.split('(', regexGroup).join('(').length;
 
     // place a ( at the front and a ) before the to-be-folded group
     reg = '(' + reg.substring(0, foldStart) + ')' + reg.substring(foldStart);
-    this.ParsedRegexString = reg;
+    return reg;
   }
 
   /**
