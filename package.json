@@ -57,7 +57,7 @@
 					"type": "string",
 					"order": 1,
 					"description": "Regex to match",
-					"default": "(class|className)=[`'{\"]([^`'\"}]+)[`'\"}]",
+					"default": "(class|className)=([`'\"{])([^`'\"}].*?)(\\2|})",
 					"examples": [
 						"(class|className)=[`'{\"]([^`'\"}]+)[`'\"}]",
 						"class=\"([a-zA-Z0-9-\\s]+)(?=\")",
