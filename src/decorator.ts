@@ -86,6 +86,7 @@ export class Decorator {
         console.error("The regex was wrong");
         break;
       }
+      console.log(match);
       const foldIndex = match[1].length;
       const foldEndIndex = match[1 + regexGroup].length;
 
