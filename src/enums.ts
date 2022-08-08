@@ -13,16 +13,11 @@ export enum Configs {
    unfoldedOpacity = "unfoldedOpacity",
    after = "after",
    supportedLanguages = "supportedLanguages",
-   decorationOptions = "decoration.options"
+   perLanguageOptions = "perLanguage.options"
 }
 
-export enum DecorationConfigs {
-   options = "decoration.options",
-   before = "decoration.options.before",
-   after = "decoration.options.after",
-   contentText = "contentText",
-   color = "color",
-   textDecoration = "textDecoration",
-   letterSpacing = "letterSpacing",
-
+export enum PerLanguageOptions {
+   before = `perLanguage.options.before`,
+   start = "perLanguage.options.start",
+   end = "perLanguage.options.end",
 }
