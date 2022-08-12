@@ -3,7 +3,7 @@
 	"displayName": "Inline fold",
 	"description": "A custom decorator that \"fold\" matching content in single line",
 	"icon": "res/icon.png",
-	"version": "0.1.6",
+	"version": "0.1.7",
 	"publisher": "moalamri",
 	"homepage": "https://github.com/moalamri/vscode-inline-fold",
 	"bugs": "https://github.com/moalamri/vscode-inline-fold/issues",
@@ -127,7 +127,7 @@
 				"inlineFold.after": {
 					"type": "string",
 					"order": 7,
-					"description": "(Optional) Add any character to be appended to the folded text",
+					"description": "(Optional) Add any text/character to be appended to the folded text",
 					"default": "",
 					"examples": [
 						"+",
@@ -138,7 +138,7 @@
 				"inlineFold.unfoldOnLineSelect": {
 					"type": "boolean",
 					"order": 8,
-					"description": "(Optional) Unfold all the folded contents on line select",
+					"description": "(Optional) unfold the line when any part of the line is selected",
 					"default": false
 				}
 			},

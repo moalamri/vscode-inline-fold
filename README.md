@@ -4,7 +4,7 @@
 <br />
 
 ## Inline Fold - VSCode Extension
-⚠️ NOTICE: this extension is still under active development! ⚠️
+> ⚠️ NOTICE: this extension is still under active development! ⚠️
 
 ## VS Code Inline Fold Extension
 
@@ -28,10 +28,17 @@ The extension also enables folding of attribute values within HTML/JSX tags. It 
 - `inlineFold.maskColor` color of the mask character(s)
 - `inlineFold.after` an optional text/character that will be appended to the end of folded code
 - `inlineFold.supportedLanguages` a list of targeted language Ids
+- `inlineFold.unfoldOnLineSelect` unfold the line when any part of the line is selected
 
-If the extension doesn't work for your language out of the box, you can add it from the settings under `inlineFold.supportedLanguages` using the specific language Id.
 
-Examples:
+### Running the extension
+You can install the extension <a href="https://marketplace.visualstudio.com/items?itemName=moalamri.inline-fold"> in the marketplace here</a>. If you encounter any issue or would like to contribute, <a href="https://github.com/moalamri/vscode-inline-fold">visit the GitHub page</a>.
+
+### Notes
+* Use settings UI to configure the extension (better for regex escaping).
+* If the extension doesn't work, then check for your language id, you can add it from the settings under `inlineFold.supportedLanguages` using the specific language Id.
+
+Current default language Ids (see [here](https://code.visualstudio.com/docs/languages/identifiers#_known-language-identifiers) for more):
 - `vue`
 - `html`
 - `svelte`
@@ -41,13 +48,9 @@ Examples:
 - `javascriptreact`
 - `typescriptreact`
 
-*Check here for <a href="https://code.visualstudio.com/docs/languages/identifiers#_known-language-identifiers">more options</a>*
 
-### Running the extension
-You can install the extension <a href="https://marketplace.visualstudio.com/items?itemName=moalamri.inline-fold"> in the marketplace here</a>. If you encounter any issue or would like to contribute, <a href="https://github.com/moalamri/vscode-inline-fold">visit the GitHub page</a>.
-
-### Notes
-Use settings UI to configure the extension (better for regex escaping).
+### Known Issues
+* Currently template literals are not fully supported.
 
 ### Changelog
 See the project's <a href="CHANGELOG.md"> changelog</a> here.
