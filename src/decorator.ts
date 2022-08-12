@@ -1,4 +1,4 @@
-import { DecorationOptions, Position, Range, TextEditor, TextEditorDecorationType, WorkspaceConfiguration } from "vscode";
+import { DecorationOptions, Position, Range, Selection, TextEditor, TextEditorDecorationType, WorkspaceConfiguration } from "vscode";
 import { maskDecorationOptions, noDecoration, unfoldedDecorationOptions } from "./decoration";
 import { Configs } from "./enums";
 
@@ -114,12 +114,25 @@ export class Decorator {
     }
 
     this.CurrentEditor.setDecorations(this.UnfoldedDecoration, decorators);
+
+    let decorationsToFold = decorators
+      .map(({ range }) => range)
+      .filter((r) => !r.contains(this.CurrentEditor.selection) && !this.CurrentEditor.selection.contains(r))
+      .filter((r) => !this.CurrentEditor.selections.find((s) => r.contains(s)))
+
+    const shouldFoldOnLineSelect = this.WorkspaceConfigs.get(Configs.unfoldOnLineSelect) as boolean
+    if (shouldFoldOnLineSelect){
+      const isInTheLineRange = (range : Range , targetRange : Range) => {
+        return range.start.line <= targetRange.start.line && range.end.line >= targetRange.start.line
+      }
+      decorationsToFold = decorationsToFold
+        .filter((r) => !isInTheLineRange(this.CurrentEditor.selection , r))
+        .filter((r) => !this.CurrentEditor.selections.find((s) => isInTheLineRange(s , r)))
+    }
+
     this.CurrentEditor.setDecorations(
       this.MaskDecoration,
-      decorators
-        .map(({ range }) => range)
-        .filter((r) => !r.contains(this.CurrentEditor.selection) && !this.CurrentEditor.selection.contains(r))
-        .filter((r) => !this.CurrentEditor.selections.find((s) => r.contains(s)))
+      decorationsToFold
     )
   }
 
