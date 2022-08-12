@@ -12,11 +12,9 @@ import { Configs } from "./enums";
  */
 export class DecoratorTypeOptions {
   private cache = new Map<string, TextEditorDecorationType>();
-  private lineChahe: string[];
 
   public ClearCache() {
     this.cache.clear();
-    delete this.lineChahe;
   }
 
   public UnfoldedDecorationType = (langId: string /* To use later for lang scoped configs */): DecorationRenderOptions => {
