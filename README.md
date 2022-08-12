@@ -28,6 +28,7 @@ The extension also enables folding of attribute values within HTML/JSX tags. It 
 - `inlineFold.maskColor` color of the mask character(s)
 - `inlineFold.after` an optional text/character that will be appended to the end of folded code
 - `inlineFold.supportedLanguages` a list of targeted language Ids
+- `inlineFold.unfoldOnLineSelect` disabled by default, if enabled fold/unfold will be toggled by selecting anywhere of the line
 
 If the extension doesn't work for your language out of the box, you can add it from the settings under `inlineFold.supportedLanguages` using the specific language Id.
 
