@@ -229,8 +229,5 @@
 		"updated": true,
 		"preRelease": false,
 		"installedTimestamp": 1657117103571
-	},
-	"dependencies": {
-		"xregexp": "^5.1.1"
 	}
 }
