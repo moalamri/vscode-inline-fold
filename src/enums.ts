@@ -10,5 +10,6 @@ export enum Configs {
    maskColor = "maskColor",
    unfoldedOpacity = "unfoldedOpacity",
    after = "after",
-   supportedLanguages = "supportedLanguages"
+   supportedLanguages = "supportedLanguages",
+   unfoldOnLineSelect = "unfoldOnLineSelect"
 }

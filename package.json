@@ -134,6 +134,12 @@
 						"<-",
 						"<<"
 					]
+				},
+				"inlineFold.unfoldOnLineSelect": {
+					"type": "boolean",
+					"order": 8,
+					"description": "(Optional) Unfold all the folded contents on line select",
+					"default": false
 				}
 			},
 			"required": [
