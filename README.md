@@ -37,6 +37,7 @@ You can install the extension <a href="https://marketplace.visualstudio.com/item
 ### Notes
 * Use settings UI to configure the extension (better for regex escaping).
 * If the extension doesn't work, then check for your language id, you can add it from the settings under `inlineFold.supportedLanguages` using the specific language Id.
+* You can set a keyboard shortcut to toggle the folding on and off. Search for "Inline Fold" in the commands panel, then click the gear icon and set the desired keybinding.
 
 Current default language Ids (see [here](https://code.visualstudio.com/docs/languages/identifiers#_known-language-identifiers) for more):
 - `vue`
