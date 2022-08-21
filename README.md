@@ -19,6 +19,21 @@ The extension also enables folding of attribute values within HTML/JSX tags. It 
     <img width="650" alt="preview" src="https://user-images.githubusercontent.com/964077/179401349-4b217316-3099-47d0-a8b0-10fb2381d105.png">
 </p>
 
+### SVG As For Another USE Case
+Embeded SVG also tend to have alot of code, that you just dont wanna focus on.
+So with this settings below you can fold the ugly part.
+```
+Regex to Match: <svg(\s*.*?\s*)<\/svg>
+Regex Flags: gs
+``` 
+**Note**: Minfing SVG maybe required for better experience.Beside we looking forward that this extension will support multiple Regex soon.
+
+
+<div class="flex">
+    <img width="40%" alt="preview" src="https://github.com/n4j1Br4ch1D/vscode-inline-fold/blob/master/res/svg-fold.png">
+    <img width="40%" alt="preview" src="https://github.com/n4j1Br4ch1D/vscode-inline-fold/blob/master/res/svg-fold-settings.png">
+</div>
+
 ### Available Settings
 - `inlineFold.regex` regex to match the code line
 - `inlineFold.regexFlags` regex flags
