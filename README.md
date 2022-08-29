@@ -59,6 +59,7 @@ Current default language Ids (see [here](https://code.visualstudio.com/docs/lang
 - `html`
 - `svelte`
 - `vue-html`
+- `blade`
 - `javascript`
 - `typescript`
 - `javascriptreact`
