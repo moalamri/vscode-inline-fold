@@ -25,7 +25,7 @@ So with this settings below you can fold the ugly part.
 ```
 Regex to Match: <svg(\s*.*?\s*)<\/svg>
 Regex Flags: gs
-``` 
+```
 **Note**: Minfing SVG maybe required for better experience.Beside we looking forward that this extension will support multiple Regex soon.
 
 
@@ -59,6 +59,13 @@ Current default language Ids (see [here](https://code.visualstudio.com/docs/lang
 - `html`
 - `svelte`
 - `vue-html`
+- `php`
+- `blade`
+- `erb`
+- `twig`
+- `nunjucks`
+- `django-html`
+- `jinja-html`
 - `javascript`
 - `typescript`
 - `javascriptreact`
