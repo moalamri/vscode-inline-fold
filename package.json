@@ -28,6 +28,10 @@
 			{
 				"command": "inlineFold.toggle",
 				"title": "Toggle inline fold"
+			},
+			{
+				"command": "inlineFold.enabled",
+				"title": "Enable/disable inline fold extension"
 			}
 		],
 		"configuration": {
