@@ -1,14 +1,14 @@
-import { ExtensionContext, commands, window } from 'vscode';
+import { ExtensionContext, commands } from 'vscode';
 import { Decorator } from './decorator';
-import { Cmds } from './enums';
+import { CMDS } from './enums';
 
 export function registerCommands(context: ExtensionContext, decorator: Decorator): void {
   let disposable: any[] = [];
-  disposable.push(commands.registerCommand(Cmds.InlineFoldEnabled, () => {
+  disposable.push(commands.registerCommand(CMDS.INLINE_FOLD_DEFAULT, () => {
     decorator.toggle();
   }, null));
 
-  disposable.push(commands.registerCommand(Cmds.InlineFoldToggle, () => {
+  disposable.push(commands.registerCommand(CMDS.INLINE_FOLD_TOGGLE, () => {
     decorator.toggle();
   }, null));
   context.subscriptions.push(...disposable);

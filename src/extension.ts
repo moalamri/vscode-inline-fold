@@ -1,11 +1,11 @@
-import { commands, ExtensionContext, window, workspace, WorkspaceConfiguration } from "vscode";
+import { ExtensionContext, window, workspace, WorkspaceConfiguration } from "vscode";
 import { Decorator } from "./decorator";
-import { Cmds, Configs } from "./enums";
+import { CONFIGS } from "./enums";
 import { EventsLimit } from "./utils";
 import { registerCommands } from "./commands";
 
 export function activate(context: ExtensionContext) {
-   const config: WorkspaceConfiguration = workspace.getConfiguration(Configs.identifier);
+   const config: WorkspaceConfiguration = workspace.getConfiguration(CONFIGS.IDENTIFIER);
    const decorator = new Decorator();
    const elimit = new EventsLimit();
    decorator.updateConfigs(config);
@@ -18,10 +18,6 @@ export function activate(context: ExtensionContext) {
       if (!textEditor) return
       decorator.activeEditor(textEditor);
    }
-
-   commands.registerCommand(Cmds.InlineFoldToggle, () => {
-      decorator.toggle();
-   }, null);
 
    window.onDidChangeActiveTextEditor((e) => {
       if (!e) return;
@@ -44,8 +40,8 @@ export function activate(context: ExtensionContext) {
    }, null, context.subscriptions);
 
    workspace.onDidChangeConfiguration((event) => {
-      if (event.affectsConfiguration(Configs.identifier)) {
-         decorator.updateConfigs(workspace.getConfiguration(Configs.identifier));
+      if (event.affectsConfiguration(CONFIGS.IDENTIFIER)) {
+         decorator.updateConfigs(workspace.getConfiguration(CONFIGS.IDENTIFIER));
       }
    }, null, context.subscriptions);
 

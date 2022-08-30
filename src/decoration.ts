@@ -1,5 +1,5 @@
 import { window, DecorationRangeBehavior, WorkspaceConfiguration, TextEditorDecorationType } from "vscode";
-import { Configs } from "./enums";
+import { CONFIGS } from "./enums";
 
 /**
  * The unfolded text decoration
@@ -8,7 +8,7 @@ import { Configs } from "./enums";
  */
 export const unfoldedDecorationOptions = (extConfs: WorkspaceConfiguration): TextEditorDecorationType => window.createTextEditorDecorationType({
   rangeBehavior: DecorationRangeBehavior.ClosedClosed,
-  opacity: extConfs.get(Configs.unfoldedOpacity).toString()
+  opacity: extConfs.get(CONFIGS.UNFOLDED_OPACITY).toString()
 });
 
 /**
@@ -18,11 +18,11 @@ export const unfoldedDecorationOptions = (extConfs: WorkspaceConfiguration): Tex
  */
 export const maskDecorationOptions = (extConfs: WorkspaceConfiguration): TextEditorDecorationType => window.createTextEditorDecorationType({
   before: {
-    contentText: extConfs.get(Configs.maskChar),
-    color: extConfs.get(Configs.maskColor)
+    contentText: extConfs.get(CONFIGS.MASK_CHAR),
+    color: extConfs.get(CONFIGS.MASK_COLOR)
   },
   after: {
-    contentText: extConfs.get(Configs.after),
+    contentText: extConfs.get(CONFIGS.AFTER),
   },
   letterSpacing: "-1ch",
   textDecoration: "none; display: none;"

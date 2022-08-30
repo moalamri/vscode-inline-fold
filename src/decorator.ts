@@ -1,6 +1,7 @@
 import { DecorationOptions, Position, Range, Selection, TextEditor, TextEditorDecorationType, WorkspaceConfiguration } from "vscode";
 import { maskDecorationOptions, noDecoration, unfoldedDecorationOptions } from "./decoration";
-import { Configs } from "./enums";
+import { CONFIGS } from "./enums";
+import { ExtSettings } from "./settings";
 
 export class Decorator {
   WorkspaceConfigs: WorkspaceConfiguration;
@@ -46,6 +47,14 @@ export class Decorator {
   }
 
   /**
+   * Set the extension default state either to be activated or not.
+   */
+  setDefault() {
+    ExtSettings.setDefault();
+    this.updateDecorations();
+  }
+
+  /**
   * Set the active state of the decorator (used for command)
   */
   toggle() {
@@ -59,24 +68,26 @@ export class Decorator {
   */
   updateConfigs(extConfs: WorkspaceConfiguration) {
     this.WorkspaceConfigs = extConfs;
-    this.SupportedLanguages = extConfs.get(Configs.supportedLanguages) || [];
+    this.SupportedLanguages = extConfs.get(CONFIGS.SUPPORTED_LANGUAGES) || [];
     this.UnfoldedDecoration = unfoldedDecorationOptions(extConfs);
     this.MaskDecoration = maskDecorationOptions(extConfs);
     this.NoDecorations = noDecoration();
-    this.ParsedRegexString = this.parseRegexString(extConfs.get(Configs.regex), extConfs.get(Configs.regexGroup) || 1);
+    this.ParsedRegexString = this.parseRegexString(extConfs.get(CONFIGS.REGEX), extConfs.get(CONFIGS.REGEX_GROUP) || 1);
   }
 
 
   updateDecorations() {
     if (
+      ExtSettings.get(CONFIGS.ENABLED) ||
       !this.SupportedLanguages ||
       !this.ParsedRegexString ||
       !this.SupportedLanguages.includes(this.CurrentEditor.document.languageId)) {
       return;
     }
 
-    const regexGroup: number = parseInt(this.WorkspaceConfigs.get(Configs.regexGroup)) || 1;
-    const regEx: RegExp = RegExp(this.ParsedRegexString, this.WorkspaceConfigs.get(Configs.regexFlags));
+    const shouldFoldOnLineSelect = this.WorkspaceConfigs.get(CONFIGS.UNFOLDED_ON_LINE_SELECT) as boolean
+    const regexGroup: number = parseInt(this.WorkspaceConfigs.get(CONFIGS.REGEX_GROUP)) || 1;
+    const regEx: RegExp = RegExp(this.ParsedRegexString, this.WorkspaceConfigs.get(CONFIGS.REGEX_FLAGS));
     const text: string = this.CurrentEditor.document.getText();
     const decorators: DecorationOptions[] = [];
 
@@ -120,7 +131,6 @@ export class Decorator {
       .filter((r) => !r.contains(this.CurrentEditor.selection) && !this.CurrentEditor.selection.contains(r))
       .filter((r) => !this.CurrentEditor.selections.find((s) => r.contains(s)))
 
-    const shouldFoldOnLineSelect = this.WorkspaceConfigs.get(Configs.unfoldOnLineSelect) as boolean
     if (shouldFoldOnLineSelect){
       const isInTheLineRange = (range : Range , targetRange : Range) => {
         return range.start.line <= targetRange.start.line && range.end.line >= targetRange.start.line
