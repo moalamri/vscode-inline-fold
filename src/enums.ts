@@ -1,7 +1,9 @@
-export enum Commands {
+export enum Cmds {
    InlineFoldToggle = "inlineFold.toggle",
+   InlineFoldEnabled = "inlineFold.enabled",
 }
 export enum Configs {
+   enabled = "enabled",
    identifier = "inlineFold",
    regex = "regex",
    regexFlags = "regexFlags",
@@ -11,5 +13,5 @@ export enum Configs {
    unfoldedOpacity = "unfoldedOpacity",
    after = "after",
    supportedLanguages = "supportedLanguages",
-   unfoldOnLineSelect = "unfoldOnLineSelect"
+   unfoldOnLineSelect = "unfoldOnLineSelect",
 }
