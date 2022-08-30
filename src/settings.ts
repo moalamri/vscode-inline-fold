@@ -16,7 +16,7 @@ class ExtSettingsInstance {
   /*
   * Get the current state of the extension.
   */
-  private get currentState(): boolean {
+  private currentState(): boolean {
     return this.configs.get<boolean>(CONFIGS.ENABLED);
   }
 
@@ -31,8 +31,10 @@ class ExtSettingsInstance {
   /**
    * Set the extension default state either to be activated or not.
    */
-  public setDefault() {
-    this.configs.update(CONFIGS.ENABLED, !this.currentState);
+  public ToggleDefault(): boolean {
+    const newState = !this.currentState();
+    this.configs.update(CONFIGS.ENABLED, newState);
+    return newState;
   }
 
   /**
@@ -40,7 +42,8 @@ class ExtSettingsInstance {
    * @param section : the key of the configuration
    * @returns Workspace extension's configuration value of the section
    */
-  public get<T>(section: CONFIGS): T {
+  public Get<T>(section: CONFIGS): T {
+    console.log(this.configs.get<T>(section));
     return this.configs.get<T>(section);
   }
 
@@ -48,7 +51,7 @@ class ExtSettingsInstance {
 }
 
 /**
- * Shared instance of the extension config. 
+ * Shared instance of the extension's configs. 
  * Yes, a singleton :0
  */
 export const ExtSettings = ExtSettingsInstance.instance;

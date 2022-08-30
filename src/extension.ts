@@ -8,7 +8,7 @@ export function activate(context: ExtensionContext) {
    const config: WorkspaceConfiguration = workspace.getConfiguration(CONFIGS.IDENTIFIER);
    const decorator = new Decorator();
    const elimit = new EventsLimit();
-   decorator.updateConfigs(config);
+   decorator.UpdateConfigs(config);
    registerCommands(context, decorator);
    elimit.Register(triggerUpdateDecorations)
    elimit.Lead();
@@ -41,7 +41,8 @@ export function activate(context: ExtensionContext) {
 
    workspace.onDidChangeConfiguration((event) => {
       if (event.affectsConfiguration(CONFIGS.IDENTIFIER)) {
-         decorator.updateConfigs(workspace.getConfiguration(CONFIGS.IDENTIFIER));
+         decorator.ClearDecorationsCache();
+         decorator.UpdateConfigs(workspace.getConfiguration(CONFIGS.IDENTIFIER));
       }
    }, null, context.subscriptions);
 

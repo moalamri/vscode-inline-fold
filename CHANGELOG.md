@@ -2,6 +2,10 @@
 
 <br/>
 
+> ### v 0.1.8
+- feat: Added new option to enable/disable the extension by default [#52](https://github.com/moalamri/vscode-inline-fold/discussions/52).
+- added out-of-box support to `blade, php, jinja-html, django-html, nunjucks, erb, twig` by [@e-medeiros](https://github.com/e-medeiros) fixes [#50](https://github.com/moalamri/vscode-inline-fold/issues/50)
+
 > ### v 0.1.7
 - feat: Add settings for auto-unfold when any part of the line is selected. [@Zoha](https://github.com/Zoha)
 

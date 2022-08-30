@@ -1,10 +1,10 @@
-import { DecorationOptions, Position, Range, Selection, TextEditor, TextEditorDecorationType, WorkspaceConfiguration } from "vscode";
-import { maskDecorationOptions, noDecoration, unfoldedDecorationOptions } from "./decoration";
+import { DecorationOptions, Position, Range, TextEditor, TextEditorDecorationType, WorkspaceConfiguration } from "vscode";
+import { DecoratorTypeOptions } from "./decoration";
 import { CONFIGS } from "./enums";
 import { ExtSettings } from "./settings";
 
 export class Decorator {
-  WorkspaceConfigs: WorkspaceConfiguration;
+  TextDecorationOptions = new DecoratorTypeOptions();
   UnfoldedDecoration: TextEditorDecorationType;
   MaskDecoration: TextEditorDecorationType;
   NoDecorations: TextEditorDecorationType;
@@ -31,6 +31,13 @@ export class Decorator {
   }
 
   /**
+   * This method gets triggered when the extension's settings are changed
+   */
+  ClearDecorationsCache() {
+    this.TextDecorationOptions.ClearCache();
+  }
+
+  /**
   * Set the number of the starting line of where the decoration should be applied.
   * @param n number
   */
@@ -50,7 +57,7 @@ export class Decorator {
    * Set the extension default state either to be activated or not.
    */
   setDefault() {
-    ExtSettings.setDefault();
+    this.Active = ExtSettings.ToggleDefault();
     this.updateDecorations();
   }
 
@@ -66,49 +73,58 @@ export class Decorator {
   * This method gets triggered when the extension settings are changed
   * @param extConfs: Workspace configs
   */
-  updateConfigs(extConfs: WorkspaceConfiguration) {
-    this.WorkspaceConfigs = extConfs;
-    this.SupportedLanguages = extConfs.get(CONFIGS.SUPPORTED_LANGUAGES) || [];
-    this.UnfoldedDecoration = unfoldedDecorationOptions(extConfs);
-    this.MaskDecoration = maskDecorationOptions(extConfs);
-    this.NoDecorations = noDecoration();
-    this.ParsedRegexString = this.parseRegexString(extConfs.get(CONFIGS.REGEX), extConfs.get(CONFIGS.REGEX_GROUP) || 1);
+  UpdateConfigs(extConfs: WorkspaceConfiguration) {
+    ExtSettings.UpdateConfigs(extConfs);
+    this.SupportedLanguages = ExtSettings.Get<string[]>(CONFIGS.SUPPORTED_LANGUAGES) || [];
+    this.ParsedRegexString = this.parseRegexString(ExtSettings.Get<string>(CONFIGS.REGEX),
+      ExtSettings.Get<number>(CONFIGS.REGEX_GROUP) || 1);
   }
-
 
   updateDecorations() {
     if (
-      ExtSettings.get(CONFIGS.ENABLED) ||
       !this.SupportedLanguages ||
       !this.ParsedRegexString ||
       !this.SupportedLanguages.includes(this.CurrentEditor.document.languageId)) {
       return;
     }
 
-    const shouldFoldOnLineSelect = this.WorkspaceConfigs.get(CONFIGS.UNFOLDED_ON_LINE_SELECT) as boolean
-    const regexGroup: number = parseInt(this.WorkspaceConfigs.get(CONFIGS.REGEX_GROUP)) || 1;
-    const regEx: RegExp = RegExp(this.ParsedRegexString, this.WorkspaceConfigs.get(CONFIGS.REGEX_FLAGS));
+    const shouldFoldOnLineSelect = ExtSettings.Get<boolean>(CONFIGS.UNFOLDED_ON_LINE_SELECT)
+    const regexGroup: number = ExtSettings.Get<number>(CONFIGS.REGEX_GROUP) || 1;
+    const regEx: RegExp = RegExp(ExtSettings.Get<string>(CONFIGS.REGEX), ExtSettings.Get<string>(CONFIGS.REGEX_FLAGS));
     const text: string = this.CurrentEditor.document.getText();
-    const decorators: DecorationOptions[] = [];
+    //const decorators: DecorationOptions[] = [];
+    const langId: string = this.CurrentEditor.document.languageId;
+    const matchDecorationType = this.TextDecorationOptions.MaskDecorationTypeCache(langId);
+    const unfoldDecorationType = this.TextDecorationOptions.UnfoldDecorationTypeCache(langId);
+    const plainDecorationType = this.TextDecorationOptions.PlainDecorationTypeCache(langId);
+    const unfoldDecorationOptions: DecorationOptions[] = [];
+    const matchDecorationOptions: DecorationOptions[] = [];
 
     let match;
     while (match = regEx.exec(text)) {
-      if (match.length <= regexGroup + 1) {
-        console.error("The regex was wrong");
-        break;
-      }
-      const foldIndex = match[1].length;
-      const foldEndIndex = match[1 + regexGroup].length;
+      // if (match.length <= regexGroup + 1) {
+      //   console.error("The regex was wrong");
+      //   break;
+      // }
+      // const foldIndex = match[1].length;
+      // const foldEndIndex = match[1 + regexGroup].length;
 
-      // match.index is the start of the entire match
-      const startFoldPosition = this.startPositionLine([match.index, foldIndex])
-      const endFoldPosition = this.endPositionLine([match.index, foldIndex + foldEndIndex])
-      /* Creating a new range object from the calculated positions. */
-      const range = new Range(startFoldPosition, endFoldPosition);
+      // // match.index is the start of the entire match
+      // const startFoldPosition = this.startPositionLine([match.index, foldIndex])
+      // const endFoldPosition = this.endPositionLine([match.index, foldIndex + foldEndIndex])
+      // /* Creating a new range object from the calculated positions. */
+      // const range = new Range(startFoldPosition, endFoldPosition);
+
+      const matched = match[regexGroup];
+      const skip = match[0].indexOf(matched.replace(match[regexGroup])) + 1;
+      const foldIndex = match[0].substring(skip).indexOf(matched) + skip;
+      const startPosition = this.startPositionLine(match.index, foldIndex);
+      const endPosition = this.endPositionLine(match.index, foldIndex, matched.length);
+      const range = new Range(startPosition, endPosition);
 
       /* Checking if the toggle command is active or not. If it is not active, it will remove all decorations. */
       if (!this.Active) {
-        this.CurrentEditor.setDecorations(this.NoDecorations, []);
+        this.CurrentEditor.setDecorations(plainDecorationType, []);
         break;
       }
 
@@ -117,33 +133,42 @@ export class Decorator {
         continue;
       }
 
+      // The only possible way to fix tooltip hover flickering
+      // temporary
+      if (this.CurrentEditor.selection.contains(range) || this.CurrentEditor.selections.find(s => range.contains(s))) {
+        unfoldDecorationOptions.push(this.TextDecorationOptions.UnfoldedDecorationOptions(range, match));
+      } else {
+        matchDecorationOptions.push(this.TextDecorationOptions.MatchedDecorationOptions(range, langId));
+      }
+
       /* Pushing the range and the hoverMessage to the decorators array to apply later. */
-      decorators.push({
-        range,
-        hoverMessage: `Full text **${match[regexGroup + 1]}**`
-      });
+      // decorators.push({
+      //   range,
+      //   hoverMessage: `Full text **${match[regexGroup + 1]}**`
+      // });
     }
 
-    this.CurrentEditor.setDecorations(this.UnfoldedDecoration, decorators);
+    this.CurrentEditor.setDecorations(unfoldDecorationType, unfoldDecorationOptions);
 
-    let decorationsToFold = decorators
+    let decorationsToFold = matchDecorationOptions
       .map(({ range }) => range)
       .filter((r) => !r.contains(this.CurrentEditor.selection) && !this.CurrentEditor.selection.contains(r))
       .filter((r) => !this.CurrentEditor.selections.find((s) => r.contains(s)))
 
-    if (shouldFoldOnLineSelect){
-      const isInTheLineRange = (range : Range , targetRange : Range) => {
+    if (shouldFoldOnLineSelect) {
+      const isInTheLineRange = (range: Range, targetRange: Range) => {
         return range.start.line <= targetRange.start.line && range.end.line >= targetRange.start.line
       }
       decorationsToFold = decorationsToFold
-        .filter((r) => !isInTheLineRange(this.CurrentEditor.selection , r))
-        .filter((r) => !this.CurrentEditor.selections.find((s) => isInTheLineRange(s , r)))
+        .filter((r) => !isInTheLineRange(this.CurrentEditor.selection, r))
+        .filter((r) => !this.CurrentEditor.selections.find((s) => isInTheLineRange(s, r)))
     }
 
-    this.CurrentEditor.setDecorations(
-      this.MaskDecoration,
-      decorationsToFold
-    )
+    this.CurrentEditor.setDecorations(matchDecorationType, matchDecorationOptions);
+    // this.CurrentEditor.setDecorations(
+    //   this.MaskDecoration,
+    //   decorationsToFold
+    // )
   }
 
   /**
@@ -158,31 +183,55 @@ export class Decorator {
     return reg;
   }
 
-  /**
-   * It sums an array of numbers and returns a Position object that 
-   * represents the end position of the matched column.
-   * 
-   * @param totalOffset number[]
-   * @return The position of the cursor in the document.
-   */
-  startPositionLine(totalOffset: any): Position {
-    return this.CurrentEditor.document.positionAt(
-      totalOffset.reduce((partialSum: number, a: number) => partialSum + a, 0)
-    );
-  }
+    /**
+  * 
+  * @param matchIndex number
+  * @param startIndex number
+  * @returns position
+  */
+     startPositionLine(matchIndex: number, startIndex: number): Position {
+      return this.CurrentEditor.document.positionAt(
+        matchIndex + startIndex
+      );
+    }
+  
+    /**
+    * 
+    * @param matchIndex number
+    * @param startIndex number
+    * @returns position
+    */
+    endPositionLine(matchIndex: number, startIndex: number, length: number): Position {
+      return this.CurrentEditor.document.positionAt(
+        matchIndex + startIndex + length
+      );
+    }
 
-  /**
-   * It takes an array of numbers, and returns a Position object that 
-   * represents the end position of the matched column.
-   * 
-   * @param totalOffset number[]
-   * @return The position of the end of the line.
-   */
-  endPositionLine(totalOffset: any): Position {
-    return this.CurrentEditor.document.positionAt(
-      totalOffset.reduce((thisSum: number, next: number) => thisSum + next, 0)
-    );
-  }
+  // /**
+  //  * It sums an array of numbers and returns a Position object that 
+  //  * represents the end position of the matched column.
+  //  * 
+  //  * @param totalOffset number[]
+  //  * @return The position of the cursor in the document.
+  //  */
+  // startPositionLine(totalOffset: any): Position {
+  //   return this.CurrentEditor.document.positionAt(
+  //     totalOffset.reduce((partialSum: number, a: number) => partialSum + a, 0)
+  //   );
+  // }
+
+  // /**
+  //  * It takes an array of numbers, and returns a Position object that 
+  //  * represents the end position of the matched column.
+  //  * 
+  //  * @param totalOffset number[]
+  //  * @return The position of the end of the line.
+  //  */
+  // endPositionLine(totalOffset: any): Position {
+  //   return this.CurrentEditor.document.positionAt(
+  //     totalOffset.reduce((thisSum: number, next: number) => thisSum + next, 0)
+  //   );
+  // }
 
   constructor () { }
 }
