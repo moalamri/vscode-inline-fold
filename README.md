@@ -64,6 +64,8 @@ Current default language Ids (see [here](https://code.visualstudio.com/docs/lang
 - `erb`
 - `twig`
 - `nunjucks`
+- `django-html`
+- `jinja-html`
 - `javascript`
 - `typescript`
 - `javascriptreact`

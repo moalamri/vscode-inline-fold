@@ -52,6 +52,8 @@
 						"erb",
 						"twig",
 						"nunjucks",
+						"django-html",
+						"jinja-html",
 						"javascript",
 						"typescript",
 						"javascriptreact",
