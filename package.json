@@ -1,6 +1,27 @@
 {
-  "name": "inline-fold",
-  "displayName": "Inline fold",
+	"name": "inline-fold",
+	"displayName": "Inline fold",
+	"description": "A custom decorator that \"fold\" matching content in single line",
+	"icon": "res/icon.png",
+	"version": "0.2.0",
+	"publisher": "moalamri",
+	"homepage": "https://github.com/moalamri/vscode-inline-fold",
+	"bugs": "https://github.com/moalamri/vscode-inline-fold/issues",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/moalamri/vscode-inline-fold"
+	},
+	"engines": {
+		"vscode": "^1.68.1"
+	},
+	"categories": [
+		"Visualization",
+		"Other"
+	],
+	"activationEvents": [
+		"onStartupFinished"
+	],
   "ava": {
     "verbose": true,
     "files": [
@@ -10,69 +31,55 @@
       "ts-node/register"
     ]
   },
-  "description": "A custom decorator that \"fold\" matching content in single line",
-  "icon": "res/icon.png",
-  "version": "0.2.0",
-  "publisher": "moalamri",
-  "homepage": "https://github.com/moalamri/vscode-inline-fold",
-  "bugs": "https://github.com/moalamri/vscode-inline-fold/issues",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/moalamri/vscode-inline-fold"
-  },
-  "engines": {
-    "vscode": "^1.68.1"
-  },
-  "categories": [
-    "Visualization",
-    "Other"
-  ],
-  "activationEvents": [
-    "onStartupFinished"
-  ],
-  "main": "./out/extension.js",
-  "contributes": {
-    "commands": [
-      {
-        "command": "inlineFold.toggle",
-        "title": "Toggle inline fold"
-      }
-    ],
-    "configuration": {
-      "type": "object",
-      "title": "Inline fold settings",
-      "properties": {
-        "inlineFold.supportedLanguages": {
-          "type": "array",
-          "order": 0,
-          "description": "Supported languages",
-          "items": {
-            "type": "string",
-            "description": "Language Ids: https://code.visualstudio.com/docs/languages/identifiers#_known-language-identifiers"
-          },
-          "minItems": 1,
-          "default": [
-            "html",
-            "svelte",
-            "vue",
-            "javascript",
-            "typescript",
-            "javascriptreact",
-            "typescriptreact"
-          ]
-        },
-        "inlineFold.regex": {
-          "type": "string",
-          "order": 1,
-          "description": "Regex to match",
-          "default": "(className|class)=({`(?:.+)`}|\"(?:[^`{}=\"]+)\")",
-          "examples": [
-            "(className|class)=({`(?:.+)`}|\"(?:[^`{}=\"]+)\")",
-            "class=\"([a-zA-Z0-9-\\s]+)(?=\")",
-            "id=\"([a-zA-Z0-9-\\s]+)(?=\")"
-          ]
-        },
+	"main": "./out/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "inlineFold.toggle",
+				"title": "Toggle inline fold"
+			}
+		],
+		"configuration": {
+			"type": "object",
+			"title": "Inline fold settings",
+			"properties": {
+				"inlineFold.supportedLanguages": {
+					"type": "array",
+					"order": 0,
+					"description": "Supported languages",
+					"items": {
+						"type": "string",
+						"description": "Language Ids: https://code.visualstudio.com/docs/languages/identifiers#_known-language-identifiers"
+					},
+					"minItems": 1,
+					"default": [
+						"html",
+						"svelte",
+						"vue",
+						"php",
+						"blade",
+						"erb",
+						"twig",
+						"nunjucks",
+						"django-html",
+						"jinja-html",
+						"javascript",
+						"typescript",
+						"javascriptreact",
+						"typescriptreact"
+					]
+				},
+				"inlineFold.regex": {
+					"type": "string",
+					"order": 1,
+					"description": "Regex to match",
+					"default": "(class|className)=[`'{\"]([^`'\"}]+)[`'\"}]",
+					"examples": [
+						"(class|className)=[`'{\"]([^`'\"}]+)[`'\"}]",
+						"class=\"([a-zA-Z0-9-\\s]+)(?=\")",
+						"id=\"([a-zA-Z0-9-\\s]+)(?=\")"
+					]
+				},
         "inlineFold.regexFlags": {
           "type": "string",
           "order": 2,
@@ -206,42 +213,43 @@
             "<<"
           ],
           "scope": "language-overridable"
-        }
-      },
-      "required": [
-        "inlineFold.regex",
-        "inlineFold.regexFlags",
-        "inlineFold.regexGroup",
-        "inlineFold.maskChar",
-        "inlineFold.supportedLanguages"
-      ]
-    }
-  },
-  "scripts": {
-    "vscode:prepublish": "pnpm run compile",
-    "vscode:package": "vsce package",
-    "vscode:publish": "vsce publish",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "test": "ava"
-  },
-  "devDependencies": {
-    "@ava/typescript": "^3.0.1",
-    "@types/node": "^18.7.13",
-    "@types/vscode": "1.70.0",
-    "auto": "^10.37.4",
-    "ava": "^4.3.3",
-    "ts-node": "^10.9.1",
-    "typescript": "4.8.2"
-  },
-  "__metadata": {
-    "id": "4dc4b505-dda3-4ac6-b839-397f8cf0adcc",
-    "publisherDisplayName": "Mohammed Alamri",
-    "publisherId": "41376028-10e6-4784-aff4-9c6be1c5c66e",
-    "isPreReleaseVersion": false,
-    "targetPlatform": "undefined",
-    "updated": true,
-    "preRelease": false,
-    "installedTimestamp": 1657117103571
-  }
+        },
+				"inlineFold.unfoldOnLineSelect": {
+					"type": "boolean",
+					"order": 8,
+					"description": "(Optional) unfold the line when any part of the line is selected",
+					"default": false
+				}
+			},
+			"required": [
+				"inlineFold.regex",
+				"inlineFold.regexFlags",
+				"inlineFold.regexGroup",
+				"inlineFold.maskChar",
+				"inlineFold.supportedLanguages"
+			]
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "pnpm run compile",
+		"vscode:package": "vsce package",
+		"vscode:publish": "vsce publish",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./"
+	},
+	"devDependencies": {
+		"@types/vscode": "1.68.1",
+		"@types/node": "^17.0.33",
+		"typescript": "4.7.4"
+	},
+	"__metadata": {
+		"id": "4dc4b505-dda3-4ac6-b839-397f8cf0adcc",
+		"publisherDisplayName": "Mohammed Alamri",
+		"publisherId": "41376028-10e6-4784-aff4-9c6be1c5c66e",
+		"isPreReleaseVersion": false,
+		"targetPlatform": "undefined",
+		"updated": true,
+		"preRelease": false,
+		"installedTimestamp": 1657117103571
+	}
 }

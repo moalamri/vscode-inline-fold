@@ -13,7 +13,7 @@ export enum EnuSettings {
    unfoldedOpacity = "unfoldedOpacity",
    after = "after",
    supportedLanguages = "supportedLanguages",
-   perLanguageOptions = "perLanguage.options"
+   unfoldOnLineSelect = "unfoldOnLineSelect"
 }
 
 export enum PerLanguageOptions {

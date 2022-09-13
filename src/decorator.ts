@@ -6,6 +6,7 @@ import { EnuSettings as EnumSettings } from "./enums";
 export class Decorator {
   TextDecorationOptions = new DecoratorTypeOptions();
   CurrentEditor: TextEditor;
+  ParsedRegexString: string;
   SupportedLanguages: string[] = [];
   Active: boolean = true;
   Offset: number = 30;
@@ -60,6 +61,7 @@ export class Decorator {
     this.TextDecorationOptions.ClearCache();
   }
 
+
   updateDecorations() {
     if (!this.SupportedLanguages || !this.SupportedLanguages.includes(this.CurrentEditor.document.languageId)) {
       return;
@@ -74,6 +76,7 @@ export class Decorator {
     const plainDecorationType = this.TextDecorationOptions.PlainDecorationTypeCache(langId);
     const unfoldDecorationOptions: DecorationOptions[] = [];
     const matchDecorationOptions: DecorationOptions[] = [];
+    const shouldFoldOnLineSelect = Settings.Get<boolean>(Configs.unfoldOnLineSelect);
     let match;
     while (match = regEx.exec(text)) {
       
@@ -84,11 +87,13 @@ export class Decorator {
       const endPosition = this.endPositionLine(match.index, foldIndex, matched.length);
       const range = new Range(startPosition, endPosition);
 
+      /* Checking if the toggle command is active or not. If it is not active, it will remove all decorations. */
       if (!this.Active) {
         this.CurrentEditor.setDecorations(plainDecorationType, []);
         break;
       }
 
+      /* Checking if the range is within the visible area of the editor plus a specified offset for a head decoration. */
       if (!(this.StartLine <= range.start.line && range.end.line <= this.EndLine)) {
         continue;
       }
