@@ -3,12 +3,11 @@
 <br/>
 
 > ### 0.2.0:
-    - Added: support for language scoped settings.
-    - Added: custom cache for the decorations per languageid (to avoid re-rendering the decorations when the language changes).
-    - Fixed: [#23](https://github.com/moalamri/vscode-inline-fold/issues/23)
-    - Exposed some DecorationInstanceRenderOptions to allow for customizating the decoration.
+-  feat: support for language scoped settings.
+-  perf: custom cache for the decorations per languageid (to avoid re-rendering the decorations when the language changes).
+-  fix: [#23](https://github.com/moalamri/vscode-inline-fold/issues/23)
 
-### v 0.1.7
+> ### v 0.1.7
 - feat: Add settings for auto-unfold when any part of the line is selected. [@Zoha](https://github.com/Zoha)
 
 > ### v 0.1.6
