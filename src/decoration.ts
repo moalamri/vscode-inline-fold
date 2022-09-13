@@ -57,10 +57,8 @@ export class DecoratorTypeOptions {
   }
 
   public MatchedDecorationOptions = (range: Range, _languageId: string): DecorationOptions => {
-    const configs = Settings.Get<DecorationInstanceRenderOptions>(EnuSettings.perLanguageOptions);
     return {
-      range,
-      renderOptions: configs
+      range
     }
   }
 
