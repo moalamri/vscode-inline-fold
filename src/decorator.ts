@@ -1,7 +1,7 @@
 import { DecorationOptions, Position, Range, TextEditor, WorkspaceConfiguration } from "vscode";
-import { ExtensionConfigs } from "./config";
+import { Settings } from "./settings";
 import { DecoratorTypeOptions } from "./decoration";
-import { Configs } from "./enums";
+import { EnuSettings as EnumSettings } from "./enums";
 
 export class Decorator {
   TextDecorationOptions = new DecoratorTypeOptions();
@@ -55,8 +55,8 @@ export class Decorator {
   * @param extConfs: Workspace configs
   */
   updateConfigs(extConfs: WorkspaceConfiguration) {
-    ExtensionConfigs.UpdateConfigs(extConfs);
-    this.SupportedLanguages = ExtensionConfigs.GetSupportedLanguages();
+    Settings.Update(extConfs);
+    this.SupportedLanguages = Settings.Get<string[]>(EnumSettings.supportedLanguages);
     this.TextDecorationOptions.ClearCache();
   }
 
@@ -66,9 +66,9 @@ export class Decorator {
     }
 
     const langId: string = this.CurrentEditor.document.languageId;
-    const regEx: RegExp = RegExp(ExtensionConfigs.get<RegExp>(Configs.regex, langId), ExtensionConfigs.get<string>(Configs.regexFlags, langId));
+    const regEx: RegExp = RegExp(Settings.Get<RegExp>(EnumSettings.regex), Settings.Get<string>(EnumSettings.regexFlags));
     const text: string = this.CurrentEditor.document.getText();
-    const regexGroup: number = ExtensionConfigs.get<number>(Configs.regexGroup, langId) as number | 1;
+    const regexGroup: number = Settings.Get<number>(EnumSettings.regexGroup) as number | 1;
     const matchDecorationType = this.TextDecorationOptions.MaskDecorationTypeCache(langId);
     const unfoldDecorationType = this.TextDecorationOptions.UnfoldDecorationTypeCache(langId);
     const plainDecorationType = this.TextDecorationOptions.PlainDecorationTypeCache(langId);
@@ -105,24 +105,12 @@ export class Decorator {
     this.CurrentEditor.setDecorations(matchDecorationType, matchDecorationOptions);
   }
 
-  /**
-  * 
-  * @param matchIndex number
-  * @param startIndex number
-  * @returns position
-  */
   startPositionLine(matchIndex: number, startIndex: number): Position {
     return this.CurrentEditor.document.positionAt(
       matchIndex + startIndex
     );
   }
 
-  /**
-  * 
-  * @param matchIndex number
-  * @param startIndex number
-  * @returns position
-  */
   endPositionLine(matchIndex: number, startIndex: number, length: number): Position {
     return this.CurrentEditor.document.positionAt(
       matchIndex + startIndex + length
