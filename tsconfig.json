@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"module": "commonjs",
+		"module": "CommonJS",
 		"skipLibCheck": true,
 		"target": "es6",
 		"outDir": "out",
@@ -9,7 +9,11 @@
 		],
 		"sourceMap": true,
 		"rootDir": "src",
-		"strict": false
+		"strict": false,
+		"types": [
+			"node"
+		],
+		"moduleResolution": "node",
 	},
 	"exclude": [
 		"node_modules"

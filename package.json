@@ -1,233 +1,247 @@
 {
-	"name": "inline-fold",
-	"displayName": "Inline fold",
-	"description": "A custom decorator that \"fold\" matching content in single line",
-	"icon": "res/icon.png",
-	"version": "0.2.0",
-	"publisher": "moalamri",
-	"homepage": "https://github.com/moalamri/vscode-inline-fold",
-	"bugs": "https://github.com/moalamri/vscode-inline-fold/issues",
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/moalamri/vscode-inline-fold"
-	},
-	"engines": {
-		"vscode": "^1.68.1"
-	},
-	"categories": [
-		"Visualization",
-		"Other"
-	],
-	"activationEvents": [
-		"onStartupFinished"
-	],
-	"main": "./out/extension.js",
-	"contributes": {
-		"commands": [
-			{
-				"command": "inlineFold.toggle",
-				"title": "Toggle inline fold"
-			}
-		],
-		"configuration": {
-			"type": "object",
-			"title": "Inline fold settings",
-			"properties": {
-				"inlineFold.supportedLanguages": {
-					"type": "array",
-					"order": 0,
-					"description": "Supported languages",
-					"items": {
-						"type": "string",
-						"description": "Language Ids: https://code.visualstudio.com/docs/languages/identifiers#_known-language-identifiers"
-					},
-					"minItems": 1,
-					"default": [
-						"html",
-						"svelte",
-						"vue",
-						"javascript",
-						"typescript",
-						"javascriptreact",
-						"typescriptreact"
-					]
-				},
-				"inlineFold.regex": {
-					"type": "string",
-					"order": 1,
-					"description": "Regex to match",
-					"default": "(className|class)=({`(?:.+)`}|\"(?:[^`{}=\"]+)\")",
-					"examples": [
-						"(className|class)=({`(?:.+)`}|\"(?:[^`{}=\"]+)\")",
-						"class=\"([a-zA-Z0-9-\\s]+)(?=\")",
-						"id=\"([a-zA-Z0-9-\\s]+)(?=\")"
-					]
-				},
-				"inlineFold.regexFlags": {
-					"type": "string",
-					"order": 2,
-					"description": "Regex flags",
-					"default": "g",
-					"examples": [
-						"g",
-						"gi"
-					]
-				},
-				"inlineFold.regexGroup": {
-					"type": "string",
-					"order": 3,
-					"description": "Regex capturing group number that will be folded",
-					"default": "2",
-					"examples": [
-						"1",
-						"2"
-					]
-				},
-				"inlineFold.perLanguage.options": {
-					"type": "object",
-					"description": "Options to configure the inline folding in language scope",
-					"properties": {
-						"before": {
-							"type": "array",
-							"description": "Text/Characters that will be before the start character",
-							"examples": [
-								[
-									"class="
-								],
-								[
-									"className="
-								],
-								[
-									"class=",
-									"className="
-								]
-							],
-							"default": [
-								"class=",
-								"className="
-							]
-						},
-						"start": {
-							"type": "array",
-							"description": "Property of the character where the folding will start",
-							"examples": [
-								"\"",
-								"`",
-								"{"
-							],
-							"default": [
-								[
-									"\""
-								]
-							]
-						},
-						"end": {
-							"type": "array",
-							"description": "Property of the character where the folding will stop",
-							"examples": [
-								[
-									"\"",
-									"`",
-									"}"
-								]
-							],
-							"default": [
-								[
-									"\""
-								]
-							]
-						}
-					},
-					"scope": "language-overridable",
-					"perLanguage": true
-				},
-				"inlineFold.maskChar": {
-					"type": "string",
-					"order": 4,
-					"description": "The mask that covers the folded text",
-					"default": "◦◦◦",
-					"examples": [
-						"◦◦◦",
-						"▶▶",
-						"⌨"
-					],
-					"scope": "language-overridable",
-					"perLanguage": true
-				},
-				"inlineFold.maskColor": {
-					"type": "string",
-					"order": 5,
-					"description": "The color of the covering mask in hex",
-					"default": "#68D7AC",
-					"examples": [
-						"#68D7AC",
-						"#FF0000"
-					],
-					"scope": "language-overridable"
-				},
-				"inlineFold.unfoldedOpacity": {
-					"type": "number",
-					"order": 6,
-					"description": "The opacity of the unfolded text (from 0 to 1)",
-					"default": 0.7,
-					"enum": [
-						0,
-						0.1,
-						0.2,
-						0.3,
-						0.4,
-						0.5,
-						0.6,
-						0.7,
-						0.8,
-						0.9,
-						1
-					],
-					"scope": "language-overridable"
-				},
-				"inlineFold.after": {
-					"type": "string",
-					"order": 7,
-					"description": "(Optional) Add any character to be appended to the folded text",
-					"default": "",
-					"examples": [
-						"+",
-						"<-",
-						"<<"
-					],
-					"scope": "language-overridable"
-				}
-			},
-			"required": [
-				"inlineFold.regex",
-				"inlineFold.regexFlags",
-				"inlineFold.regexGroup",
-				"inlineFold.maskChar",
-				"inlineFold.supportedLanguages"
-			]
-		}
-	},
-	"scripts": {
-		"vscode:prepublish": "pnpm run compile",
-		"vscode:package": "vsce package",
-		"vscode:publish": "vsce publish",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./"
-	},
-	"devDependencies": {
-		"@types/node": "^17.0.33",
-		"@types/vscode": "1.68.1",
-		"typescript": "4.7.4"
-	},
-	"__metadata": {
-		"id": "4dc4b505-dda3-4ac6-b839-397f8cf0adcc",
-		"publisherDisplayName": "Mohammed Alamri",
-		"publisherId": "41376028-10e6-4784-aff4-9c6be1c5c66e",
-		"isPreReleaseVersion": false,
-		"targetPlatform": "undefined",
-		"updated": true,
-		"preRelease": false,
-		"installedTimestamp": 1657117103571
-	}
+  "name": "inline-fold",
+  "displayName": "Inline fold",
+  "ava": {
+    "verbose": true,
+    "files": [
+      "tests/**/*.test.ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ]
+  },
+  "description": "A custom decorator that \"fold\" matching content in single line",
+  "icon": "res/icon.png",
+  "version": "0.2.0",
+  "publisher": "moalamri",
+  "homepage": "https://github.com/moalamri/vscode-inline-fold",
+  "bugs": "https://github.com/moalamri/vscode-inline-fold/issues",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moalamri/vscode-inline-fold"
+  },
+  "engines": {
+    "vscode": "^1.68.1"
+  },
+  "categories": [
+    "Visualization",
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "inlineFold.toggle",
+        "title": "Toggle inline fold"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Inline fold settings",
+      "properties": {
+        "inlineFold.supportedLanguages": {
+          "type": "array",
+          "order": 0,
+          "description": "Supported languages",
+          "items": {
+            "type": "string",
+            "description": "Language Ids: https://code.visualstudio.com/docs/languages/identifiers#_known-language-identifiers"
+          },
+          "minItems": 1,
+          "default": [
+            "html",
+            "svelte",
+            "vue",
+            "javascript",
+            "typescript",
+            "javascriptreact",
+            "typescriptreact"
+          ]
+        },
+        "inlineFold.regex": {
+          "type": "string",
+          "order": 1,
+          "description": "Regex to match",
+          "default": "(className|class)=({`(?:.+)`}|\"(?:[^`{}=\"]+)\")",
+          "examples": [
+            "(className|class)=({`(?:.+)`}|\"(?:[^`{}=\"]+)\")",
+            "class=\"([a-zA-Z0-9-\\s]+)(?=\")",
+            "id=\"([a-zA-Z0-9-\\s]+)(?=\")"
+          ]
+        },
+        "inlineFold.regexFlags": {
+          "type": "string",
+          "order": 2,
+          "description": "Regex flags",
+          "default": "g",
+          "examples": [
+            "g",
+            "gi"
+          ]
+        },
+        "inlineFold.regexGroup": {
+          "type": "string",
+          "order": 3,
+          "description": "Regex capturing group number that will be folded",
+          "default": "2",
+          "examples": [
+            "1",
+            "2"
+          ]
+        },
+        "inlineFold.perLanguage.options": {
+          "type": "object",
+          "description": "Options to configure the inline folding in language scope",
+          "properties": {
+            "before": {
+              "type": "array",
+              "description": "Text/Characters that will be before the start character",
+              "examples": [
+                [
+                  "class="
+                ],
+                [
+                  "className="
+                ],
+                [
+                  "class=",
+                  "className="
+                ]
+              ],
+              "default": [
+                "class=",
+                "className="
+              ]
+            },
+            "start": {
+              "type": "array",
+              "description": "Property of the character where the folding will start",
+              "examples": [
+                "\"",
+                "`",
+                "{"
+              ],
+              "default": [
+                [
+                  "\""
+                ]
+              ]
+            },
+            "end": {
+              "type": "array",
+              "description": "Property of the character where the folding will stop",
+              "examples": [
+                [
+                  "\"",
+                  "`",
+                  "}"
+                ]
+              ],
+              "default": [
+                [
+                  "\""
+                ]
+              ]
+            }
+          },
+          "scope": "language-overridable",
+          "perLanguage": true
+        },
+        "inlineFold.maskChar": {
+          "type": "string",
+          "order": 4,
+          "description": "The mask that covers the folded text",
+          "default": "◦◦◦",
+          "examples": [
+            "◦◦◦",
+            "▶▶",
+            "⌨"
+          ],
+          "scope": "language-overridable",
+          "perLanguage": true
+        },
+        "inlineFold.maskColor": {
+          "type": "string",
+          "order": 5,
+          "description": "The color of the covering mask in hex",
+          "default": "#68D7AC",
+          "examples": [
+            "#68D7AC",
+            "#FF0000"
+          ],
+          "scope": "language-overridable"
+        },
+        "inlineFold.unfoldedOpacity": {
+          "type": "number",
+          "order": 6,
+          "description": "The opacity of the unfolded text (from 0 to 1)",
+          "default": 0.7,
+          "enum": [
+            0,
+            0.1,
+            0.2,
+            0.3,
+            0.4,
+            0.5,
+            0.6,
+            0.7,
+            0.8,
+            0.9,
+            1
+          ],
+          "scope": "language-overridable"
+        },
+        "inlineFold.after": {
+          "type": "string",
+          "order": 7,
+          "description": "(Optional) Add any character to be appended to the folded text",
+          "default": "",
+          "examples": [
+            "+",
+            "<-",
+            "<<"
+          ],
+          "scope": "language-overridable"
+        }
+      },
+      "required": [
+        "inlineFold.regex",
+        "inlineFold.regexFlags",
+        "inlineFold.regexGroup",
+        "inlineFold.maskChar",
+        "inlineFold.supportedLanguages"
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run compile",
+    "vscode:package": "vsce package",
+    "vscode:publish": "vsce publish",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "test": "ava"
+  },
+  "devDependencies": {
+    "@ava/typescript": "^3.0.1",
+    "@types/node": "^18.7.13",
+    "@types/vscode": "1.70.0",
+    "auto": "^10.37.4",
+    "ava": "^4.3.3",
+    "ts-node": "^10.9.1",
+    "typescript": "4.8.2"
+  },
+  "__metadata": {
+    "id": "4dc4b505-dda3-4ac6-b839-397f8cf0adcc",
+    "publisherDisplayName": "Mohammed Alamri",
+    "publisherId": "41376028-10e6-4784-aff4-9c6be1c5c66e",
+    "isPreReleaseVersion": false,
+    "targetPlatform": "undefined",
+    "updated": true,
+    "preRelease": false,
+    "installedTimestamp": 1657117103571
+  }
 }
