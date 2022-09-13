@@ -1,41 +1,100 @@
 import test from 'ava';
 import examples from './helper/examples';
-import JsxParser from '../helpers/jsxClass';
-
+import JSX from '../helpers/jsxClass';
 
 test('Parser', t => {
-	const _parser = new JsxParser();
+	const _parser = new JSX(examples.comp);
 	const ParsedComp = [
-		'<div className="text-lg"',
-		`<p className='top-3'>`,
-		'</p>',
-		'<p className="top-3">',
-		'</p>',
-		'<button disabled={true} className="top-3">',
-		'</button>',
-		'<button aria-label="some button" className="top-3" disabled={false} >',
-		'</button>',
-		'<p className="top-3">',
-		'</p>',
-		'<MyComponent />',
-		'<MyOtherComponent className="top-3" />',
-		'<p className="top-3">',
-		'</p>',
-		'<p className={`{props.hello ? "top-3" : "bottom-3"}`}>',
-		'</p>',
-		'<p className="top-3">',
-		'</p>',
-		'<p className="top-3">',
-		'</p>',
-		'<p className="top-3">',
-		'</p>',
-		'<div className={`mt-3 ${props.buttonClassName} text-red-400 {props.text} text-sm`}>',
-		'<button onClick={(e)=>',
-		'</button>',
-		'</div>',
-		'<p className="top-3">',
-		'</p>',
-		'</div>',
+		{
+			attr: 'className',
+			end: 22,
+			line: 2,
+			start: 13,
+		},
+		{
+			attr: 'className',
+			end: 24,
+			line: 3,
+			start: 15,
+		},
+		{
+			attr: 'className',
+			end: 24,
+			line: 4,
+			start: 15,
+		},
+		{
+			attr: 'className',
+			end: 65,
+			line: 5,
+			start: 56,
+		},
+		{
+			attr: 'disabled',
+			end: 29,
+			line: 6,
+			start: 21,
+		},
+		{
+			attr: 'aria-label',
+			end: 30,
+			line: 7,
+			start: 20,
+		},
+		{
+			attr: 'className',
+			end: 24,
+			line: 8,
+			start: 15,
+		},
+		{
+			attr: 'className',
+			end: 39,
+			line: 10,
+			start: 30,
+		},
+		{
+			attr: 'className',
+			end: 24,
+			line: 11,
+			start: 15,
+		},
+		{
+			attr: 'className',
+			end: 24,
+			line: 12,
+			start: 15,
+		},
+		{
+			attr: 'className',
+			end: 40,
+			line: 13,
+			start: 31,
+		},
+		{
+			attr: 'className',
+			end: 39,
+			line: 14,
+			start: 30,
+		},
+		{
+			attr: 'className',
+			end: 30,
+			line: 18,
+			start: 21,
+		},
+		{
+			attr: 'onClick',
+			end: 35,
+			line: 19,
+			start: 28,
+		},
+		{
+			attr: 'className',
+			end: 28,
+			line: 22,
+			start: 19,
+		},
 	];
 	const ParsedComp3 = [
 		'<div className=\"value-here\" test=\"anything\" style=\'hi:there\'',
@@ -57,8 +116,5 @@ test('Parser', t => {
 		'</h2>',
 		'</div>',
 	];
-	t.log(_parser.Parser(examples.comp));
-	t.deepEqual(_parser.Parser(examples.comp3), ParsedComp3);
-	t.deepEqual(_parser.Parser(examples.comp), ParsedComp);
-	t.deepEqual(_parser.Parser(examples.comp4), ParsedComp4);
+	t.deepEqual(_parser.Parse(), ParsedComp);
 });
