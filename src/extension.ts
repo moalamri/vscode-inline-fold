@@ -1,10 +1,10 @@
 import { commands, ExtensionContext, window, workspace, WorkspaceConfiguration } from "vscode";
 import { Decorator } from "./decorator";
-import { Commands, EnuSettings } from "./enums";
+import { Commands, EnumSettings } from "./enums";
 import { EventsLimit } from "./utils";
 
 export function activate(context: ExtensionContext) {
-   const workspaceConfig: WorkspaceConfiguration = workspace.getConfiguration(EnuSettings.identifier);
+   const workspaceConfig: WorkspaceConfiguration = workspace.getConfiguration(EnumSettings.identifier);
    const decorator = new Decorator();
    const elimit = new EventsLimit();
    updateConfigs(workspaceConfig);
@@ -46,8 +46,8 @@ export function activate(context: ExtensionContext) {
    }, null, context.subscriptions);
 
    workspace.onDidChangeConfiguration((event) => {
-      if (event.affectsConfiguration(EnuSettings.identifier)) {
-         updateConfigs(workspace.getConfiguration(EnuSettings.identifier));
+      if (event.affectsConfiguration(EnumSettings.identifier)) {
+         updateConfigs(workspace.getConfiguration(EnumSettings.identifier));
       }
    }, null, context.subscriptions);
 }

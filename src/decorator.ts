@@ -1,7 +1,7 @@
 import { DecorationOptions, Position, Range, TextEditor, WorkspaceConfiguration } from "vscode";
 import { Settings } from "./settings";
 import { DecoratorTypeOptions } from "./decoration";
-import { EnuSettings as EnumSettings } from "./enums";
+import { EnumSettings } from "./enums";
 
 export class Decorator {
   TextDecorationOptions = new DecoratorTypeOptions();
@@ -76,7 +76,7 @@ export class Decorator {
     const plainDecorationType = this.TextDecorationOptions.PlainDecorationTypeCache(langId);
     const unfoldDecorationOptions: DecorationOptions[] = [];
     const matchDecorationOptions: DecorationOptions[] = [];
-    const shouldFoldOnLineSelect = Settings.Get<boolean>(Configs.unfoldOnLineSelect);
+    const unFoldOnLineSelect = Settings.Get<boolean>(EnumSettings.unfoldOnLineSelect);
     let match;
     while (match = regEx.exec(text)) {
       
@@ -99,10 +99,11 @@ export class Decorator {
       }
 
       // The only possible way to fix tooltip hover flickering
-      if(this.CurrentEditor.selection.contains(range) || this.CurrentEditor.selections.find(s => range.contains(s))) {
-        unfoldDecorationOptions.push(this.TextDecorationOptions.UnfoldedDecorationOptions(range, matched));
+      if (this.CurrentEditor.selection.contains(range) || 
+          this.CurrentEditor.selections.find(s => range.contains(s))) {
+        unfoldDecorationOptions.push(this.TextDecorationOptions.UnfoldedDecorationOptions(new Range(startPosition, endPosition), matched));
       } else {
-        matchDecorationOptions.push(this.TextDecorationOptions.MatchedDecorationOptions(range, langId));
+        matchDecorationOptions.push(this.TextDecorationOptions.MatchedDecorationOptions(range));
       }
     }
 

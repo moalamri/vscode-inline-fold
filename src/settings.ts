@@ -1,5 +1,5 @@
 import { ConfigurationScope, workspace, WorkspaceConfiguration } from "vscode";
-import { EnuSettings, PerLanguageOptions } from "./enums";
+import { EnumSettings, PerLanguageOptions } from "./enums";
 
 class ExtensionSettings {
   private static _instance: ExtensionSettings;
@@ -27,7 +27,7 @@ class ExtensionSettings {
    * @param _languageId : editor's active language id
    * @returns Language's scoped configuration or fall back to global configuration
    */
-  public Get<T>(_section: EnuSettings | PerLanguageOptions): T {
+  public Get<T>(_section: EnumSettings | PerLanguageOptions): T {
     return this.configs.get<T>(_section);
   }
 
@@ -37,11 +37,11 @@ class ExtensionSettings {
    * @param _languageId : editor's active language id
    * @returns 
    */
-  public GetLanguageConfig<T>(_section: EnuSettings | PerLanguageOptions, _languageId: string): T {
+  public GetLanguageConfig<T>(_section: EnumSettings | PerLanguageOptions, _languageId: string): T {
     const scope: ConfigurationScope = {
       languageId: _languageId,
     };
-    const config: T = workspace.getConfiguration(`${EnuSettings.identifier}`, scope).get<T>(_section);
+    const config: T = workspace.getConfiguration(`${EnumSettings.identifier}`, scope).get<T>(_section);
     if(!config) return;
     return config;
   }

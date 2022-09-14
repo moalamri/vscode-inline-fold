@@ -2,7 +2,7 @@ export enum Commands {
    InlineFoldToggle = "inlineFold.toggle",
 }
 
-export enum EnuSettings {
+export enum EnumSettings {
    identifier = "inlineFold",
    languageId = "languageId",
    regex = "regex",

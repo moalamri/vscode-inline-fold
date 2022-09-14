@@ -1,6 +1,6 @@
 import { DecorationInstanceRenderOptions, DecorationOptions, DecorationRangeBehavior, DecorationRenderOptions, Range, TextEditorDecorationType, window } from "vscode";
 import { Settings } from "./settings";
-import { EnuSettings } from "./enums";
+import { EnumSettings } from "./enums";
 
 /**
  * With each time the decorator is triggered, and the method setDecoration is called,
@@ -20,18 +20,18 @@ export class DecoratorTypeOptions {
   public UnfoldedDecorationType = (langId: string /* To use later for lang scoped configs */): DecorationRenderOptions => {
     return {
       rangeBehavior: DecorationRangeBehavior.ClosedClosed,
-      opacity: Settings.Get<string>(EnuSettings.unfoldedOpacity).toString()
+      opacity: Settings.Get<string>(EnumSettings.unfoldedOpacity).toString()
     }
   }
 
   public MatchedDecorationType = (langId: string /* To use later for lang scoped configs */): DecorationRenderOptions => {
     return {
       before: {
-        contentText: Settings.Get<string>(EnuSettings.maskChar),
-        color: Settings.Get<string>(EnuSettings.maskColor),
+        contentText: Settings.Get<string>(EnumSettings.maskChar),
+        color: Settings.Get<string>(EnumSettings.maskColor),
       },
       after: {
-        contentText: Settings.Get<string>(EnuSettings.after)
+        contentText: Settings.Get<string>(EnumSettings.after)
       },
       letterSpacing: "-2ch",
       textDecoration: "none; display: none;"
@@ -56,7 +56,7 @@ export class DecoratorTypeOptions {
         .get(langId);
   }
 
-  public MatchedDecorationOptions = (range: Range, _languageId: string): DecorationOptions => {
+  public MatchedDecorationOptions = (range: Range): DecorationOptions => {
     return {
       range
     }
