@@ -1,21 +1,4 @@
-type Match = {
-  Pre?: {
-    index: number,
-    text: string;
-  },
-  Start?: {
-    index: number,
-    char: string;
-  },
-  Content?: {
-    length: number,
-    text: string
-  },
-  End?: {
-    index: number,
-    char: string;
-  }
-}
+import type {  Match, Tag, JsxAttribute  } from './jsx';
 
 export default class JSX {
   private eLines: string[];
