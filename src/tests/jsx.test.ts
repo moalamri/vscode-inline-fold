@@ -2,6 +2,9 @@ import test from 'ava';
 import examples from './helper/examples';
 import JSX from '../helpers/jsxClass';
 
+// I used ava instead of vscode-test because the extension will crash if the parser failed
+// So testing the parser alone against some examples is surely enough, I hope so :)
+// You can trigger the tests with different ways without adding a suite/vsc-engine
 test('Parser', t => {
 	const _parser = new JSX(examples.comp);
 	const ParsedComp = [

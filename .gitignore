@@ -4,3 +4,4 @@ pnpm-debug.log
 pnpm-lock.yaml
 .vscode/settings.json
 .env
+.gitpod.yml
