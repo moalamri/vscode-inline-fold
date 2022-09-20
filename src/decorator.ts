@@ -2,6 +2,8 @@ import { DecorationOptions, Position, Range, TextEditor, WorkspaceConfiguration 
 import { Settings } from "./settings";
 import { DecoratorTypeOptions } from "./decoration";
 import { EnumSettings } from "./enums";
+import { LineNavigate } from "./helpers/jsxClass"
+import examples from './tests/helper/examples'
 
 export class Decorator {
   TextDecorationOptions = new DecoratorTypeOptions();
@@ -68,7 +70,15 @@ export class Decorator {
     }
 
     const langId: string = this.CurrentEditor.document.languageId;
-    const regEx: RegExp = RegExp(Settings.Get<RegExp>(EnumSettings.regex), Settings.Get<string>(EnumSettings.regexFlags));
+    //const regEx: RegExp = RegExp(Settings.Get<RegExp>(EnumSettings.regex), Settings.Get<string>(EnumSettings.regexFlags));
+
+    // Only lines with tags and attributes
+    //const regEx = RegExp(/(?!<[a-zA-z0-9]\s+)([a-zA-Z0-9-:])*?(?=\s*?[^\w]*?=)/, 'g')
+    // Break by line
+    //const textLines: string[] = this.CurrentEditor.document.getText().split(/[\n]+/);
+    // Break by line from examples 
+    const textLines: string[] = examples.comp.split(/[\n]+/);
+
     const text: string = this.CurrentEditor.document.getText();
     const regexGroup: number = Settings.Get<number>(EnumSettings.regexGroup) as number | 1;
     const matchDecorationType = this.TextDecorationOptions.MaskDecorationTypeCache(langId);
@@ -78,37 +88,46 @@ export class Decorator {
     const matchDecorationOptions: DecorationOptions[] = [];
     const unFoldOnLineSelect = Settings.Get<boolean>(EnumSettings.unfoldOnLineSelect);
     let match;
-    while (match = regEx.exec(text)) {
-      
-      const matched = match[regexGroup];
-      const skip = match[0].indexOf(matched.replace(match[regexGroup])) + 1;
-      const foldIndex = match[0].substring(skip).indexOf(matched) + skip;
-      const startPosition = this.startPositionLine(match.index, foldIndex);
-      const endPosition = this.endPositionLine(match.index, foldIndex, matched.length);
-      const range = new Range(startPosition, endPosition);
 
-      /* Checking if the toggle command is active or not. If it is not active, it will remove all decorations. */
-      if (!this.Active) {
-        this.CurrentEditor.setDecorations(plainDecorationType, []);
-        break;
+    for (let i = 0; i < textLines.length; i++) {
+
+
+      const line = textLines[i];
+      const nav = new LineNavigate(line);
+      if (nav.hasPre()) {
+        nav.indexAfterPre();
+        console.log(nav.curr())
       }
 
-      /* Checking if the range is within the visible area of the editor plus a specified offset for a head decoration. */
-      if (!(this.StartLine <= range.start.line && range.end.line <= this.EndLine)) {
-        continue;
-      }
+      //   const matched = match[regexGroup];
+      //   const skip = match[0].indexOf(matched.replace(match[regexGroup])) + 1;
+      //   const foldIndex = match[0].substring(skip).indexOf(matched) + skip;
+      //   const startPosition = this.startPositionLine(match.index, foldIndex);
+      //   const endPosition = this.endPositionLine(match.index, foldIndex, matched.length);
+      //   const range = new Range(startPosition, endPosition);
 
-      // The only possible way to fix tooltip hover flickering
-      if (this.CurrentEditor.selection.contains(range) || 
-          this.CurrentEditor.selections.find(s => range.contains(s))) {
-        unfoldDecorationOptions.push(this.TextDecorationOptions.UnfoldedDecorationOptions(new Range(startPosition, endPosition), matched));
-      } else {
-        matchDecorationOptions.push(this.TextDecorationOptions.MatchedDecorationOptions(range));
-      }
+      //   /* Checking if the toggle command is active or not. If it is not active, it will remove all decorations. */
+      //   if (!this.Active) {
+      //     this.CurrentEditor.setDecorations(plainDecorationType, []);
+      //     break;
+      //   }
+
+      //   /* Checking if the range is within the visible area of the editor plus a specified offset for a head decoration. */
+      //   if (!(this.StartLine <= range.start.line && range.end.line <= this.EndLine)) {
+      //     continue;
+      //   }
+
+      //   // The only possible way to fix tooltip hover flickering
+      //   if (this.CurrentEditor.selection.contains(range) || 
+      //       this.CurrentEditor.selections.find(s => range.contains(s))) {
+      //     unfoldDecorationOptions.push(this.TextDecorationOptions.UnfoldedDecorationOptions(new Range(startPosition, endPosition), matched));
+      //   } else {
+      //     matchDecorationOptions.push(this.TextDecorationOptions.MatchedDecorationOptions(range));
+      //   }
     }
 
-    this.CurrentEditor.setDecorations(unfoldDecorationType, unfoldDecorationOptions);
-    this.CurrentEditor.setDecorations(matchDecorationType, matchDecorationOptions);
+    // this.CurrentEditor.setDecorations(unfoldDecorationType, unfoldDecorationOptions);
+    // this.CurrentEditor.setDecorations(matchDecorationType, matchDecorationOptions);
   }
 
   startPositionLine(matchIndex: number, startIndex: number): Position {
@@ -123,5 +142,5 @@ export class Decorator {
     );
   }
 
-  constructor () { }
+  constructor() { }
 }
