@@ -31,31 +31,6 @@ export default class JSX {
       return props;
     }
 
-  Pre() {
-    if(!this.eLines) return;
-    this.eLines.forEach((line, i) => {
-      if(line.indexOf(this.pre)) {
-        this.match.Pre = {
-          index: i,
-          text: line
-        }
-      }
-    })
-  }
-
-  private parse() {
-    let match: Match;
-    const props: object[] = [];
-    if(this.hasMatch()) {
-      
-    }
-    //return elem;
-  }
-
-  private hasMatch() {
-   const match: object[] = [];
-    return match
-  }
 
   // For testing only
     constructor(_editorText: string) {
@@ -65,4 +40,58 @@ export default class JSX {
       this.start = "{";
       this.end = "}";
     }
+}
+
+
+export class LineNavigate {
+  line: string;
+  lineLen: number;
+  index: number;
+  constructor(_line) {
+    this.line = _line;
+    this.lineLen = _line.length;
+    this.index = 0;
+  }
+
+  next() {
+    this.index++;
+    return this.line.charAt(this.index);
+  }
+
+  prev() {
+    this.index--;
+    return this.line.charAt(this.index);
+  }
+
+  curr() {
+    return this.line.charAt(this.index);
+  }
+
+  hasPre() {
+    return this.line.includes('className=');
+  }
+
+  indexAfterPre() {
+    this.index = this.line.indexOf('className=') + 'className='.length;
+    return this.index
+  }
+
+  at(i) {
+    return this.line.charAt(i)
+  }
+
+  passThis(char) {
+    if (this.curr() === char) {
+      this.next();
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  peekNext() {
+    return this.line.charAt(this.index + 1);
+  }
+
+  lookForAheah(type) {}
 }
