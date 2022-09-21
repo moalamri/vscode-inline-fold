@@ -1,6 +1,6 @@
 import test from 'ava';
 import examples from './helper/examples';
-import JSX, { LineNavigate } from '../helpers/jsxClass';
+import { LineNavigate } from '../helpers/jsx';
 
 // I used ava instead of vscode-test because the extension will crash if the parser failed
 // So testing the parser alone against some examples is surely enough, I hope so :)
