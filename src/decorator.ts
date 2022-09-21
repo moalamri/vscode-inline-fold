@@ -2,7 +2,7 @@ import { DecorationOptions, Position, Range, TextEditor, WorkspaceConfiguration 
 import { Settings } from "./settings";
 import { DecoratorTypeOptions } from "./decoration";
 import { EnumSettings } from "./enums";
-import { LineNavigate } from "./helpers/jsxClass"
+import { LineNavigate } from "./helpers/jsx"
 import examples from './tests/helper/examples'
 
 export class Decorator {
@@ -63,7 +63,6 @@ export class Decorator {
     this.TextDecorationOptions.ClearCache();
   }
 
-
   updateDecorations() {
     if (!this.SupportedLanguages || !this.SupportedLanguages.includes(this.CurrentEditor.document.languageId)) {
       return;
@@ -91,12 +90,15 @@ export class Decorator {
 
     for (let i = 0; i < textLines.length; i++) {
 
-
       const line = textLines[i];
       const nav = new LineNavigate(line);
       if (nav.hasPre()) {
         nav.indexAfterPre();
-        console.log(nav.curr())
+        if (nav.hasPre()) {
+          if (nav.hasStart()) {
+            console.log(nav.match)
+          }
+        }
       }
 
       //   const matched = match[regexGroup];
