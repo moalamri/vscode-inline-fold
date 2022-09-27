@@ -1,10 +1,11 @@
 import { commands, ExtensionContext, window, workspace, WorkspaceConfiguration } from "vscode";
 import { Decorator } from "./decorator";
-import { Commands, Configs } from "./enums";
+import { Commands, Settings } from "./enums";
 import { EventsLimit } from "./utils";
+import { Cache } from "./cache";
 
 export function activate(context: ExtensionContext) {
-   const config: WorkspaceConfiguration = workspace.getConfiguration(Configs.identifier);
+   const config: WorkspaceConfiguration = workspace.getConfiguration(Settings.identifier);
    const decorator = new Decorator();
    const elimit = new EventsLimit();
    decorator.updateConfigs(config);
@@ -17,8 +18,12 @@ export function activate(context: ExtensionContext) {
       decorator.activeEditor(textEditor);
    }
 
-   const command = commands.registerCommand(Commands.InlineFoldToggle, () => {
+   const toggleCommand = commands.registerCommand(Commands.InlineFoldToggle, () => {
       decorator.toggle();
+   });
+
+   const clearCacheCommand = commands.registerCommand(Commands.InlineFoldClearCache, () => {
+      Cache.ClearCache();
    });
 
    const activeTextEditor = window.onDidChangeActiveTextEditor((e) => {
@@ -41,16 +46,20 @@ export function activate(context: ExtensionContext) {
    });
 
    const changeConfiguration = workspace.onDidChangeConfiguration((event) => {
-      if (event.affectsConfiguration(Configs.identifier)) {
-         decorator.updateConfigs(workspace.getConfiguration(Configs.identifier));
+      if (event.affectsConfiguration(Settings.identifier)) {
+         if(!event.affectsConfiguration(Settings.autoFold)) {
+            Cache.ClearCache();
+         }
+         decorator.updateConfigs(workspace.getConfiguration(Settings.identifier));
       }
    });
 
    // Add to a list of disposables to the editor context
    // which are disposed when this extension is deactivated.
-   context.subscriptions.push(command);
-   context.subscriptions.push(activeTextEditor);
+   context.subscriptions.push(toggleCommand);
    context.subscriptions.push(changeSelection);
+   context.subscriptions.push(activeTextEditor);
+   context.subscriptions.push(clearCacheCommand);
    context.subscriptions.push(changeVisibleRange);
    context.subscriptions.push(changeConfiguration);
 }
