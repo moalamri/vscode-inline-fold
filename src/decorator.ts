@@ -74,9 +74,8 @@ export class Decorator {
       return;
     }
 
+    const regEx: RegExp = ExtSettings.Regex();
     const text: string = this.CurrentEditor.document.getText();
-    const regEx: RegExp = RegExp(ExtSettings.Get<RegExp>(Settings.regex), 
-    ExtSettings.Get<string>(Settings.regexFlags));
     const langId: string = this.CurrentEditor.document.languageId;
     const unFoldOnLineSelect = ExtSettings.Get<boolean>(Settings.unfoldOnLineSelect);
     const regexGroup: number = ExtSettings.Get<number>(Settings.regexGroup) as number | 1;
@@ -90,8 +89,7 @@ export class Decorator {
     while ((match = regEx.exec(text)) !== null) {
 
       const matched = match[regexGroup];
-      const skip = match[0].indexOf(matched.replace(match[regexGroup])) + 1;
-      const foldIndex = match[0].substring(skip).indexOf(matched) + skip;
+      const foldIndex = match[0].lastIndexOf(matched);
       const startPosition = this.startPositionLine(match.index, foldIndex);
       const endPosition = this.endPositionLine(match.index, foldIndex, matched.length);
       const range = new Range(startPosition, endPosition);

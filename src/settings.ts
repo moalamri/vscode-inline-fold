@@ -31,6 +31,10 @@ class ExtensionSettings {
     return this.configs.get<T>(_section);
   }
 
+  public Regex(): RegExp {
+    return RegExp(this.Get<RegExp>(Settings.regex), this.Get<string>(Settings.regexFlags));
+  }
+
   constructor () {}
 }
 
