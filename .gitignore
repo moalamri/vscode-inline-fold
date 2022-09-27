@@ -1,5 +1,5 @@
 out
 node_modules
 .pnpm-debug.log
-.pnpm-lock.yaml
+pnpm-lock.yaml
 .vscode/settings.json
