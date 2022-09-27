@@ -13,7 +13,7 @@
 		"url": "https://github.com/moalamri/vscode-inline-fold"
 	},
 	"engines": {
-		"vscode": "^1.68.1"
+		"vscode": "^1.71.0"
 	},
 	"categories": [
 		"Visualization",
@@ -54,9 +54,10 @@
 					},
 					"minItems": 1,
 					"default": [
+						"vue",
 						"html",
 						"svelte",
-						"vue",
+						"vue-html",
 						"php",
 						"blade",
 						"erb",
