@@ -1,4 +1,4 @@
-import { DecorationOptions, Position, Range, Selection, TextEditor, TextEditorDecorationType, WorkspaceConfiguration } from "vscode";
+import { DecorationOptions, Position, Range, TextEditor, TextEditorDecorationType, WorkspaceConfiguration } from "vscode";
 import { maskDecorationOptions, noDecoration, unfoldedDecorationOptions } from "./decoration";
 import { Configs } from "./enums";
 
@@ -79,6 +79,7 @@ export class Decorator {
     const regEx: RegExp = RegExp(this.ParsedRegexString, this.WorkspaceConfigs.get(Configs.regexFlags));
     const text: string = this.CurrentEditor.document.getText();
     const decorators: DecorationOptions[] = [];
+    const shouldFoldOnLineSelect = this.WorkspaceConfigs.get(Configs.unfoldOnLineSelect) as boolean
 
     let match;
     while (match = regEx.exec(text)) {
@@ -120,7 +121,6 @@ export class Decorator {
       .filter((r) => !r.contains(this.CurrentEditor.selection) && !this.CurrentEditor.selection.contains(r))
       .filter((r) => !this.CurrentEditor.selections.find((s) => r.contains(s)))
 
-    const shouldFoldOnLineSelect = this.WorkspaceConfigs.get(Configs.unfoldOnLineSelect) as boolean
     if (shouldFoldOnLineSelect){
       const isInTheLineRange = (range : Range , targetRange : Range) => {
         return range.start.line <= targetRange.start.line && range.end.line >= targetRange.start.line
