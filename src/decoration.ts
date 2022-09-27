@@ -31,7 +31,6 @@ export class DecoratorTypeOptions {
         color: ExtSettings.Get<string>(Settings.maskColor),
       },
       after: {
-        margin: "+1ch",
         contentText: ExtSettings.Get<string>(Settings.after)
       },
       letterSpacing: "-2ch",
