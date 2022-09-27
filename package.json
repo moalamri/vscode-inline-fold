@@ -3,7 +3,7 @@
 	"displayName": "Inline fold",
 	"description": "A custom decorator that \"fold\" matching content in single line",
 	"icon": "res/icon.png",
-	"version": "0.1.7",
+	"version": "0.1.8",
 	"publisher": "moalamri",
 	"homepage": "https://github.com/moalamri/vscode-inline-fold",
 	"bugs": "https://github.com/moalamri/vscode-inline-fold/issues",
@@ -34,9 +34,15 @@
 			"type": "object",
 			"title": "Inline fold settings",
 			"properties": {
+				"inlineFold.enabled": {
+					"type": "boolean",
+					"order": 0,
+					"description": "Set the default state of inline fold when opening a file",
+					"default": true
+				},
 				"inlineFold.supportedLanguages": {
 					"type": "array",
-					"order": 0,
+					"order": 1,
 					"description": "Supported languages",
 					"items": {
 						"type": "string",
@@ -62,7 +68,7 @@
 				},
 				"inlineFold.regex": {
 					"type": "string",
-					"order": 1,
+					"order": 2,
 					"description": "Regex to match",
 					"default": "(class|className)=[`'{\"]([^`'\"}]+)[`'\"}]",
 					"examples": [
@@ -73,7 +79,7 @@
 				},
 				"inlineFold.regexFlags": {
 					"type": "string",
-					"order": 2,
+					"order": 3,
 					"description": "Regex flags",
 					"default": "g",
 					"examples": [
@@ -83,7 +89,7 @@
 				},
 				"inlineFold.regexGroup": {
 					"type": "string",
-					"order": 3,
+					"order": 4,
 					"description": "Regex capturing group number that will be folded",
 					"default": "2",
 					"examples": [
@@ -93,7 +99,7 @@
 				},
 				"inlineFold.maskChar": {
 					"type": "string",
-					"order": 4,
+					"order": 5,
 					"description": "The mask that covers the folded text",
 					"default": "◦◦◦",
 					"examples": [
@@ -104,7 +110,7 @@
 				},
 				"inlineFold.maskColor": {
 					"type": "string",
-					"order": 5,
+					"order": 6,
 					"description": "The color of the covering mask in hex",
 					"default": "#68D7AC",
 					"examples": [
@@ -114,7 +120,7 @@
 				},
 				"inlineFold.unfoldedOpacity": {
 					"type": "number",
-					"order": 6,
+					"order": 7,
 					"description": "The opacity of the unfolded text (from 0 to 1)",
 					"default": 0.7,
 					"enum": [
@@ -133,7 +139,7 @@
 				},
 				"inlineFold.after": {
 					"type": "string",
-					"order": 7,
+					"order": 8,
 					"description": "(Optional) Add any text/character to be appended to the folded text",
 					"default": "",
 					"examples": [
@@ -144,7 +150,7 @@
 				},
 				"inlineFold.unfoldOnLineSelect": {
 					"type": "boolean",
-					"order": 8,
+					"order": 9,
 					"description": "(Optional) unfold the line when any part of the line is selected",
 					"default": false
 				}

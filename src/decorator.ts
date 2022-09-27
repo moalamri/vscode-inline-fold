@@ -1,4 +1,4 @@
-import { DecorationOptions, Position, Range, TextEditor, TextEditorDecorationType, WorkspaceConfiguration } from "vscode";
+import { DecorationOptions, Position, Range, TextEditor, TextEditorDecorationType, workspace, WorkspaceConfiguration } from "vscode";
 import { maskDecorationOptions, noDecoration, unfoldedDecorationOptions } from "./decoration";
 import { Configs } from "./enums";
 
@@ -12,6 +12,7 @@ export class Decorator {
   SupportedLanguages: string[] = [];
   Offset: number = 30;
   Active: boolean = true;
+  AutoFold: boolean = workspace.getConfiguration(Configs.identifier).get(Configs.autoFold);
   StartLine: number = 0;
   EndLine: number = 0;
 
@@ -34,15 +35,25 @@ export class Decorator {
   * @param n number
   */
   startLine(n: number) {
-    this.StartLine = n - this.Offset <= 0 ? 0 : n - this.Offset;
+    // We want to make sure that the start line is not less than 0
+    if(n - this.Offset <= 0) {
+      this.StartLine = 0;
+    } else {
+      this.StartLine = n - this.Offset;
+    }
   }
 
   /**
   * Set the number of the ending line of where the decoration should be applied.
   * @param n number
   */
-  endLine(n: number) {
-    this.EndLine = n + this.Offset >= this.CurrentEditor.document.lineCount ? this.CurrentEditor.document.lineCount : n + this.Offset;
+   endLine(n: number) {
+    // We want to make sure that the end line is not greater than the total lines
+    if(n + this.Offset >= this.CurrentEditor.document.lineCount) {
+      this.EndLine = this.CurrentEditor.document.lineCount - 1;
+    } else {
+      this.EndLine = n + this.Offset;
+    }
   }
 
   /**
@@ -51,6 +62,13 @@ export class Decorator {
   toggle() {
     this.Active = !this.Active;
     this.updateDecorations();
+  }
+
+  /**
+   * Set the default active state of the decorator
+   */
+  setAutoFold() {
+    this.AutoFold = this.WorkspaceConfigs.get(Configs.autoFold);
   }
 
   /**
@@ -64,6 +82,7 @@ export class Decorator {
     this.MaskDecoration = maskDecorationOptions(extConfs);
     this.NoDecorations = noDecoration();
     this.ParsedRegexString = this.parseRegexString(extConfs.get(Configs.regex), extConfs.get(Configs.regexGroup) || 1);
+    this.setAutoFold();
   }
 
 
@@ -96,8 +115,9 @@ export class Decorator {
       /* Creating a new range object from the calculated positions. */
       const range = new Range(startFoldPosition, endFoldPosition);
 
-      /* Checking if the toggle command is active or not. If it is not active, it will remove all decorations. */
-      if (!this.Active) {
+      /* Checking if the toggle command or default state is active or not. 
+      * If it is not active, it will remove all decorations. */
+      if (!this.Active || !this.AutoFold) {
         this.CurrentEditor.setDecorations(this.NoDecorations, []);
         break;
       }

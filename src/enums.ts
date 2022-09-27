@@ -3,6 +3,7 @@ export enum Commands {
 }
 export enum Configs {
    identifier = "inlineFold",
+   autoFold = "autoFold",
    regex = "regex",
    regexFlags = "regexFlags",
    regexGroup = "regexGroup",
