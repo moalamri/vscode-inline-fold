@@ -1,38 +1,78 @@
-import { window, DecorationRangeBehavior, WorkspaceConfiguration, TextEditorDecorationType } from "vscode";
-import { Configs } from "./enums";
+import { DecorationOptions, DecorationRangeBehavior, DecorationRenderOptions, Range, TextEditorDecorationType, window } from "vscode";
+import { ExtSettings } from "./settings";
+import { Settings } from "./enums";
 
 /**
- * The unfolded text decoration
- * @param extConfs Workspace configs
- * @returns TextEditorDecorationType with custom modifications
+ * With each time the decorator is triggered, and the method setDecoration is called,
+ * The extension will create a new decoration type with sequential numbers. This will
+ * Create large number of decoration types which will overlapse each other.
+ * This class DecoratorTypeOptions is used to cache the decoration type for each trigger
+ * To only have single applied set of decoration type per language id.
+ * on demand.
  */
-export const unfoldedDecorationOptions = (extConfs: WorkspaceConfiguration): TextEditorDecorationType => window.createTextEditorDecorationType({
-  rangeBehavior: DecorationRangeBehavior.ClosedClosed,
-  opacity: extConfs.get(Configs.unfoldedOpacity).toString()
-});
+export class DecoratorTypeOptions {
+  private cache = new Map<string, TextEditorDecorationType>();
 
-/**
- * The decoration of the mask for the folded text
- * @param extConfs Workspace configs
- * @returns TextEditorDecorationType with custom modifications
- */
-export const maskDecorationOptions = (extConfs: WorkspaceConfiguration): TextEditorDecorationType => window.createTextEditorDecorationType({
-  before: {
-    contentText: extConfs.get(Configs.maskChar),
-    color: extConfs.get(Configs.maskColor)
-  },
-  after: {
-    contentText: extConfs.get(Configs.after),
-  },
-  letterSpacing: "-1ch",
-  textDecoration: "none; display: none;"
-});
+  public ClearCache() {
+    this.cache.clear();
+  }
 
-/**
- * This is used to reset the decorations when toggle command is fired
- * @param extConfs Workspace configs
- * @returns TextEditorDecorationType with custom modifications
- */
-export const noDecoration = (): TextEditorDecorationType => window.createTextEditorDecorationType({
-  rangeBehavior: DecorationRangeBehavior.ClosedClosed,
-})
+  public UnfoldedDecorationType = (langId: string /* To use later for lang scoped configs */): DecorationRenderOptions => {
+    return {
+      rangeBehavior: DecorationRangeBehavior.ClosedClosed,
+      opacity: ExtSettings.Get<string>(Settings.unfoldedOpacity).toString()
+    }
+  }
+
+  public MatchedDecorationType = (langId: string /* To use later for lang scoped configs */): DecorationRenderOptions => {
+    return {
+      before: {
+        contentText: ExtSettings.Get<string>(Settings.maskChar),
+        color: ExtSettings.Get<string>(Settings.maskColor),
+      },
+      after: {
+        contentText: ExtSettings.Get<string>(Settings.after)
+      },
+      letterSpacing: "-2ch",
+      textDecoration: "none; display: none;"
+    }
+  };
+
+  public UnfoldDecorationTypeCache(langId: string): TextEditorDecorationType {
+    return this.cache.has(langId) ? this.cache.get(langId) as TextEditorDecorationType :
+      this.cache.set(langId, window.createTextEditorDecorationType(this.UnfoldedDecorationType(langId)))
+        .get(langId);
+  }
+
+  public MaskDecorationTypeCache(langId: string): TextEditorDecorationType {
+    return this.cache.has(langId) ? this.cache.get(langId) as TextEditorDecorationType :
+      this.cache.set(langId, window.createTextEditorDecorationType(this.MatchedDecorationType(langId)))
+        .get(langId);
+  }
+
+  public PlainDecorationTypeCache(langId: string): TextEditorDecorationType {
+    return this.cache.has(langId) ? this.cache.get(langId) as TextEditorDecorationType: 
+      this.cache.set(langId, window.createTextEditorDecorationType(this.PlainDecorationType()))
+        .get(langId);
+  }
+
+  public MatchedDecorationOptions = (range: Range): DecorationOptions => {
+    return {
+      range
+    }
+  }
+
+  public UnfoldedDecorationOptions = (range: Range, text: string): DecorationOptions => {
+    return {
+      range,
+      hoverMessage: `Full text: ${text}`,
+    }
+  }
+
+  public PlainDecorationType = (): DecorationRenderOptions => {
+    return { rangeBehavior: DecorationRangeBehavior.ClosedClosed }
+  }
+
+  constructor () { }
+
+}

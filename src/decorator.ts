@@ -1,18 +1,16 @@
-import { DecorationOptions, Position, Range, TextEditor, TextEditorDecorationType, workspace, WorkspaceConfiguration } from "vscode";
-import { maskDecorationOptions, noDecoration, unfoldedDecorationOptions } from "./decoration";
-import { Configs } from "./enums";
+import { DecorationOptions, Position, Range, TextEditor, WorkspaceConfiguration } from "vscode";
+import { ExtSettings } from "./settings";
+import { DecoratorTypeOptions } from "./decoration";
+import { Settings } from "./enums";
+import { Cache } from "./cache";
 
 export class Decorator {
-  WorkspaceConfigs: WorkspaceConfiguration;
-  UnfoldedDecoration: TextEditorDecorationType;
-  MaskDecoration: TextEditorDecorationType;
-  NoDecorations: TextEditorDecorationType;
+  TextDecorationOptions = new DecoratorTypeOptions();
   CurrentEditor: TextEditor;
   ParsedRegexString: string;
   SupportedLanguages: string[] = [];
-  Offset: number = 30;
   Active: boolean = true;
-  AutoFold: boolean = workspace.getConfiguration(Configs.identifier).get(Configs.autoFold);
+  Offset: number = 30;
   StartLine: number = 0;
   EndLine: number = 0;
 
@@ -35,8 +33,7 @@ export class Decorator {
   * @param n number
   */
   startLine(n: number) {
-    // We want to make sure that the start line is not less than 0
-    if(n - this.Offset <= 0) {
+    if (n - this.Offset < 0) {
       this.StartLine = 0;
     } else {
       this.StartLine = n - this.Offset;
@@ -47,10 +44,9 @@ export class Decorator {
   * Set the number of the ending line of where the decoration should be applied.
   * @param n number
   */
-   endLine(n: number) {
-    // We want to make sure that the end line is not greater than the total lines
-    if(n + this.Offset >= this.CurrentEditor.document.lineCount) {
-      this.EndLine = this.CurrentEditor.document.lineCount - 1;
+  endLine(n: number) {
+    if (n + this.Offset > this.CurrentEditor.document.lineCount) {
+      this.EndLine = this.CurrentEditor.document.lineCount;
     } else {
       this.EndLine = n + this.Offset;
     }
@@ -60,15 +56,8 @@ export class Decorator {
   * Set the active state of the decorator (used for command)
   */
   toggle() {
-    this.Active = !this.Active;
+    Cache.ToggleState();
     this.updateDecorations();
-  }
-
-  /**
-   * Set the default active state of the decorator
-   */
-  setAutoFold() {
-    this.AutoFold = this.WorkspaceConfigs.get(Configs.autoFold);
   }
 
   /**
@@ -76,49 +65,40 @@ export class Decorator {
   * @param extConfs: Workspace configs
   */
   updateConfigs(extConfs: WorkspaceConfiguration) {
-    this.WorkspaceConfigs = extConfs;
-    this.SupportedLanguages = extConfs.get(Configs.supportedLanguages) || [];
-    this.UnfoldedDecoration = unfoldedDecorationOptions(extConfs);
-    this.MaskDecoration = maskDecorationOptions(extConfs);
-    this.NoDecorations = noDecoration();
-    this.ParsedRegexString = this.parseRegexString(extConfs.get(Configs.regex), extConfs.get(Configs.regexGroup) || 1);
-    this.setAutoFold();
+    ExtSettings.Update(extConfs);
+    this.SupportedLanguages = ExtSettings.Get<string[]>(Settings.supportedLanguages);
+    this.TextDecorationOptions.ClearCache();
   }
 
-
   updateDecorations() {
-    if (
-      !this.SupportedLanguages ||
-      !this.ParsedRegexString ||
-      !this.SupportedLanguages.includes(this.CurrentEditor.document.languageId)) {
+    if (!this.SupportedLanguages || !this.SupportedLanguages.includes(this.CurrentEditor.document.languageId)) {
       return;
     }
 
-    const regexGroup: number = parseInt(this.WorkspaceConfigs.get(Configs.regexGroup)) || 1;
-    const regEx: RegExp = RegExp(this.ParsedRegexString, this.WorkspaceConfigs.get(Configs.regexFlags));
+    const langId: string = this.CurrentEditor.document.languageId;
     const text: string = this.CurrentEditor.document.getText();
-    const decorators: DecorationOptions[] = [];
-    const shouldFoldOnLineSelect = this.WorkspaceConfigs.get(Configs.unfoldOnLineSelect) as boolean
-
+    const regEx: RegExp = RegExp(ExtSettings.Get<RegExp>(Settings.regex), ExtSettings.Get<string>(Settings.regexFlags));
+    const regexGroup: number = ExtSettings.Get<number>(Settings.regexGroup) as number | 1;
+    const matchDecorationType = this.TextDecorationOptions.MaskDecorationTypeCache(langId);
+    const unfoldDecorationType = this.TextDecorationOptions.UnfoldDecorationTypeCache(langId);
+    const plainDecorationType = this.TextDecorationOptions.PlainDecorationTypeCache(langId);
+    const unfoldDecorationOptions: DecorationOptions[] = [];
+    const matchDecorationOptions: DecorationOptions[] = [];
+    const unFoldOnLineSelect = ExtSettings.Get<boolean>(Settings.unfoldOnLineSelect);
     let match;
-    while (match = regEx.exec(text)) {
-      if (match.length <= regexGroup + 1) {
-        console.error("The regex was wrong");
-        break;
-      }
-      const foldIndex = match[1].length;
-      const foldEndIndex = match[1 + regexGroup].length;
+    this.Active = Cache.State;
+    while ((match = regEx.exec(text)) !== null) {
 
-      // match.index is the start of the entire match
-      const startFoldPosition = this.startPositionLine([match.index, foldIndex])
-      const endFoldPosition = this.endPositionLine([match.index, foldIndex + foldEndIndex])
-      /* Creating a new range object from the calculated positions. */
-      const range = new Range(startFoldPosition, endFoldPosition);
+      const matched = match[regexGroup];
+      const skip = match[0].indexOf(matched.replace(match[regexGroup])) + 1;
+      const foldIndex = match[0].substring(skip).indexOf(matched) + skip;
+      const startPosition = this.startPositionLine(match.index, foldIndex);
+      const endPosition = this.endPositionLine(match.index, foldIndex, matched.length);
+      const range = new Range(startPosition, endPosition);
 
-      /* Checking if the toggle command or default state is active or not. 
-      * If it is not active, it will remove all decorations. */
-      if (!this.Active || !this.AutoFold) {
-        this.CurrentEditor.setDecorations(this.NoDecorations, []);
+      /* Checking if the toggle command is active or not. If it is not active, it will remove all decorations. */
+      if (Cache.State === false) {
+        this.CurrentEditor.setDecorations(plainDecorationType, []);
         break;
       }
 
@@ -127,70 +107,28 @@ export class Decorator {
         continue;
       }
 
-      /* Pushing the range and the hoverMessage to the decorators array to apply later. */
-      decorators.push({
-        range,
-        hoverMessage: `Full text **${match[regexGroup + 1]}**`
-      });
-    }
-
-    this.CurrentEditor.setDecorations(this.UnfoldedDecoration, decorators);
-
-    let decorationsToFold = decorators
-      .map(({ range }) => range)
-      .filter((r) => !r.contains(this.CurrentEditor.selection) && !this.CurrentEditor.selection.contains(r))
-      .filter((r) => !this.CurrentEditor.selections.find((s) => r.contains(s)))
-
-    if (shouldFoldOnLineSelect){
-      const isInTheLineRange = (range : Range , targetRange : Range) => {
-        return range.start.line <= targetRange.start.line && range.end.line >= targetRange.start.line
+      // The only possible way to fix tooltip hover flickering
+      if (this.CurrentEditor.selection.contains(range) ||
+        this.CurrentEditor.selections.find(s => range.contains(s))) {
+        unfoldDecorationOptions.push(this.TextDecorationOptions.UnfoldedDecorationOptions(new Range(startPosition, endPosition), matched));
+      } else {
+        matchDecorationOptions.push(this.TextDecorationOptions.MatchedDecorationOptions(range));
       }
-      decorationsToFold = decorationsToFold
-        .filter((r) => !isInTheLineRange(this.CurrentEditor.selection , r))
-        .filter((r) => !this.CurrentEditor.selections.find((s) => isInTheLineRange(s , r)))
     }
 
-    this.CurrentEditor.setDecorations(
-      this.MaskDecoration,
-      decorationsToFold
-    )
+    this.CurrentEditor.setDecorations(unfoldDecorationType, unfoldDecorationOptions);
+    this.CurrentEditor.setDecorations(matchDecorationType, matchDecorationOptions);
   }
 
-  /**
-   * Parse the regex in such a way that the to-be-folded group is always group number 2.
-   */
-  parseRegexString(reg: string, regexGroup: number): string {
-    // find the start of the to-be-folded group
-    const foldStart = reg.split('(', regexGroup).join('(').length;
-
-    // place a ( at the front and a ) before the to-be-folded group
-    reg = '(' + reg.substring(0, foldStart) + ')' + reg.substring(foldStart);
-    return reg;
-  }
-
-  /**
-   * It sums an array of numbers and returns a Position object that 
-   * represents the end position of the matched column.
-   * 
-   * @param totalOffset number[]
-   * @return The position of the cursor in the document.
-   */
-  startPositionLine(totalOffset: any): Position {
+  startPositionLine(matchIndex: number, startIndex: number): Position {
     return this.CurrentEditor.document.positionAt(
-      totalOffset.reduce((partialSum: number, a: number) => partialSum + a, 0)
+      matchIndex + startIndex
     );
   }
 
-  /**
-   * It takes an array of numbers, and returns a Position object that 
-   * represents the end position of the matched column.
-   * 
-   * @param totalOffset number[]
-   * @return The position of the end of the line.
-   */
-  endPositionLine(totalOffset: any): Position {
+  endPositionLine(matchIndex: number, startIndex: number, length: number): Position {
     return this.CurrentEditor.document.positionAt(
-      totalOffset.reduce((thisSum: number, next: number) => thisSum + next, 0)
+      matchIndex + startIndex + length
     );
   }
 
