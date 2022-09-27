@@ -1,7 +1,7 @@
 export enum Commands {
    InlineFoldToggle = "inlineFold.toggle",
 }
-export enum Configs {
+export enum Settings {
    identifier = "inlineFold",
    autoFold = "autoFold",
    regex = "regex",
