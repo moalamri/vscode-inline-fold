@@ -17,24 +17,25 @@ export class DecoratorTypeOptions {
     this.cache.clear();
   }
 
-  public UnfoldedDecorationType = (langId: string /* To use later for lang scoped configs */): DecorationRenderOptions => {
+  public UnfoldedDecorationType = (langId?: string /* To use later for lang scoped configs */): DecorationRenderOptions => {
     return {
       rangeBehavior: DecorationRangeBehavior.ClosedClosed,
-      opacity: ExtSettings.Get<string>(Settings.unfoldedOpacity).toString()
+      opacity: ExtSettings.Get<string>(Settings.unfoldedOpacity)
     }
   }
 
-  public MatchedDecorationType = (langId: string /* To use later for lang scoped configs */): DecorationRenderOptions => {
+  public MatchedDecorationType = (langId?: string /* To use later for lang scoped configs */): DecorationRenderOptions => {
     return {
       before: {
         contentText: ExtSettings.Get<string>(Settings.maskChar),
         color: ExtSettings.Get<string>(Settings.maskColor),
       },
       after: {
+        margin: "+1ch",
         contentText: ExtSettings.Get<string>(Settings.after)
       },
       letterSpacing: "-2ch",
-      textDecoration: "none; display: none;"
+      textDecoration: "none; display: none;",
     }
   };
 
@@ -54,19 +55,6 @@ export class DecoratorTypeOptions {
     return this.cache.has(langId) ? this.cache.get(langId) as TextEditorDecorationType: 
       this.cache.set(langId, window.createTextEditorDecorationType(this.PlainDecorationType()))
         .get(langId);
-  }
-
-  public MatchedDecorationOptions = (range: Range): DecorationOptions => {
-    return {
-      range
-    }
-  }
-
-  public UnfoldedDecorationOptions = (range: Range, text: string): DecorationOptions => {
-    return {
-      range,
-      hoverMessage: `Full text: ${text}`,
-    }
   }
 
   public PlainDecorationType = (): DecorationRenderOptions => {

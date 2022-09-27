@@ -47,7 +47,7 @@ export function activate(context: ExtensionContext) {
 
    const changeConfiguration = workspace.onDidChangeConfiguration((event) => {
       if (event.affectsConfiguration(Settings.identifier)) {
-         if(!event.affectsConfiguration(Settings.autoFold)) {
+         if (!event.affectsConfiguration(Settings.autoFold)) {
             Cache.ClearCache();
          }
          decorator.updateConfigs(workspace.getConfiguration(Settings.identifier));

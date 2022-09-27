@@ -5,11 +5,10 @@ import { Settings } from "./enums";
 import { Cache } from "./cache";
 
 export class Decorator {
-  TextDecorationOptions = new DecoratorTypeOptions();
+  TDOs = new DecoratorTypeOptions();
   CurrentEditor: TextEditor;
   ParsedRegexString: string;
   SupportedLanguages: string[] = [];
-  Active: boolean = true;
   Offset: number = 30;
   StartLine: number = 0;
   EndLine: number = 0;
@@ -67,7 +66,7 @@ export class Decorator {
   updateConfigs(extConfs: WorkspaceConfiguration) {
     ExtSettings.Update(extConfs);
     this.SupportedLanguages = ExtSettings.Get<string[]>(Settings.supportedLanguages);
-    this.TextDecorationOptions.ClearCache();
+    this.TDOs.ClearCache();
   }
 
   updateDecorations() {
@@ -75,18 +74,19 @@ export class Decorator {
       return;
     }
 
-    const langId: string = this.CurrentEditor.document.languageId;
     const text: string = this.CurrentEditor.document.getText();
-    const regEx: RegExp = RegExp(ExtSettings.Get<RegExp>(Settings.regex), ExtSettings.Get<string>(Settings.regexFlags));
-    const regexGroup: number = ExtSettings.Get<number>(Settings.regexGroup) as number | 1;
-    const matchDecorationType = this.TextDecorationOptions.MaskDecorationTypeCache(langId);
-    const unfoldDecorationType = this.TextDecorationOptions.UnfoldDecorationTypeCache(langId);
-    const plainDecorationType = this.TextDecorationOptions.PlainDecorationTypeCache(langId);
-    const unfoldDecorationOptions: DecorationOptions[] = [];
-    const matchDecorationOptions: DecorationOptions[] = [];
+    const regEx: RegExp = RegExp(ExtSettings.Get<RegExp>(Settings.regex), 
+    ExtSettings.Get<string>(Settings.regexFlags));
+    const langId: string = this.CurrentEditor.document.languageId;
     const unFoldOnLineSelect = ExtSettings.Get<boolean>(Settings.unfoldOnLineSelect);
+    const regexGroup: number = ExtSettings.Get<number>(Settings.regexGroup) as number | 1;
+    const matchDecorationType = this.TDOs.MaskDecorationTypeCache(langId);
+    const plainDecorationType = this.TDOs.PlainDecorationTypeCache(langId);
+    const unfoldDecorationType = this.TDOs.UnfoldDecorationTypeCache(langId);
+    const matchDecorationOptions: DecorationOptions[] = [];
+    const unfoldDecorationOptions: DecorationOptions[] = [];
+
     let match;
-    this.Active = Cache.State;
     while ((match = regEx.exec(text)) !== null) {
 
       const matched = match[regexGroup];
@@ -96,8 +96,9 @@ export class Decorator {
       const endPosition = this.endPositionLine(match.index, foldIndex, matched.length);
       const range = new Range(startPosition, endPosition);
 
-      /* Checking if the toggle command is active or not. If it is not active, it will remove all decorations. */
-      if (Cache.State === false) {
+      /* Checking if the toggle command is active or not. without conflicts with default state settings.
+         If it is not active, it will remove all decorations. */
+      if (!Cache.State) {
         this.CurrentEditor.setDecorations(plainDecorationType, []);
         break;
       }
@@ -107,12 +108,15 @@ export class Decorator {
         continue;
       }
 
-      // The only possible way to fix tooltip hover flickering
+      /* Checking if the range is selected by the user. 
+         first check is for single selection, second is for multiple cursor selections.
+         or if the user has enabled the unfoldOnLineSelect option. */
       if (this.CurrentEditor.selection.contains(range) ||
-        this.CurrentEditor.selections.find(s => range.contains(s))) {
-        unfoldDecorationOptions.push(this.TextDecorationOptions.UnfoldedDecorationOptions(new Range(startPosition, endPosition), matched));
+        this.CurrentEditor.selections.find(s => range.contains(s)) ||
+        unFoldOnLineSelect && this.CurrentEditor.selections.find(s => s.start.line === range.start.line)) {
+        unfoldDecorationOptions.push({ range });
       } else {
-        matchDecorationOptions.push(this.TextDecorationOptions.MatchedDecorationOptions(range));
+        matchDecorationOptions.push({ range });
       }
     }
 
