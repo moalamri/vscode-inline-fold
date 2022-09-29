@@ -28,7 +28,7 @@ class ExtensionSettings {
    * @returns Language's scoped configuration or fall back to global configuration
    */
   public Get<T>(_section: Settings): T {
-    return this.configs.get<T>(_section);
+    return this.configs.get<T>(_section) as T;
   }
 
   public Regex(): RegExp {

@@ -1,8 +1,8 @@
-import { DecorationOptions, Position, Range, TextEditor, WorkspaceConfiguration } from "vscode";
-import { ExtSettings } from "./settings";
+import { Position, Range, TextEditor, WorkspaceConfiguration } from "vscode";
+import { Cache } from "./cache";
 import { DecoratorTypeOptions } from "./decoration";
 import { Settings } from "./enums";
-import { Cache } from "./cache";
+import { ExtSettings } from "./settings";
 
 export class Decorator {
   TDOs = new DecoratorTypeOptions();
@@ -80,11 +80,10 @@ export class Decorator {
     const unFoldOnLineSelect = ExtSettings.Get<boolean>(Settings.unfoldOnLineSelect);
     const regexGroup: number = ExtSettings.Get<number>(Settings.regexGroup) as number | 1;
     const matchDecorationType = this.TDOs.MaskDecorationTypeCache(langId);
-    const plainDecorationType = this.TDOs.PlainDecorationTypeCache(langId);
-    const unfoldDecorationType = this.TDOs.UnfoldDecorationTypeCache(langId);
-    const matchDecorationOptions: DecorationOptions[] = [];
-    const unfoldDecorationOptions: DecorationOptions[] = [];
-
+    const plainDecorationType = this.TDOs.PlainDecorationType();
+    const unfoldDecorationType = this.TDOs.UnfoldDecorationType();
+    const foldRanges: Range[] = [];
+    const unfoldRanges: Range[] = [];
     let match;
     while ((match = regEx.exec(text)) !== null) {
 
@@ -110,16 +109,19 @@ export class Decorator {
          first check is for single selection, second is for multiple cursor selections.
          or if the user has enabled the unfoldOnLineSelect option. */
       if (this.CurrentEditor.selection.contains(range) ||
-        this.CurrentEditor.selections.find(s => range.contains(s)) ||
-        unFoldOnLineSelect && this.CurrentEditor.selections.find(s => s.start.line === range.start.line)) {
-        unfoldDecorationOptions.push({ range });
+          this.CurrentEditor.selections.find(s => range.contains(s)) ||
+          unFoldOnLineSelect && this.CurrentEditor.selections.find(s => s.start.line === range.start.line)) {
+        unfoldRanges.push(range);
       } else {
-        matchDecorationOptions.push({ range });
+        foldRanges.push(range);
       }
     }
 
-    this.CurrentEditor.setDecorations(unfoldDecorationType, unfoldDecorationOptions);
-    this.CurrentEditor.setDecorations(matchDecorationType, matchDecorationOptions);
+    this.CurrentEditor.setDecorations(unfoldDecorationType, unfoldRanges);
+    this.CurrentEditor.setDecorations(
+      matchDecorationType,
+      foldRanges
+    )
   }
 
   startPositionLine(matchIndex: number, startIndex: number): Position {

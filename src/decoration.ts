@@ -1,5 +1,4 @@
-import path = require("path");
-import { DecorationRangeBehavior, DecorationRenderOptions, TextEditorDecorationType, Uri, window } from "vscode";
+import { DecorationRangeBehavior, TextEditorDecorationType, window } from "vscode";
 import { Settings } from "./enums";
 import { ExtSettings } from "./settings";
 
@@ -22,15 +21,15 @@ export class DecoratorTypeOptions {
   }
 
   /** @param langId To use later for lang scoped configs */
-  private UnfoldedDecorationType = (langId?: string): TextEditorDecorationType => {
+  public UnfoldDecorationType = (langId?: string): TextEditorDecorationType => {
     return window.createTextEditorDecorationType({
       rangeBehavior: DecorationRangeBehavior.ClosedOpen,
-      opacity: ExtSettings.Get<string>(Settings.unfoldedOpacity)
+      opacity: ExtSettings.Get<string>(Settings.unfoldedOpacity).toString()
     })
   }
 
   /** @param langId To use later for lang scoped configs */
-  private MatchedDecorationType = (langId?: string /* To use later for lang scoped configs */): TextEditorDecorationType => {
+  public MatchedDecorationType = (langId?: string /* To use later for lang scoped configs */): TextEditorDecorationType => {
     return window.createTextEditorDecorationType({
       before: {
         contentText: ExtSettings.Get<string>(Settings.maskChar),
@@ -44,32 +43,13 @@ export class DecoratorTypeOptions {
 
   };
 
-
-  private noDecoration = (): TextEditorDecorationType => window.createTextEditorDecorationType({})
-
-  public UnfoldDecorationTypeCache(langId: string): TextEditorDecorationType {
-    if (this.cache.has(langId)) {
-      return this.cache.get(langId) as TextEditorDecorationType;
-    }
-    const decorationType = this.UnfoldedDecorationType();
-    this.cache.set(langId, decorationType);
-    return decorationType;
-  }
+  public PlainDecorationType = (): TextEditorDecorationType => window.createTextEditorDecorationType({})
 
   public MaskDecorationTypeCache(langId: string): TextEditorDecorationType {
     if (this.cache.has(langId)) {
       return this.cache.get(langId) as TextEditorDecorationType;
     }
     const decorationType = this.MatchedDecorationType();
-    this.cache.set(langId, decorationType);
-    return decorationType;
-  }
-
-  public PlainDecorationTypeCache(langId: string): TextEditorDecorationType {
-    if (this.cache.has(langId)) {
-      return this.cache.get(langId) as TextEditorDecorationType;
-    }
-    const decorationType = this.noDecoration();
     this.cache.set(langId, decorationType);
     return decorationType;
   }
