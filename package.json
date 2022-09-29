@@ -95,7 +95,7 @@
 				"inlineFold.regexGroup": {
 					"type": "string",
 					"order": 4,
-					"description": "Regex capturing group number that will be folded",
+					"description": "Regex capture group number for content that will be folded",
 					"default": "2",
 					"examples": [
 						"1",

@@ -45,7 +45,8 @@ export class DecoratorTypeOptions {
 
   public PlainDecorationType = (): TextEditorDecorationType => window.createTextEditorDecorationType({})
 
-  public MaskDecorationTypeCache(langId: string): TextEditorDecorationType {
+  public MaskDecorationTypeCache(): TextEditorDecorationType {
+    const langId = window.activeTextEditor.document.languageId;
     if (this.cache.has(langId)) {
       return this.cache.get(langId) as TextEditorDecorationType;
     }

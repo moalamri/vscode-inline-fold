@@ -75,17 +75,16 @@ export class Decorator {
     }
 
     const regEx: RegExp = ExtSettings.Regex();
-    const text: string = this.CurrentEditor.document.getText();
-    const langId: string = this.CurrentEditor.document.languageId;
     const unFoldOnLineSelect = ExtSettings.Get<boolean>(Settings.unfoldOnLineSelect);
     const regexGroup: number = ExtSettings.Get<number>(Settings.regexGroup) as number | 1;
-    const matchDecorationType = this.TDOs.MaskDecorationTypeCache(langId);
+    const matchDecorationType = this.TDOs.MaskDecorationTypeCache();
     const plainDecorationType = this.TDOs.PlainDecorationType();
     const unfoldDecorationType = this.TDOs.UnfoldDecorationType();
     const foldRanges: Range[] = [];
     const unfoldRanges: Range[] = [];
+
     let match;
-    while ((match = regEx.exec(text)) !== null) {
+    while ((match = regEx.exec(this.CurrentEditor.document.getText())) !== null) {
 
       const matched = match[regexGroup];
       const foldIndex = match[0].lastIndexOf(matched);
