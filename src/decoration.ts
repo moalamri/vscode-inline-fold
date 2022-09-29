@@ -1,6 +1,7 @@
-import { DecorationOptions, DecorationRangeBehavior, DecorationRenderOptions, Range, TextEditorDecorationType, window } from "vscode";
-import { ExtSettings } from "./settings";
+import path = require("path");
+import { DecorationRangeBehavior, DecorationRenderOptions, TextEditorDecorationType, Uri, window } from "vscode";
 import { Settings } from "./enums";
+import { ExtSettings } from "./settings";
 
 /**
  * With each time the decorator is triggered, and the method setDecoration is called,
@@ -14,50 +15,63 @@ export class DecoratorTypeOptions {
   private cache = new Map<string, TextEditorDecorationType>();
 
   public ClearCache() {
+    this.cache.forEach((decOp) => {
+      decOp.dispose();
+    });
     this.cache.clear();
   }
 
-  public UnfoldedDecorationType = (langId?: string /* To use later for lang scoped configs */): DecorationRenderOptions => {
-    return {
-      rangeBehavior: DecorationRangeBehavior.ClosedClosed,
+  /** @param langId To use later for lang scoped configs */
+  private UnfoldedDecorationType = (langId?: string): TextEditorDecorationType => {
+    return window.createTextEditorDecorationType({
+      rangeBehavior: DecorationRangeBehavior.ClosedOpen,
       opacity: ExtSettings.Get<string>(Settings.unfoldedOpacity)
-    }
+    })
   }
 
-  public MatchedDecorationType = (langId?: string /* To use later for lang scoped configs */): DecorationRenderOptions => {
-    return {
+  /** @param langId To use later for lang scoped configs */
+  private MatchedDecorationType = (langId?: string /* To use later for lang scoped configs */): TextEditorDecorationType => {
+    return window.createTextEditorDecorationType({
       before: {
         contentText: ExtSettings.Get<string>(Settings.maskChar),
         color: ExtSettings.Get<string>(Settings.maskColor),
       },
       after: {
-        contentText: ExtSettings.Get<string>(Settings.after)
+        contentText: ExtSettings.Get<string>(Settings.after),
       },
-      letterSpacing: "-2ch",
-      textDecoration: "none; display: none;",
-    }
+      textDecoration: "none; display: none;"
+    });
+
   };
 
+
+  private noDecoration = (): TextEditorDecorationType => window.createTextEditorDecorationType({})
+
   public UnfoldDecorationTypeCache(langId: string): TextEditorDecorationType {
-    return this.cache.has(langId) ? this.cache.get(langId) as TextEditorDecorationType :
-      this.cache.set(langId, window.createTextEditorDecorationType(this.UnfoldedDecorationType(langId)))
-        .get(langId);
+    if (this.cache.has(langId)) {
+      return this.cache.get(langId) as TextEditorDecorationType;
+    }
+    const decorationType = this.UnfoldedDecorationType();
+    this.cache.set(langId, decorationType);
+    return decorationType;
   }
 
   public MaskDecorationTypeCache(langId: string): TextEditorDecorationType {
-    return this.cache.has(langId) ? this.cache.get(langId) as TextEditorDecorationType :
-      this.cache.set(langId, window.createTextEditorDecorationType(this.MatchedDecorationType(langId)))
-        .get(langId);
+    if (this.cache.has(langId)) {
+      return this.cache.get(langId) as TextEditorDecorationType;
+    }
+    const decorationType = this.MatchedDecorationType();
+    this.cache.set(langId, decorationType);
+    return decorationType;
   }
 
   public PlainDecorationTypeCache(langId: string): TextEditorDecorationType {
-    return this.cache.has(langId) ? this.cache.get(langId) as TextEditorDecorationType: 
-      this.cache.set(langId, window.createTextEditorDecorationType(this.PlainDecorationType()))
-        .get(langId);
-  }
-
-  public PlainDecorationType = (): DecorationRenderOptions => {
-    return { rangeBehavior: DecorationRangeBehavior.ClosedClosed }
+    if (this.cache.has(langId)) {
+      return this.cache.get(langId) as TextEditorDecorationType;
+    }
+    const decorationType = this.noDecoration();
+    this.cache.set(langId, decorationType);
+    return decorationType;
   }
 
   constructor () { }
