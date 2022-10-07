@@ -4,10 +4,13 @@
 
 > ### v 0.1.8:
 - feat: each session will have its own folding state (per file).
-- new: add an option for default folding state when new file is opened [#53](https://github.com/moalamri/vscode-inline-fold/issues/52) `inlineFold.autoFold`
-- new: add a new command to clear the current session folding state `Clear Cache`.
+- new: an option for default folding state when new file is opened [#53](https://github.com/moalamri/vscode-inline-fold/issues/52) `inlineFold.autoFold`
+- new: a command to clear the current session folding state `Clear Cache`.
 - fix: [#23](https://github.com/moalamri/vscode-inline-fold/issues/23)
 - fix: [#50](https://github.com/moalamri/vscode-inline-fold/issues/50) by [@e-medeiros](https://github.com/e-medeiros)
+- fix: [#46] by [@e-medeiros](https://github.com/e-medeiros)
+- fix: [#39] by [@e-medeiros](https://github.com/e-medeiros)
+- fix: [#20] by [@e-medeiros](https://github.com/e-medeiros)
 - perf: custom cache for the decorations per languageid (to avoid re-rendering the decorations when the language changes).
 
 > ### v 0.1.7
