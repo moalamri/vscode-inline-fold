@@ -26,6 +26,14 @@ The extension also enables folding of attribute values within HTML/JSX tags. It 
 </p>
 
 ## Examples
+### className in React Component
+These settings can help you fold your React component's className attribute values with template strings.
+```
+Regex to Match: (className)=(({(`|))|(['"`]))(.*?)(\2|(\4)})
+Regex Flags: g
+Regex Group: 6
+```
+
 ### SVG
 Embeded SVG also tend to have alot of code, that you just dont wanna focus on.
 So with this settings below you can fold the ugly part.
