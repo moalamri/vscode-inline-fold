@@ -8,9 +8,9 @@
 - new: a command to clear the current session folding state `Clear Cache`.
 - fix: [#23](https://github.com/moalamri/vscode-inline-fold/issues/23)
 - fix: [#50](https://github.com/moalamri/vscode-inline-fold/issues/50) by [@e-medeiros](https://github.com/e-medeiros)
-- fix: [#46] by [@e-medeiros](https://github.com/e-medeiros)
-- fix: [#39] by [@e-medeiros](https://github.com/e-medeiros)
-- fix: [#20] by [@e-medeiros](https://github.com/e-medeiros)
+- fix: [#46](https://github.com/moalamri/vscode-inline-fold/issues/46) by [@e-medeiros](https://github.com/e-medeiros)
+- fix: [#39](https://github.com/moalamri/vscode-inline-fold/issues/39) by [@e-medeiros](https://github.com/e-medeiros)
+- fix: [#20](https://github.com/moalamri/vscode-inline-fold/issues/20) by [@e-medeiros](https://github.com/e-medeiros)
 - perf: custom cache for the decorations per languageid (to avoid re-rendering the decorations when the language changes).
 
 > ### v 0.1.7
