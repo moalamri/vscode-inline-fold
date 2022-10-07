@@ -75,10 +75,10 @@
 					"type": "string",
 					"order": 2,
 					"description": "Regex to match",
-					"default": "(class|className)=[`'{\"]([^`'\"}]+)[`'\"}]",
+					"default": "(class|className)=(({(`|))|(['\"`]))(.*?)(\\2|(\\4)})",
 					"examples": [
+						"(class|className)=(({(`|))|(['\"`]))(.*?)(\\2|(\\4)})",
 						"(class|className)=[`'{\"]([^`'\"}]+)[`'\"}]",
-						"class=\"([a-zA-Z0-9-\\s]+)(?=\")",
 						"id=\"([a-zA-Z0-9-\\s]+)(?=\")"
 					]
 				},
@@ -96,10 +96,14 @@
 					"type": "string",
 					"order": 4,
 					"description": "Regex capture group number for content that will be folded",
-					"default": "2",
+					"default": "6",
 					"examples": [
 						"1",
-						"2"
+						"2",
+						"3",
+						"4",
+						"5",
+						"6"
 					]
 				},
 				"inlineFold.maskChar": {
