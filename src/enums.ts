@@ -1,8 +1,10 @@
 export enum Commands {
    InlineFoldToggle = "inlineFold.toggle",
+   InlineFoldClearCache = "inlineFold.clearCache",
 }
-export enum Configs {
+export enum Settings {
    identifier = "inlineFold",
+   autoFold = "autoFold",
    regex = "regex",
    regexFlags = "regexFlags",
    regexGroup = "regexGroup",

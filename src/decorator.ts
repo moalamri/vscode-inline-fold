@@ -1,17 +1,15 @@
-import { DecorationOptions, Position, Range, Selection, TextEditor, TextEditorDecorationType, WorkspaceConfiguration } from "vscode";
-import { maskDecorationOptions, noDecoration, unfoldedDecorationOptions } from "./decoration";
-import { Configs } from "./enums";
+import { Position, Range, TextEditor, WorkspaceConfiguration } from "vscode";
+import { Cache } from "./cache";
+import { DecoratorTypeOptions } from "./decoration";
+import { Settings } from "./enums";
+import { ExtSettings } from "./settings";
 
 export class Decorator {
-  WorkspaceConfigs: WorkspaceConfiguration;
-  UnfoldedDecoration: TextEditorDecorationType;
-  MaskDecoration: TextEditorDecorationType;
-  NoDecorations: TextEditorDecorationType;
+  TDOs = new DecoratorTypeOptions();
   CurrentEditor: TextEditor;
   ParsedRegexString: string;
   SupportedLanguages: string[] = [];
   Offset: number = 30;
-  Active: boolean = true;
   StartLine: number = 0;
   EndLine: number = 0;
 
@@ -34,7 +32,11 @@ export class Decorator {
   * @param n number
   */
   startLine(n: number) {
-    this.StartLine = n - this.Offset <= 0 ? 0 : n - this.Offset;
+    if (n - this.Offset < 0) {
+      this.StartLine = 0;
+    } else {
+      this.StartLine = n - this.Offset;
+    }
   }
 
   /**
@@ -42,14 +44,18 @@ export class Decorator {
   * @param n number
   */
   endLine(n: number) {
-    this.EndLine = n + this.Offset >= this.CurrentEditor.document.lineCount ? this.CurrentEditor.document.lineCount : n + this.Offset;
+    if (n + this.Offset > this.CurrentEditor.document.lineCount) {
+      this.EndLine = this.CurrentEditor.document.lineCount;
+    } else {
+      this.EndLine = n + this.Offset;
+    }
   }
 
   /**
   * Set the active state of the decorator (used for command)
   */
   toggle() {
-    this.Active = !this.Active;
+    Cache.ToggleState();
     this.updateDecorations();
   }
 
@@ -58,46 +64,38 @@ export class Decorator {
   * @param extConfs: Workspace configs
   */
   updateConfigs(extConfs: WorkspaceConfiguration) {
-    this.WorkspaceConfigs = extConfs;
-    this.SupportedLanguages = extConfs.get(Configs.supportedLanguages) || [];
-    this.UnfoldedDecoration = unfoldedDecorationOptions(extConfs);
-    this.MaskDecoration = maskDecorationOptions(extConfs);
-    this.NoDecorations = noDecoration();
-    this.ParsedRegexString = this.parseRegexString(extConfs.get(Configs.regex), extConfs.get(Configs.regexGroup) || 1);
+    ExtSettings.Update(extConfs);
+    this.SupportedLanguages = ExtSettings.Get<string[]>(Settings.supportedLanguages);
+    this.TDOs.ClearCache();
   }
 
-
   updateDecorations() {
-    if (
-      !this.SupportedLanguages ||
-      !this.ParsedRegexString ||
-      !this.SupportedLanguages.includes(this.CurrentEditor.document.languageId)) {
+    if (!this.SupportedLanguages || !this.SupportedLanguages.includes(this.CurrentEditor.document.languageId)) {
       return;
     }
 
-    const regexGroup: number = parseInt(this.WorkspaceConfigs.get(Configs.regexGroup)) || 1;
-    const regEx: RegExp = RegExp(this.ParsedRegexString, this.WorkspaceConfigs.get(Configs.regexFlags));
-    const text: string = this.CurrentEditor.document.getText();
-    const decorators: DecorationOptions[] = [];
+    const regEx: RegExp = ExtSettings.Regex();
+    const unFoldOnLineSelect = ExtSettings.Get<boolean>(Settings.unfoldOnLineSelect);
+    const regexGroup: number = ExtSettings.Get<number>(Settings.regexGroup) as number | 1;
+    const matchDecorationType = this.TDOs.MaskDecorationTypeCache();
+    const plainDecorationType = this.TDOs.PlainDecorationType();
+    const unfoldDecorationType = this.TDOs.UnfoldDecorationType();
+    const foldRanges: Range[] = [];
+    const unfoldRanges: Range[] = [];
 
     let match;
-    while (match = regEx.exec(text)) {
-      if (match.length <= regexGroup + 1) {
-        console.error("The regex was wrong");
-        break;
-      }
-      const foldIndex = match[1].length;
-      const foldEndIndex = match[1 + regexGroup].length;
+    while ((match = regEx.exec(this.CurrentEditor.document.getText())) !== null) {
 
-      // match.index is the start of the entire match
-      const startFoldPosition = this.startPositionLine([match.index, foldIndex])
-      const endFoldPosition = this.endPositionLine([match.index, foldIndex + foldEndIndex])
-      /* Creating a new range object from the calculated positions. */
-      const range = new Range(startFoldPosition, endFoldPosition);
+      const matched = match[regexGroup];
+      const foldIndex = match[0].lastIndexOf(matched);
+      const startPosition = this.startPositionLine(match.index, foldIndex);
+      const endPosition = this.endPositionLine(match.index, foldIndex, matched.length);
+      const range = new Range(startPosition, endPosition);
 
-      /* Checking if the toggle command is active or not. If it is not active, it will remove all decorations. */
-      if (!this.Active) {
-        this.CurrentEditor.setDecorations(this.NoDecorations, []);
+      /* Checking if the toggle command is active or not. without conflicts with default state settings.
+         If it is not active, it will remove all decorations. */
+      if (!Cache.State) {
+        this.CurrentEditor.setDecorations(plainDecorationType, []);
         break;
       }
 
@@ -106,71 +104,34 @@ export class Decorator {
         continue;
       }
 
-      /* Pushing the range and the hoverMessage to the decorators array to apply later. */
-      decorators.push({
-        range,
-        hoverMessage: `Full text **${match[regexGroup + 1]}**`
-      });
-    }
-
-    this.CurrentEditor.setDecorations(this.UnfoldedDecoration, decorators);
-
-    let decorationsToFold = decorators
-      .map(({ range }) => range)
-      .filter((r) => !r.contains(this.CurrentEditor.selection) && !this.CurrentEditor.selection.contains(r))
-      .filter((r) => !this.CurrentEditor.selections.find((s) => r.contains(s)))
-
-    const shouldFoldOnLineSelect = this.WorkspaceConfigs.get(Configs.unfoldOnLineSelect) as boolean
-    if (shouldFoldOnLineSelect){
-      const isInTheLineRange = (range : Range , targetRange : Range) => {
-        return range.start.line <= targetRange.start.line && range.end.line >= targetRange.start.line
+      /* Checking if the range is selected by the user. 
+         first check is for single selection, second is for multiple cursor selections.
+         or if the user has enabled the unfoldOnLineSelect option. */
+      if (this.CurrentEditor.selection.contains(range) ||
+          this.CurrentEditor.selections.find(s => range.contains(s)) ||
+          unFoldOnLineSelect && this.CurrentEditor.selections.find(s => s.start.line === range.start.line)) {
+        unfoldRanges.push(range);
+      } else {
+        foldRanges.push(range);
       }
-      decorationsToFold = decorationsToFold
-        .filter((r) => !isInTheLineRange(this.CurrentEditor.selection , r))
-        .filter((r) => !this.CurrentEditor.selections.find((s) => isInTheLineRange(s , r)))
     }
 
+    this.CurrentEditor.setDecorations(unfoldDecorationType, unfoldRanges);
     this.CurrentEditor.setDecorations(
-      this.MaskDecoration,
-      decorationsToFold
+      matchDecorationType,
+      foldRanges
     )
   }
 
-  /**
-   * Parse the regex in such a way that the to-be-folded group is always group number 2.
-   */
-  parseRegexString(reg: string, regexGroup: number): string {
-    // find the start of the to-be-folded group
-    const foldStart = reg.split('(', regexGroup).join('(').length;
-
-    // place a ( at the front and a ) before the to-be-folded group
-    reg = '(' + reg.substring(0, foldStart) + ')' + reg.substring(foldStart);
-    return reg;
-  }
-
-  /**
-   * It sums an array of numbers and returns a Position object that 
-   * represents the end position of the matched column.
-   * 
-   * @param totalOffset number[]
-   * @return The position of the cursor in the document.
-   */
-  startPositionLine(totalOffset: any): Position {
+  startPositionLine(matchIndex: number, startIndex: number): Position {
     return this.CurrentEditor.document.positionAt(
-      totalOffset.reduce((partialSum: number, a: number) => partialSum + a, 0)
+      matchIndex + startIndex
     );
   }
 
-  /**
-   * It takes an array of numbers, and returns a Position object that 
-   * represents the end position of the matched column.
-   * 
-   * @param totalOffset number[]
-   * @return The position of the end of the line.
-   */
-  endPositionLine(totalOffset: any): Position {
+  endPositionLine(matchIndex: number, startIndex: number, length: number): Position {
     return this.CurrentEditor.document.positionAt(
-      totalOffset.reduce((thisSum: number, next: number) => thisSum + next, 0)
+      matchIndex + startIndex + length
     );
   }
 

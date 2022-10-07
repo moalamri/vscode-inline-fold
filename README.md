@@ -1,12 +1,18 @@
 <p align="center">
-    <img width="128" alt="preview" src="https://user-images.githubusercontent.com/964077/179586355-6d90c66a-6812-4ab7-9657-4596dd1b2a62.png">
+    <img width="128" alt="preview" src="https://raw.githubusercontent.com/moalamri/vscode-inline-fold/master/res/icon.png">
 </p>
 <br />
 
-## Inline Fold - VSCode Extension
-> ⚠️ NOTICE: this extension is still under active development! ⚠️
+<h2 align="center"> Inline Fold - VSCode Extension </h2>
+<p align="center">
+<img alt="preview" src="https://vsmarketplacebadge.apphb.com/version-short/moalamri.inline-fold.svg">
+<img alt="preview" src="https://vsmarketplacebadge.apphb.com/downloads-short/moalamri.inline-fold.svg">
+<img alt="preview" src="https://vsmarketplacebadge.apphb.com/installs-short/moalamri.inline-fold.svg">
+<br/>
+<img alt="preview" src="https://vsmarketplacebadge.apphb.com/rating-star/moalamri.inline-fold.svg">
+</p>
 
-## VS Code Inline Fold Extension
+### Inline Fold
 
 VS Code Inline Fold extension mimics VS Code's [folding](https://code.visualstudio.com/docs/editor/codebasics#_folding) experience for inline code.
 This is especially useful when working with frameworks like Tailwind CSS which use lots of utility classes that often disfigure code visual structure. You can expand the folds by clicking on them. You can also configure the extension to target specific attributes in your markup.
@@ -16,25 +22,43 @@ The extension also enables folding of attribute values within HTML/JSX tags. It 
 <br />
 
 <p align="center">
-    <img width="650" alt="preview" src="https://user-images.githubusercontent.com/964077/179401349-4b217316-3099-47d0-a8b0-10fb2381d105.png">
+    <img width="650" alt="preview" src="https://raw.githubusercontent.com/moalamri/vscode-inline-fold/master/res/preview.png">
 </p>
 
-### SVG As For Another USE Case
+## Examples
+
+### React Component className value
+These settings can help you fold your React component's className attribute values with template strings.
+```
+Regex to Match: (className)=(({(`|))|(['"`]))(.*?)(\2|(\4)})
+Regex Flags: g
+Regex Group: 6
+```
+
+### Fold class/className value after set number of characters. [#60](https://github.com/moalamri/vscode-inline-fold/issues/60)
+Sometimes you have only a couple of short classnames which you don't necessarily want to fold, so you could modify the regex to only fold a list of classes if it's longer than 30 characters.
+**Note**: This doesn't work with template strings.
+```
+Regex to Match: (class|className)=[`'{"]([^`'"}]{30,})[`'"}]
+Regex Flags: g
+Regex Group: 2
+```
+
+### SVG
 Embeded SVG also tend to have alot of code, that you just dont wanna focus on.
 So with this settings below you can fold the ugly part.
+
+**Note**: Minfing SVG maybe required for better experience. Beside we looking forward that this extension will support multiple Regex soon.
 ```
 Regex to Match: <svg(\s*.*?\s*)<\/svg>
 Regex Flags: gs
 ```
-**Note**: Minfing SVG maybe required for better experience.Beside we looking forward that this extension will support multiple Regex soon.
+<p align="center">
+  <img width="40%" src="https://raw.githubusercontent.com/moalamri/vscode-inline-fold/master/res/svg-fold-settings.png">
+  <img width="40%" src="https://raw.githubusercontent.com/moalamri/vscode-inline-fold/master/res/svg-fold.png">
+</p>
 
-
-<div class="flex">
-    <img width="40%" alt="preview" src="https://github.com/n4j1Br4ch1D/vscode-inline-fold/blob/master/res/svg-fold.png">
-    <img width="40%" alt="preview" src="https://github.com/n4j1Br4ch1D/vscode-inline-fold/blob/master/res/svg-fold-settings.png">
-</div>
-
-### Available Settings
+## Available Settings
 - `inlineFold.regex` regex to match the code line
 - `inlineFold.regexFlags` regex flags
 - `inlineFold.regexGroup` regex group that match the code that should be folded
@@ -44,9 +68,10 @@ Regex Flags: gs
 - `inlineFold.after` an optional text/character that will be appended to the end of folded code
 - `inlineFold.supportedLanguages` a list of targeted language Ids
 - `inlineFold.unfoldOnLineSelect` unfold the line when any part of the line is selected
+- `inlineFold.autoFold` the default state of inline folding when opening a file
 
 
-### Running the extension
+## Running the extension
 You can install the extension <a href="https://marketplace.visualstudio.com/items?itemName=moalamri.inline-fold"> in the marketplace here</a>. If you encounter any issue or would like to contribute, <a href="https://github.com/moalamri/vscode-inline-fold">visit the GitHub page</a>.
 
 ### Notes
@@ -79,7 +104,7 @@ Current default language Ids (see [here](https://code.visualstudio.com/docs/lang
 See the project's <a href="CHANGELOG.md"> changelog</a> here.
 
 ### Contributors
-<a href="https://github.com/moalamri/vscode-inline-fold/graphs/contributors">
+<a href="https://github.com/moalamri/inline-fold/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=moalamri/vscode-inline-fold" />
 </a>
 

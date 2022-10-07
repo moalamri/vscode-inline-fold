@@ -1,38 +1,60 @@
-import { window, DecorationRangeBehavior, WorkspaceConfiguration, TextEditorDecorationType } from "vscode";
-import { Configs } from "./enums";
+import { DecorationRangeBehavior, TextEditorDecorationType, window } from "vscode";
+import { Settings } from "./enums";
+import { ExtSettings } from "./settings";
 
 /**
- * The unfolded text decoration
- * @param extConfs Workspace configs
- * @returns TextEditorDecorationType with custom modifications
+ * With each time the decorator is triggered, and the method setDecoration is called,
+ * The extension will create a new decoration type with sequential numbers. This will
+ * Create large number of decoration types which will overlapse each other.
+ * This class DecoratorTypeOptions is used to cache the decoration type for each trigger
+ * To only have single applied set of decoration type per language id.
+ * on demand.
  */
-export const unfoldedDecorationOptions = (extConfs: WorkspaceConfiguration): TextEditorDecorationType => window.createTextEditorDecorationType({
-  rangeBehavior: DecorationRangeBehavior.ClosedClosed,
-  opacity: extConfs.get(Configs.unfoldedOpacity).toString()
-});
+export class DecoratorTypeOptions {
+  private cache = new Map<string, TextEditorDecorationType>();
 
-/**
- * The decoration of the mask for the folded text
- * @param extConfs Workspace configs
- * @returns TextEditorDecorationType with custom modifications
- */
-export const maskDecorationOptions = (extConfs: WorkspaceConfiguration): TextEditorDecorationType => window.createTextEditorDecorationType({
-  before: {
-    contentText: extConfs.get(Configs.maskChar),
-    color: extConfs.get(Configs.maskColor)
-  },
-  after: {
-    contentText: extConfs.get(Configs.after),
-  },
-  letterSpacing: "-1ch",
-  textDecoration: "none; display: none;"
-});
+  public ClearCache() {
+    this.cache.forEach((decOp) => {
+      decOp.dispose();
+    });
+    this.cache.clear();
+  }
 
-/**
- * This is used to reset the decorations when toggle command is fired
- * @param extConfs Workspace configs
- * @returns TextEditorDecorationType with custom modifications
- */
-export const noDecoration = (): TextEditorDecorationType => window.createTextEditorDecorationType({
-  rangeBehavior: DecorationRangeBehavior.ClosedClosed,
-})
+  /** @param langId To use later for lang scoped configs */
+  public UnfoldDecorationType = (langId?: string): TextEditorDecorationType => {
+    return window.createTextEditorDecorationType({
+      rangeBehavior: DecorationRangeBehavior.ClosedOpen,
+      opacity: ExtSettings.Get<string>(Settings.unfoldedOpacity).toString()
+    })
+  }
+
+  /** @param langId To use later for lang scoped configs */
+  public MatchedDecorationType = (langId?: string /* To use later for lang scoped configs */): TextEditorDecorationType => {
+    return window.createTextEditorDecorationType({
+      before: {
+        contentText: ExtSettings.Get<string>(Settings.maskChar),
+        color: ExtSettings.Get<string>(Settings.maskColor),
+      },
+      after: {
+        contentText: ExtSettings.Get<string>(Settings.after),
+      },
+      textDecoration: "none; display: none;"
+    });
+
+  };
+
+  public PlainDecorationType = (): TextEditorDecorationType => window.createTextEditorDecorationType({})
+
+  public MaskDecorationTypeCache(): TextEditorDecorationType {
+    const langId = window.activeTextEditor.document.languageId;
+    if (this.cache.has(langId)) {
+      return this.cache.get(langId) as TextEditorDecorationType;
+    }
+    const decorationType = this.MatchedDecorationType();
+    this.cache.set(langId, decorationType);
+    return decorationType;
+  }
+
+  constructor () { }
+
+}
