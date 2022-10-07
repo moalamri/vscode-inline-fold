@@ -26,12 +26,22 @@ The extension also enables folding of attribute values within HTML/JSX tags. It 
 </p>
 
 ## Examples
-### className in React Component
+
+### React Component className value
 These settings can help you fold your React component's className attribute values with template strings.
 ```
 Regex to Match: (className)=(({(`|))|(['"`]))(.*?)(\2|(\4)})
 Regex Flags: g
 Regex Group: 6
+```
+
+### Fold class/className value after set number of characters. [#60](https://github.com/moalamri/vscode-inline-fold/issues/60)
+Sometimes you have only a couple of short classnames which you don't necessarily want to fold, so you could modify the regex to only fold a list of classes if it's longer than 30 characters.
+**Note**: This doesn't work with template strings.
+```
+Regex to Match: (class|className)=[`'{"]([^`'"}]{30,})[`'"}]
+Regex Flags: g
+Regex Group: 2
 ```
 
 ### SVG
