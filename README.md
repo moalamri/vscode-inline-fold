@@ -98,7 +98,7 @@ Current default language Ids (see [here](https://code.visualstudio.com/docs/lang
 
 
 ### Known Issues
-* Currently template literals are not fully supported.
+If you encounter any problems, you can open an issue at the extension's <a href="https://github.com/moalamri/vscode-inline-fold">GitHub repo</a>
 
 ### Changelog
 See the project's <a href="CHANGELOG.md"> changelog</a> here.
