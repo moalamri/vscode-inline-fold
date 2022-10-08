@@ -4,7 +4,7 @@
 
 > ### v 0.1.8:
 - feat: each session will have its own folding state (per file).
-- new: an option for default folding state when new file is opened [#53](https://github.com/moalamri/vscode-inline-fold/issues/52) `inlineFold.autoFold`
+- new: an option for default folding state when new file is opened [#53](https://github.com/moalamri/vscode-inline-fold/issues/53) `inlineFold.autoFold`
 - new: a command to clear the current session folding state `Clear Cache`.
 - fix: [#23](https://github.com/moalamri/vscode-inline-fold/issues/23)
 - fix: [#50](https://github.com/moalamri/vscode-inline-fold/issues/50) by [@e-medeiros](https://github.com/e-medeiros)
