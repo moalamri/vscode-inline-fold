@@ -5,7 +5,9 @@ import { Settings } from "./enums";
 import { ExtSettings } from "./settings";
 
 export class Decorator {
-  TDOs = new DecoratorTypeOptions();
+  // DTOs is just a short name for DecoratorTypeOptions,
+  // nothing to do with data transfer objects.
+  DTOs = new DecoratorTypeOptions();
   CurrentEditor: TextEditor;
   ParsedRegexString: string;
   SupportedLanguages: string[] = [];
@@ -66,7 +68,7 @@ export class Decorator {
   updateConfigs(extConfs: WorkspaceConfiguration) {
     ExtSettings.Update(extConfs);
     this.SupportedLanguages = ExtSettings.Get<string[]>(Settings.supportedLanguages);
-    this.TDOs.ClearCache();
+    this.DTOs.ClearCache();
   }
 
   updateDecorations() {
@@ -76,15 +78,16 @@ export class Decorator {
 
     const regEx: RegExp = ExtSettings.Regex();
     const unFoldOnLineSelect = ExtSettings.Get<boolean>(Settings.unfoldOnLineSelect);
+    const text = this.CurrentEditor.document.getText();
     const regexGroup: number = ExtSettings.Get<number>(Settings.regexGroup) as number | 1;
-    const matchDecorationType = this.TDOs.MaskDecorationTypeCache();
-    const plainDecorationType = this.TDOs.PlainDecorationType();
-    const unfoldDecorationType = this.TDOs.UnfoldDecorationType();
+    const matchDecorationType = this.DTOs.MaskDecorationTypeCache();
+    const plainDecorationType = this.DTOs.PlainDecorationType();
+    const unfoldDecorationType = this.DTOs.UnfoldDecorationType();
     const foldRanges: Range[] = [];
     const unfoldRanges: Range[] = [];
 
     let match;
-    while ((match = regEx.exec(this.CurrentEditor.document.getText())) !== null) {
+    while (match = regEx.exec(text)) {
 
       const matched = match[regexGroup];
       const foldIndex = match[0].lastIndexOf(matched);
