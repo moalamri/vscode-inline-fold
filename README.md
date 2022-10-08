@@ -26,7 +26,7 @@ The extension also enables folding of attribute values within HTML/JSX tags. It 
 </p>
 
 ## Examples
-
+> **Note:** The following examples uses unescaped regex, use VS Code Settings UI for easier escaping.
 ### React Component className value
 These settings can help you fold your React component's className attribute values with template strings.
 ```
@@ -98,7 +98,7 @@ Current default language Ids (see [here](https://code.visualstudio.com/docs/lang
 
 
 ### Known Issues
-If you encounter any problems, you can open an issue at the extension's <a href="https://github.com/moalamri/vscode-inline-fold">GitHub repo</a>
+If you encounter any problems, you can open an issue at the extension's <a href="https://github.com/moalamri/vscode-inline-fold">GitHub repository</a>
 
 ### Changelog
 See the project's <a href="CHANGELOG.md"> changelog</a> here.
