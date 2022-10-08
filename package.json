@@ -27,11 +27,11 @@
 		"commands": [
 			{
 				"command": "inlineFold.toggle",
-				"title": "Toggle inline fold"
+				"title": "Inline Fold: Toggle"
 			},
 			{
 				"command": "inlineFold.clearCache",
-				"title": "Clear cache for the current session"
+				"title": "Inline Fold: Clear session cache"
 			}
 		],
 		"configuration": {
