@@ -3,7 +3,7 @@
 	"displayName": "Inline fold",
 	"description": "A custom decorator that \"fold\" matching content in single line",
 	"icon": "res/icon.png",
-	"version": "0.1.8",
+	"version": "0.1.9",
 	"publisher": "moalamri",
 	"homepage": "https://github.com/moalamri/vscode-inline-fold",
 	"bugs": "https://github.com/moalamri/vscode-inline-fold/issues",
@@ -27,11 +27,11 @@
 		"commands": [
 			{
 				"command": "inlineFold.toggle",
-				"title": "Toggle inline fold"
+				"title": "Inline Fold: Toggle"
 			},
 			{
 				"command": "inlineFold.clearCache",
-				"title": "Clear cache for the current session"
+				"title": "Inline Fold: Clear session cache"
 			}
 		],
 		"configuration": {
