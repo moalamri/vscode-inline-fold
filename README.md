@@ -52,6 +52,7 @@ So with this settings below you can fold the ugly part.
 ```
 Regex to Match: <svg(\s*.*?\s*)<\/svg>
 Regex Flags: gs
+Regex Group: 2
 ```
 <p align="center">
   <img width="40%" src="https://raw.githubusercontent.com/moalamri/vscode-inline-fold/master/res/svg-fold-settings.png">
