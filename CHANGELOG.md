@@ -2,6 +2,9 @@
 
 <br/>
 
+> ### v0.1.10:
+- fix: [#63](https://github.com/moalamri/vscode-inline-fold/issues/63)
+
 > ### v0.1.9:
 - fix: extension crashing when the regex is misconfigured.
 - now all the extensions commands starts with `Inline Fold:`
