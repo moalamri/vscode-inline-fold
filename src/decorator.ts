@@ -89,6 +89,7 @@ export class Decorator {
     let match;
     while (match = regEx.exec(text)) {
 
+      // if the matched content is undefined, skip it and continue to the next match
       if(match && !match[regexGroup]) continue;
       
       const matched = match[regexGroup];
