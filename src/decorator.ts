@@ -89,6 +89,8 @@ export class Decorator {
     let match;
     while (match = regEx.exec(text)) {
 
+      if(match && !match[regexGroup]) continue;
+      
       const matched = match[regexGroup];
       const foldIndex = match[0].lastIndexOf(matched);
       const startPosition = this.startPositionLine(match.index, foldIndex);
