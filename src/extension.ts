@@ -63,3 +63,8 @@ export function activate(context: ExtensionContext) {
    context.subscriptions.push(changeVisibleRange);
    context.subscriptions.push(changeConfiguration);
 }
+
+// this method is called when your extension is deactivated
+export function deactivate(context: ExtensionContext) { 
+   context.subscriptions.forEach((d) => d.dispose());
+}

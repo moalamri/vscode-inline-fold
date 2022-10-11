@@ -174,7 +174,8 @@
 		}
 	},
 	"scripts": {
-		"vscode:prepublish": "pnpm run compile && vsce package",
+		"vscode:prepublish": "pnpm run compile",
+		"package": "vsce package",
 		"publish": "vsce publish",
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./"
