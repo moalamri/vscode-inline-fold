@@ -26,7 +26,7 @@ The extension also enables folding of attribute values within HTML/JSX tags. It 
 </p>
 
 ## Examples
-> **Note:** The following examples uses unescaped regex, use VS Code Settings UI for easier escaping.
+> **Note**: The following examples uses unescaped regex, use VS Code Settings UI for easier escaping.
 ### React Component className value
 These settings can help you fold your React component's className attribute values with template strings.
 ```
@@ -37,7 +37,8 @@ Regex Group: 6
 
 ### Fold class/className value after set number of characters. [#60](https://github.com/moalamri/vscode-inline-fold/issues/60)
 Sometimes you have only a couple of short classnames which you don't necessarily want to fold, so you could modify the regex to only fold a list of classes if it's longer than 30 characters.
-**Note**: This doesn't work with template strings.
+
+>**Note**: This doesn't work with template strings.
 ```
 Regex to Match: (class|className)=[`'{"]([^`'"}]{30,})[`'"}]
 Regex Flags: g
@@ -57,6 +58,18 @@ Regex Group: 2
 <p align="center">
   <img width="40%" src="https://raw.githubusercontent.com/moalamri/vscode-inline-fold/master/res/svg-fold-settings.png">
   <img width="40%" src="https://raw.githubusercontent.com/moalamri/vscode-inline-fold/master/res/svg-fold.png">
+</p>
+
+### Markdown links
+The extension is very useful for collapsing markdown link URLs [#70](https://github.com/moalamri/vscode-inline-fold/issues/70):
+```
+Regex: \[.*\]\((.*)\)
+Regex Flags: g
+Regex Group: 1
+Supported languages: markdown
+```
+<p align="center">
+  <img width="30%" src="https://raw.githubusercontent.com/moalamri/vscode-inline-fold/master/res/markdown-example.png">
 </p>
 
 ## Available Settings
