@@ -94,6 +94,7 @@ You can install the extension <a href="https://marketplace.visualstudio.com/item
 * You can set a keyboard shortcut to toggle the folding on and off. Search for "Inline Fold" in the commands panel, then click the gear icon and set the desired keybinding.
 
 Current default language Ids (see [here](https://code.visualstudio.com/docs/languages/identifiers#_known-language-identifiers) for more):
+- `astro`
 - `vue`
 - `html`
 - `svelte`

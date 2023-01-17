@@ -54,6 +54,7 @@
 					},
 					"minItems": 1,
 					"default": [
+						"astro",
 						"vue",
 						"html",
 						"svelte",
