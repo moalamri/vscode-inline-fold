@@ -11,7 +11,6 @@ class ExtensionSettings {
   }
   private configs: WorkspaceConfiguration;
 
-
   /**
    * Gets triggered when any of the extension configuration changes.
    * @param _configs : the key of the configuration
@@ -31,7 +30,7 @@ class ExtensionSettings {
     // Get the current active editor languageid
     const language_Id = window.activeTextEditor.document.languageId;
     // Get the configuration of the active language id
-    const lang_config: WorkspaceConfiguration = workspace.getConfiguration(Settings.identifier, { languageId: language_Id })
+    const lang_config: WorkspaceConfiguration = workspace.getConfiguration(Settings.identifier, { languageId: language_Id });
     // return the configuration for the given section
     return lang_config.get<T>(_section);
   }
@@ -41,14 +40,16 @@ class ExtensionSettings {
    * @returns List of language ids
    */
   private getLanguagesWithRegex(): string[] {
-    const settings = Object.values(Settings);
-    const langs = []
+    // skip unnecessary keys excludedSettings
+    const excludedSettings: string[] = ["inlineFold", "supportedLanguages"];
+    const settings = Object.values(Settings).filter((v) => !excludedSettings.includes(v));
+    const langs = [];
     settings.forEach((v) => {
       const lang = this.configs.inspect(v).languageIds;
       if (lang) {
-        langs.push(...lang)
+        langs.push(...lang);
       }
-    })
+    });
     return langs;
   }
 
@@ -59,7 +60,7 @@ class ExtensionSettings {
    */
   public Get<T>(_section: Settings): T {
     // Try to get language scope configuration, otherwise fallback to global configuration
-    return this.getPerLanguage<T>(_section) as T ?? this.configs.get<T>(_section) as T;
+    return (this.getPerLanguage<T>(_section) as T) ?? (this.configs.get<T>(_section) as T);
   }
 
   /**
@@ -70,7 +71,7 @@ class ExtensionSettings {
   public GetSupportedLanguages(): string[] {
     const langs: string[] = this.Get<string[]>(Settings.supportedLanguages);
     const withLangs: string[] = this.getLanguagesWithRegex();
-    const supported: string[] = [... new Set([...langs, ...withLangs])];
+    const supported: string[] = [...new Set([...langs, ...withLangs])];
     return supported;
   }
 
@@ -78,7 +79,7 @@ class ExtensionSettings {
     return RegExp(this.Get<RegExp>(Settings.regex), this.Get<string>(Settings.regexFlags));
   }
 
-  constructor () { }
+  constructor() {}
 }
 
 // Yes, a singleton :0
