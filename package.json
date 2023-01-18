@@ -41,6 +41,7 @@
 				"inlineFold.autoFold": {
 					"type": "boolean",
 					"order": 0,
+					"scope": "language-overridable",
 					"description": "Set the default state of inline fold when opening a file",
 					"default": true
 				},
@@ -75,6 +76,7 @@
 					"type": "string",
 					"order": 2,
 					"description": "Regex to match",
+					"scope": "language-overridable",
 					"default": "(class|className)=(({(`|))|(['\"`]))(.*?)(\\2|(\\4)})",
 					"examples": [
 						"(class|className)=(({(`|))|(['\"`]))(.*?)(\\2|(\\4)})",
@@ -85,6 +87,7 @@
 				"inlineFold.regexFlags": {
 					"type": "string",
 					"order": 3,
+					"scope": "language-overridable",
 					"description": "Regex flags",
 					"default": "g",
 					"examples": [
@@ -95,6 +98,7 @@
 				"inlineFold.regexGroup": {
 					"type": "string",
 					"order": 4,
+					"scope": "language-overridable",
 					"description": "Regex capture group number for content that will be folded",
 					"default": "6",
 					"examples": [
@@ -109,6 +113,7 @@
 				"inlineFold.maskChar": {
 					"type": "string",
 					"order": 5,
+					"scope": "language-overridable",
 					"description": "The mask that covers the folded text",
 					"default": "◦◦◦",
 					"examples": [
@@ -120,6 +125,7 @@
 				"inlineFold.maskColor": {
 					"type": "string",
 					"order": 6,
+					"scope": "language-overridable",
 					"description": "The color of the covering mask in hex",
 					"default": "#68D7AC",
 					"examples": [
@@ -130,6 +136,7 @@
 				"inlineFold.unfoldedOpacity": {
 					"type": "number",
 					"order": 7,
+					"scope": "language-overridable",
 					"description": "The opacity of the unfolded text (from 0 to 1)",
 					"default": 0.7,
 					"enum": [
@@ -149,6 +156,7 @@
 				"inlineFold.after": {
 					"type": "string",
 					"order": 8,
+					"scope": "language-overridable",
 					"description": "(Optional) Add any text/character to be appended to the folded text",
 					"default": "",
 					"examples": [
@@ -159,6 +167,7 @@
 				},
 				"inlineFold.unfoldOnLineSelect": {
 					"type": "boolean",
+					"scope": "language-overridable",
 					"order": 9,
 					"description": "(Optional) unfold the line when any part of the line is selected",
 					"default": false

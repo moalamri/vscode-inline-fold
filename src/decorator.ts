@@ -1,4 +1,4 @@
-import { Position, Range, TextEditor, WorkspaceConfiguration } from "vscode";
+import { Position, Range, TextEditor, WorkspaceConfiguration, window } from "vscode";
 import { Cache } from "./cache";
 import { DecoratorTypeOptions } from "./decoration";
 import { Settings } from "./enums";
@@ -67,12 +67,12 @@ export class Decorator {
   */
   updateConfigs(extConfs: WorkspaceConfiguration) {
     ExtSettings.Update(extConfs);
-    this.SupportedLanguages = ExtSettings.Get<string[]>(Settings.supportedLanguages);
+    this.SupportedLanguages = ExtSettings.GetSupportedLanguages();
     this.DTOs.ClearCache();
   }
 
   updateDecorations() {
-    if (!this.SupportedLanguages || !this.SupportedLanguages.includes(this.CurrentEditor.document.languageId)) {
+    if (!this.SupportedLanguages.includes(this.CurrentEditor.document.languageId)) {
       return;
     }
 
@@ -90,8 +90,8 @@ export class Decorator {
     while (match = regEx.exec(text)) {
 
       // if the matched content is undefined, skip it and continue to the next match
-      if(match && !match[regexGroup]) continue;
-      
+      if (match && !match[regexGroup]) continue;
+
       const matched = match[regexGroup];
       const foldIndex = match[0].lastIndexOf(matched);
       const startPosition = this.startPositionLine(match.index, foldIndex);
@@ -114,8 +114,8 @@ export class Decorator {
          first check is for single selection, second is for multiple cursor selections.
          or if the user has enabled the unfoldOnLineSelect option. */
       if (this.CurrentEditor.selection.contains(range) ||
-          this.CurrentEditor.selections.find(s => range.contains(s)) ||
-          unFoldOnLineSelect && this.CurrentEditor.selections.find(s => s.start.line === range.start.line)) {
+        this.CurrentEditor.selections.find(s => range.contains(s)) ||
+        unFoldOnLineSelect && this.CurrentEditor.selections.find(s => s.start.line === range.start.line)) {
         unfoldRanges.push(range);
       } else {
         foldRanges.push(range);
