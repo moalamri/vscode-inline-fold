@@ -118,8 +118,6 @@ If you encounter any problems, you can open an issue at the extension's <a href=
 See the project's <a href="CHANGELOG.md"> changelog</a> here.
 
 ### Contributors
-<a href="https://github.com/moalamri/inline-fold/graphs/contributors">
+<a href="https://github.com/moalamri/vscode-inline-fold/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=moalamri/vscode-inline-fold" />
 </a>
-
-Screenshot by [Cody](https://github.com/ccccooooddddyyyy)
