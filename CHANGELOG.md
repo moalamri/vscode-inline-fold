@@ -2,6 +2,10 @@
 
 <br/>
 
+> ### v0.2.0
+- feat: add language-specific settings [#27](https://github.com/moalamri/vscode-inline-fold/issues/27) by [@Zer0xTJ](https://github.com/Zer0xTJ)
+- feat: add astro as a supported language by [@Aunali321](https://github.com/Aunali321)
+
 > ### v0.1.10:
 - fix: [#63](https://github.com/moalamri/vscode-inline-fold/issues/63)
 
