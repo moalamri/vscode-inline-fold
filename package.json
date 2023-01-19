@@ -3,7 +3,7 @@
 	"displayName": "Inline fold",
 	"description": "A custom decorator that \"fold\" matching content in single line",
 	"icon": "res/icon.png",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"publisher": "moalamri",
 	"homepage": "https://github.com/moalamri/vscode-inline-fold",
 	"bugs": "https://github.com/moalamri/vscode-inline-fold/issues",
@@ -46,6 +46,12 @@
 					"default": true
 				},
 				"inlineFold.useGlobal": {
+					"type": "boolean",
+					"order": 1,
+					"scope": "language-overridable",
+					"description": "Change the order to use global configuration before language-specific",
+					"default": false
+				},
 				"inlineFold.supportedLanguages": {
 					"type": "array",
 					"order": 2,
