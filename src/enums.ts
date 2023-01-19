@@ -13,5 +13,6 @@ export enum Settings {
    unfoldedOpacity = "unfoldedOpacity",
    after = "after",
    supportedLanguages = "supportedLanguages",
-   unfoldOnLineSelect = "unfoldOnLineSelect"
+   unfoldOnLineSelect = "unfoldOnLineSelect",
+   useGlobal = "useGlobal"
 }

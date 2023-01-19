@@ -60,6 +60,10 @@ class ExtensionSettings {
    */
   public Get<T>(_section: Settings): T {
     // Try to get language scope configuration, otherwise fallback to global configuration
+    const getGlobal = this.configs.get(Settings.useGlobal)
+    if (getGlobal) {
+      return this.configs.get<T>(_section) as T
+    }
     return (this.getPerLanguage<T>(_section) as T) ?? (this.configs.get<T>(_section) as T);
   }
 
@@ -79,7 +83,7 @@ class ExtensionSettings {
     return RegExp(this.Get<RegExp>(Settings.regex), this.Get<string>(Settings.regexFlags));
   }
 
-  constructor() {}
+  constructor () { }
 }
 
 // Yes, a singleton :0

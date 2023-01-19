@@ -3,7 +3,7 @@
 	"displayName": "Inline fold",
 	"description": "A custom decorator that \"fold\" matching content in single line",
 	"icon": "res/icon.png",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"publisher": "moalamri",
 	"homepage": "https://github.com/moalamri/vscode-inline-fold",
 	"bugs": "https://github.com/moalamri/vscode-inline-fold/issues",
@@ -45,9 +45,16 @@
 					"description": "Set the default state of inline fold when opening a file",
 					"default": true
 				},
+				"inlineFold.useGlobal": {
+					"type": "boolean",
+					"order": 1,
+					"scope": "language-overridable",
+					"description": "Change the order to use global configuration before language-specific",
+					"default": false
+				},
 				"inlineFold.supportedLanguages": {
 					"type": "array",
-					"order": 1,
+					"order": 2,
 					"description": "Supported languages",
 					"items": {
 						"type": "string",
@@ -75,7 +82,7 @@
 				},
 				"inlineFold.regex": {
 					"type": "string",
-					"order": 2,
+					"order": 3,
 					"description": "Regex to match",
 					"scope": "language-overridable",
 					"default": "(class|className)=(({(`|))|(['\"`]))(.*?)(\\2|(\\4)})",
@@ -87,7 +94,7 @@
 				},
 				"inlineFold.regexFlags": {
 					"type": "string",
-					"order": 3,
+					"order": 4,
 					"scope": "language-overridable",
 					"description": "Regex flags",
 					"default": "g",
@@ -98,7 +105,7 @@
 				},
 				"inlineFold.regexGroup": {
 					"type": "string",
-					"order": 4,
+					"order": 5,
 					"scope": "language-overridable",
 					"description": "Regex capture group number for content that will be folded",
 					"default": "6",
@@ -113,7 +120,7 @@
 				},
 				"inlineFold.maskChar": {
 					"type": "string",
-					"order": 5,
+					"order": 6,
 					"scope": "language-overridable",
 					"description": "The mask that covers the folded text",
 					"default": "◦◦◦",
@@ -125,7 +132,7 @@
 				},
 				"inlineFold.maskColor": {
 					"type": "string",
-					"order": 6,
+					"order": 7,
 					"scope": "language-overridable",
 					"description": "The color of the covering mask in hex",
 					"default": "#68D7AC",
@@ -136,7 +143,7 @@
 				},
 				"inlineFold.unfoldedOpacity": {
 					"type": "number",
-					"order": 7,
+					"order": 8,
 					"scope": "language-overridable",
 					"description": "The opacity of the unfolded text (from 0 to 1)",
 					"default": 0.7,
@@ -156,7 +163,7 @@
 				},
 				"inlineFold.after": {
 					"type": "string",
-					"order": 8,
+					"order": 9,
 					"scope": "language-overridable",
 					"description": "(Optional) Add any text/character to be appended to the folded text",
 					"default": "",
@@ -169,7 +176,7 @@
 				"inlineFold.unfoldOnLineSelect": {
 					"type": "boolean",
 					"scope": "language-overridable",
-					"order": 9,
+					"order": 10,
 					"description": "(Optional) unfold the line when any part of the line is selected",
 					"default": false
 				}

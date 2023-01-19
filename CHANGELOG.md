@@ -2,7 +2,10 @@
 
 <br/>
 
-> ### v0.2.0
+> ### v0.2.1:
+- feat: add option to disable the default configuration order.
+
+> ### v0.2.0:
 - feat: add language-specific settings [#27](https://github.com/moalamri/vscode-inline-fold/issues/27) by [@Zer0xTJ](https://github.com/Zer0xTJ)
 - feat: add astro as a supported language by [@Aunali321](https://github.com/Aunali321)
 
