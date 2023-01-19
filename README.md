@@ -4,13 +4,6 @@
 <br />
 
 <h2 align="center"> Inline Fold - VSCode Extension </h2>
-<p align="center">
-<img alt="preview" src="https://vsmarketplacebadge.apphb.com/version-short/moalamri.inline-fold.svg">
-<img alt="preview" src="https://vsmarketplacebadge.apphb.com/downloads-short/moalamri.inline-fold.svg">
-<img alt="preview" src="https://vsmarketplacebadge.apphb.com/installs-short/moalamri.inline-fold.svg">
-<br/>
-<img alt="preview" src="https://vsmarketplacebadge.apphb.com/rating-star/moalamri.inline-fold.svg">
-</p>
 
 ### Inline Fold
 
