@@ -4,13 +4,6 @@
 <br />
 
 <h2 align="center"> Inline Fold - VSCode Extension </h2>
-<p align="center">
-<img alt="preview" src="https://vsmarketplacebadge.apphb.com/version-short/moalamri.inline-fold.svg">
-<img alt="preview" src="https://vsmarketplacebadge.apphb.com/downloads-short/moalamri.inline-fold.svg">
-<img alt="preview" src="https://vsmarketplacebadge.apphb.com/installs-short/moalamri.inline-fold.svg">
-<br/>
-<img alt="preview" src="https://vsmarketplacebadge.apphb.com/rating-star/moalamri.inline-fold.svg">
-</p>
 
 ### Inline Fold
 
@@ -24,6 +17,33 @@ The extension also enables folding of attribute values within HTML/JSX tags. It 
 <p align="center">
     <img width="650" alt="preview" src="https://raw.githubusercontent.com/moalamri/vscode-inline-fold/master/res/preview.png">
 </p>
+
+## Settings
+There are two ways to configure the extension:
+### Global Settings
+You can configure the extension from the settings UI. This is the recommended way to configure the extension.
+### Language-specific Settings
+You can also configure the extension from the language-specific settings. This is useful if you want to configure the extension for a specific language.
+For example:
+```jsonc
+{
+  "[html]": {
+    "inlineFold.regex": "(class|className)=[`'{\"]([^`'\"}]{30,})[`'\"}]",
+    "inlineFold.regexFlags": "g",
+    "inlineFold.regexGroup": 2
+  }
+}
+```
+Or globally:
+```jsonc
+{
+  "inlineFold.regex": "(class|className)=[`'{\"]([^`'\"}]{30,})[`'\"}]",
+  "inlineFold.regexFlags": "g",
+  "inlineFold.regexGroup": 2
+}
+```
+
+The extension will first check for language-specific settings, then it will check for global settings as a fallback.
 
 ## Examples
 > **Note**: Some of the following examples uses unescaped regex, use VS Code Settings UI for auto escaping.
