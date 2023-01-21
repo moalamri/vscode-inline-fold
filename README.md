@@ -19,9 +19,23 @@ The extension also enables folding of attribute values within HTML/JSX tags. It 
 </p>
 
 ## Settings
-There are two ways to configure the extension:
+There are two ways to configure the extension, both can be done either by using VS Code Settings UI, or by editing user/workspace json settings file. We will cover both ways `Global Settings` and `Language-specific Settings`.
 ### Global Settings
-You can configure the extension from the settings UI. This is the recommended way to configure the extension.
+You can configure the extension from the settings UI under `User` or `Workspace` tabs (or by editing the json settings file).
+```jsonc
+{
+  "inlineFold.regex": "(class|className)=[`'{\"]([^`'\"}]{30,})[`'\"}]",
+  "inlineFold.regexFlags": "g",
+  "inlineFold.regexGroup": 2,
+  "inlineFold.unfoldedOpacity": 0.6,
+  "inlineFold.maskChar": "…",
+  "inlineFold.maskColor": "#000",
+  "inlineFold.supportedLanguages": ["javascriptreact", "typescriptreact"],
+  "inlineFold.unfoldOnLineSelect": true,
+  "inlineFold.autoFold": true
+}
+```
+This will be the default settings for all languages in `inlineFold.supportedLanguages`. You can override these settings for specific languages by using `Language-specific Settings` (see below).
 ### Language-specific Settings
 You can also configure the extension from the language-specific settings. This is useful if you want to configure the extension for a specific language.
 For example:
@@ -34,16 +48,12 @@ For example:
   }
 }
 ```
-Or globally:
-```jsonc
-{
-  "inlineFold.regex": "(class|className)=[`'{\"]([^`'\"}]{30,})[`'\"}]",
-  "inlineFold.regexFlags": "g",
-  "inlineFold.regexGroup": 2
-}
-```
+The above settings will be applied only for HTML files.
 
-The extension will first check for language-specific settings, then it will check for global settings as a fallback.
+> **Note**: The extension will first check for language-specific settings, then fallback to global settings if not found.
+
+## Keyboard Shortcuts
+All the extension's commands are available under `Inline Fold` command group. No default keyboard shortcuts are provided, but you can add your own shortcuts for the commands.
 
 ## Examples
 > **Note**: Some of the following examples uses unescaped regex, use VS Code Settings UI for auto escaping.
@@ -103,6 +113,7 @@ Supported languages: markdown
 - `inlineFold.supportedLanguages` a list of targeted language Ids
 - `inlineFold.unfoldOnLineSelect` unfold the line when any part of the line is selected
 - `inlineFold.autoFold` the default state of inline folding when opening a file
+- `inlineFold.useGlobal` force to use the global settings for all languages
 
 
 ## Running the extension
