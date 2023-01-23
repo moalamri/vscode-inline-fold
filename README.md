@@ -42,9 +42,9 @@ For example:
 ```jsonc
 {
   "[html]": {
-    "inlineFold.regex": "(class|className)=[`'{\"]([^`'\"}]{30,})[`'\"}]",
+    "inlineFold.regex": "class=\"([\\w\\s. -:\\[\\]]+)\"",
     "inlineFold.regexFlags": "g",
-    "inlineFold.regexGroup": 2
+    "inlineFold.regexGroup": 1
   }
 }
 ```
@@ -56,23 +56,26 @@ The above settings will be applied only for HTML files.
 All the extension's commands are available under `Inline Fold` command group. No default keyboard shortcuts are provided, but you can add your own shortcuts for the commands.
 
 ## Examples
-> **Note**: Some of the following examples uses unescaped regex, use VS Code Settings UI for auto escaping.
 ### React Component className value
 These settings can help you fold your React component's className attribute values with template strings.
-```
-Regex to Match: (className)=(({(`|))|(['"`]))(.*?)(\2|(\4)})
-Regex Flags: g
-Regex Group: 6
+```jsonc
+{
+  "inlineFold.regex": "(className)=(({(`|))|(['\"`]))(.*?)(\\2|(\\4))",
+  "inlineFold.regexFlags": "g",
+  "inlineFold.regexGroup": 6
+}
 ```
 
 ### Fold class/className value after set number of characters. [#60](https://github.com/moalamri/vscode-inline-fold/issues/60)
 Sometimes you have only a couple of short classnames which you don't necessarily want to fold, so you could modify the regex to only fold a list of classes if it's longer than 30 characters.
 
 >**Note**: This doesn't work with template strings.
-```
-Regex to Match: (class|className)=[`'{"]([^`'"}]{30,})[`'"}]
-Regex Flags: g
-Regex Group: 2
+```jsonc
+{
+  "inlineFold.regex": "(class|className)=[`'{\"]([^`'\"}]{30,})[`'\"}]",
+  "inlineFold.regexFlags": "g",
+  "inlineFold.regexGroup": 2
+}
 ```
 
 ### SVG
@@ -80,11 +83,14 @@ Embeded SVG also tend to have alot of code, that you just dont wanna focus on.
 So with this settings below you can fold the ugly part.
 
 **Note**: Minfing SVG maybe required for better experience. Beside we looking forward that this extension will support multiple Regex soon.
+```jsonc
+{
+  "inlineFold.regex":  "<svg(\\s*.*?\\s*)<\/svg>",
+  "inlineFold.regexFlags": "gs",
+  "inlineFold.regexGroup": 1
+}
 ```
-Regex to Match: <svg(\s*.*?\s*)<\/svg>
-Regex Flags: gs
-Regex Group: 2
-```
+
 <p align="center">
   <img width="40%" src="https://raw.githubusercontent.com/moalamri/vscode-inline-fold/master/res/svg-fold-settings.png">
   <img width="40%" src="https://raw.githubusercontent.com/moalamri/vscode-inline-fold/master/res/svg-fold.png">
@@ -92,12 +98,25 @@ Regex Group: 2
 
 ### Markdown links
 The extension is very useful for collapsing markdown link URLs [#70](https://github.com/moalamri/vscode-inline-fold/issues/70):
+```jsonc
+{
+  "inlineFold.regex": "\\[.*\\]\\((.*)\\)",
+  "inlineFold.regexFlags": "g",
+  "inlineFold.regexGroup": 1,
+  "inlineFold.supportedLanguages": ["markdown"]
+}
 ```
-Regex: \[.*\]\((.*)\)
-Regex Flags: g
-Regex Group: 1
-Supported languages: markdown
+Or, as a language-specific setting:
+```jsonc
+{
+  "[markdown]": {
+    "inlineFold.regex": "\\[.*\\]\\((.*)\\)",
+    "inlineFold.regexFlags": "g",
+    "inlineFold.regexGroup": 1
+  }
+}
 ```
+
 <p align="center">
   <img width="30%" src="https://raw.githubusercontent.com/moalamri/vscode-inline-fold/master/res/markdown-example.png">
 </p>
