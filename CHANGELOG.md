@@ -4,6 +4,7 @@
 
 > ### v0.2.2:
 - feat: add hover for folded content.
+- style: new extension icon by [@0f1](https://github.com/0f1)
 
 > ### v0.2.1:
 - feat: add option to disable the default configuration order.
