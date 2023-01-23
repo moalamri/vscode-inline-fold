@@ -1,4 +1,4 @@
-import { Position, Range, TextEditor, WorkspaceConfiguration, window } from "vscode";
+import { Position, Range, TextEditor, WorkspaceConfiguration, DecorationOptions } from "vscode";
 import { Cache } from "./cache";
 import { DecoratorTypeOptions } from "./decoration";
 import { Settings } from "./enums";
@@ -83,7 +83,7 @@ export class Decorator {
     const matchDecorationType = this.DTOs.MaskDecorationTypeCache();
     const plainDecorationType = this.DTOs.PlainDecorationType();
     const unfoldDecorationType = this.DTOs.UnfoldDecorationType();
-    const foldRanges: Range[] = [];
+    const foldRanges: DecorationOptions[] = [];
     const unfoldRanges: Range[] = [];
 
     let match;
@@ -96,7 +96,7 @@ export class Decorator {
       const foldIndex = match[0].lastIndexOf(matched);
       const startPosition = this.startPositionLine(match.index, foldIndex);
       const endPosition = this.endPositionLine(match.index, foldIndex, matched.length);
-      const range = new Range(startPosition, endPosition);
+      const range: Range = new Range(startPosition, endPosition);
 
       /* Checking if the toggle command is active or not. without conflicts with default state settings.
          If it is not active, it will remove all decorations. */
@@ -111,14 +111,14 @@ export class Decorator {
       }
 
       /* Checking if the range is selected by the user. 
-         first check is for single selection, second is for multiple cursor selections.
-         or if the user has enabled the unfoldOnLineSelect option. */
+      first check is for single selection, second is for multiple cursor selections.
+      or if the user has enabled the unfoldOnLineSelect option. */
       if (this.CurrentEditor.selection.contains(range) ||
         this.CurrentEditor.selections.find(s => range.contains(s)) ||
         unFoldOnLineSelect && this.CurrentEditor.selections.find(s => s.start.line === range.start.line)) {
         unfoldRanges.push(range);
       } else {
-        foldRanges.push(range);
+        foldRanges.push({ range, hoverMessage: "Content **" + matched + "**" });
       }
     }
 
