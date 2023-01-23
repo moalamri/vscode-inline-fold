@@ -2,6 +2,9 @@
 
 <br/>
 
+> ### v0.2.2:
+- feat: add hover for folded content.
+
 > ### v0.2.1:
 - feat: add option to disable the default configuration order.
 
