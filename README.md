@@ -1,5 +1,5 @@
 <p align="center">
-    <img width="128" alt="preview" src="https://raw.githubusercontent.com/moalamri/vscode-inline-fold/master/res/icon.png">
+    <img width="256" alt="preview" src="https://raw.githubusercontent.com/moalamri/vscode-inline-fold/master/res/icon.png">
 </p>
 <br />
 
