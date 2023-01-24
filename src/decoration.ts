@@ -20,16 +20,14 @@ export class DecoratorTypeOptions {
     this.cache.clear();
   }
 
-  /** @param langId To use later for lang scoped configs */
-  public UnfoldDecorationType = (langId?: string): TextEditorDecorationType => {
+  public UnfoldDecorationType = (): TextEditorDecorationType => {
     return window.createTextEditorDecorationType({
       rangeBehavior: DecorationRangeBehavior.ClosedOpen,
       opacity: ExtSettings.Get<string>(Settings.unfoldedOpacity).toString()
     })
   }
 
-  /** @param langId To use later for lang scoped configs */
-  public MatchedDecorationType = (langId?: string /* To use later for lang scoped configs */): TextEditorDecorationType => {
+  public MatchedDecorationType = (): TextEditorDecorationType => {
     return window.createTextEditorDecorationType({
       before: {
         contentText: ExtSettings.Get<string>(Settings.maskChar),
