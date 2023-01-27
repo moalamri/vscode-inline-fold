@@ -100,9 +100,9 @@ So with this settings below you can fold the ugly part.
 The extension is very useful for collapsing markdown link URLs [#70](https://github.com/moalamri/vscode-inline-fold/issues/70):
 ```jsonc
 {
-  "inlineFold.regex": "\\[.*\\]\\((.*)\\)",
+  "inlineFold.regex": "\\[([^\\]]*)\\]\\(([^\\s]+)\\)[^\\)\\s]*\\s",
   "inlineFold.regexFlags": "g",
-  "inlineFold.regexGroup": 1,
+  "inlineFold.regexGroup": 2,
   "inlineFold.supportedLanguages": ["markdown"]
 }
 ```
@@ -110,9 +110,9 @@ Or, as a language-specific setting:
 ```jsonc
 {
   "[markdown]": {
-    "inlineFold.regex": "\\[.*\\]\\((.*)\\)",
+    "inlineFold.regex": "\\[([^\\]]*)\\]\\(([^\\s]+)\\)[^\\)\\s]*\\s",
     "inlineFold.regexFlags": "g",
-    "inlineFold.regexGroup": 1
+    "inlineFold.regexGroup": 2
   }
 }
 ```
