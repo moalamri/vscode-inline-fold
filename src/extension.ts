@@ -26,11 +26,6 @@ export function activate(context: ExtensionContext) {
     Cache.ClearCache();
   });
 
-  const toggleClearCacheCommand = commands.registerCommand(Commands.InlineFoldToggleClearCache, () => {
-    Cache.ClearCache();
-    decorator.toggle();
-  });
-
   const activeTextEditor = window.onDidChangeActiveTextEditor((e) => {
     if (!e) return;
     elimit.Tail();
@@ -64,7 +59,6 @@ export function activate(context: ExtensionContext) {
   context.subscriptions.push(changeSelection);
   context.subscriptions.push(activeTextEditor);
   context.subscriptions.push(clearCacheCommand);
-  context.subscriptions.push(toggleClearCacheCommand);
   context.subscriptions.push(changeVisibleRange);
   context.subscriptions.push(changeConfiguration);
 }

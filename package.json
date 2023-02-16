@@ -32,10 +32,6 @@
 			{
 				"command": "inlineFold.clearCache",
 				"title": "Inline Fold: Clear session cache"
-			},
-			{
-				"command": "inlineFold.toggleClearCache",
-				"title": "Inline Fold: Toggle & Clear session cache"
 			}
 		],
 		"configuration": {
