@@ -28,7 +28,7 @@ export function activate(context: ExtensionContext) {
 
   const activeTextEditor = window.onDidChangeActiveTextEditor((e) => {
     if (!e) return;
-    elimit.Tail();
+    elimit.Trail();
   });
 
   const changeSelection = window.onDidChangeTextEditorSelection((e) => {
@@ -41,7 +41,7 @@ export function activate(context: ExtensionContext) {
 
   const changeVisibleRange = window.onDidChangeTextEditorVisibleRanges((e) => {
     if (!e.textEditor) return;
-    elimit.Tail();
+    elimit.Trail();
   });
 
   const changeText = workspace.onDidChangeTextDocument((e) => {
@@ -51,7 +51,7 @@ export function activate(context: ExtensionContext) {
     // so we will limit it to only update the decoration when the change is caused by undo/redo
     // also because `changeSelection` gets fired as well while typing.
     if (e.reason !== 1 && e.reason !== 2) return;
-    elimit.Tail();
+    elimit.Trail();
   });
 
   const changeConfiguration = workspace.onDidChangeConfiguration((event) => {
