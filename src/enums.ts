@@ -1,6 +1,7 @@
 export enum Commands {
    InlineFoldToggle = "inlineFold.toggle",
    InlineFoldClearCache = "inlineFold.clearCache",
+   InlineFoldToggleClearCache = "inlineFold.toggleClearCache"
 }
 export enum Settings {
    identifier = "inlineFold",
