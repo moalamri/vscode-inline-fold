@@ -44,6 +44,16 @@ export function activate(context: ExtensionContext) {
     elimit.Tail();
   });
 
+  const changeText = workspace.onDidChangeTextDocument((e) => {
+    // e.reason = 1 when undo
+    // e.reason = 2 when redo
+    // this event gets fired when any change happens to any text document in the workspace
+    // so we will limit it to only update the decoration when the change is caused by undo/redo
+    // also because `changeSelection` gets fired as well while typing.
+    if (e.reason !== 1 && e.reason !== 2) return;
+    elimit.Tail();
+  });
+
   const changeConfiguration = workspace.onDidChangeConfiguration((event) => {
     if (event.affectsConfiguration(Settings.identifier)) {
       if (!event.affectsConfiguration(Settings.autoFold)) {
@@ -55,6 +65,7 @@ export function activate(context: ExtensionContext) {
 
   // Add to a list of disposables to the editor context
   // which are disposed when this extension is deactivated.
+  context.subscriptions.push(changeText);
   context.subscriptions.push(toggleCommand);
   context.subscriptions.push(changeSelection);
   context.subscriptions.push(activeTextEditor);
