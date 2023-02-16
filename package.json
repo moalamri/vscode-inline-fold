@@ -45,6 +45,13 @@
 					"description": "Set the default state of inline fold when opening a file",
 					"default": true
 				},
+				"inlineFold.togglePerFile": {
+					"type": "boolean",
+					"order": 2,
+					"scope": "language-overridable",
+					"description": "Toggle inline fold per file, instead of per workspace",
+					"default": true
+				},
 				"inlineFold.useGlobal": {
 					"type": "boolean",
 					"order": 1,
