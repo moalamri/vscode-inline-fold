@@ -2,6 +2,10 @@
 
 <br/>
 
+> ### v0.2.3:
+- feat: add option to change folding toggle to per file or workspace by [@0f1](https://github.com/0f1)
+- fix: [#98](https://github.com/moalamri/vscode-inline-fold/issues/98)
+
 > ### v0.2.2:
 - feat: add hover for folded content.
 - style: new extension icon by [@0f1](https://github.com/0f1)
