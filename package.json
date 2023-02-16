@@ -36,7 +36,7 @@
 		],
 		"configuration": {
 			"type": "object",
-			"title": "Inline fold settings",
+			"title": "Inline Fold",
 			"properties": {
 				"inlineFold.autoFold": {
 					"type": "boolean",
