@@ -32,10 +32,10 @@ export function activate(context: ExtensionContext) {
   });
 
   const changeSelection = window.onDidChangeTextEditorSelection((e) => {
-    // event.kind is undefined when the selection change happens from tab switch
+    // event.kind is undefined when the selection change happens from tab switch or undo/redo
     // good to limit the number of times the decoration is updated, so no need
-    // to wrap the event.
-    if (!e.kind || !e.textEditor) return;
+    // to fire the event if it's undefined
+    if (!e.kind) return;
     elimit.Lead();
   });
 
