@@ -14,5 +14,6 @@ export enum Settings {
    after = "after",
    supportedLanguages = "supportedLanguages",
    unfoldOnLineSelect = "unfoldOnLineSelect",
-   useGlobal = "useGlobal"
+   useGlobal = "useGlobal",
+   togglePerFile = "togglePerFile"
 }
