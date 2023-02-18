@@ -1,7 +1,6 @@
 export enum Commands {
    InlineFoldToggle = "inlineFold.toggle",
-   InlineFoldClearCache = "inlineFold.clearCache",
-   InlineFoldToggleClearCache = "inlineFold.toggleClearCache"
+   InlineFoldClearCache = "inlineFold.clearCache"
 }
 export enum Settings {
    identifier = "inlineFold",
@@ -15,5 +14,6 @@ export enum Settings {
    after = "after",
    supportedLanguages = "supportedLanguages",
    unfoldOnLineSelect = "unfoldOnLineSelect",
-   useGlobal = "useGlobal"
+   useGlobal = "useGlobal",
+   togglePerFile = "togglePerFile"
 }

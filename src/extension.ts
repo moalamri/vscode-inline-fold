@@ -26,27 +26,32 @@ export function activate(context: ExtensionContext) {
     Cache.ClearCache();
   });
 
-  const toggleClearCacheCommand = commands.registerCommand(Commands.InlineFoldToggleClearCache, () => {
-    Cache.ClearCache();
-    decorator.toggle();
-  });
-
   const activeTextEditor = window.onDidChangeActiveTextEditor((e) => {
     if (!e) return;
-    elimit.Tail();
+    elimit.Trail();
   });
 
   const changeSelection = window.onDidChangeTextEditorSelection((e) => {
-    // event.kind is undefined when the selection change happens from tab switch
+    // event.kind is undefined when the selection change happens from tab switch or undo/redo
     // good to limit the number of times the decoration is updated, so no need
-    // to wrap the event.
-    if (!e.kind || !e.textEditor) return;
+    // to fire the event if it's undefined
+    if (!e.kind) return;
     elimit.Lead();
   });
 
   const changeVisibleRange = window.onDidChangeTextEditorVisibleRanges((e) => {
     if (!e.textEditor) return;
-    elimit.Tail();
+    elimit.Trail();
+  });
+
+  const changeText = workspace.onDidChangeTextDocument((e) => {
+    // e.reason = 1 when undo
+    // e.reason = 2 when redo
+    // this event gets fired when any change happens to any text document in the workspace
+    // so we will limit it to only update the decoration when the change is caused by undo/redo
+    // also because `changeSelection` gets fired as well while typing.
+    if (e.reason !== 1 && e.reason !== 2) return;
+    elimit.Trail();
   });
 
   const changeConfiguration = workspace.onDidChangeConfiguration((event) => {
@@ -60,11 +65,11 @@ export function activate(context: ExtensionContext) {
 
   // Add to a list of disposables to the editor context
   // which are disposed when this extension is deactivated.
+  context.subscriptions.push(changeText);
   context.subscriptions.push(toggleCommand);
   context.subscriptions.push(changeSelection);
   context.subscriptions.push(activeTextEditor);
   context.subscriptions.push(clearCacheCommand);
-  context.subscriptions.push(toggleClearCacheCommand);
   context.subscriptions.push(changeVisibleRange);
   context.subscriptions.push(changeConfiguration);
 }

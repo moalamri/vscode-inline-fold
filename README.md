@@ -133,6 +133,7 @@ Or, as a language-specific setting:
 - `inlineFold.unfoldOnLineSelect` unfold the line when any part of the line is selected
 - `inlineFold.autoFold` the default state of inline folding when opening a file
 - `inlineFold.useGlobal` force to use the global settings for all languages
+- `inlineFold.togglePerFile` toggle the folding state per file or workspace (default: true)
 
 
 ## Running the extension

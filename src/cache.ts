@@ -15,24 +15,21 @@ class CacheClass {
     return ExtSettings.Get<boolean>(Settings.autoFold);
   }
 
-  // Set the initial state of the extension
-  init() {
-    this.State = this.autoFold();
-  }
-
   // Set the state of the extension
   set State(_state: boolean) {
-    this.StateCache.set(window.activeTextEditor?.document.uri.path, _state);
+    if (ExtSettings.Get<boolean>(Settings.togglePerFile)) {
+      this.StateCache.set(window.activeTextEditor?.document.uri.path, _state);
+    } else {
+      this.StateCache.set("global", _state);
+    }
   }
 
   // Get the state of the extension
   get State(): boolean {
-    const state = this.StateCache.get(window.activeTextEditor?.document.uri.path);
-    if (state === undefined) {
-      this.init();
-      return this.State;
+    if (ExtSettings.Get<boolean>(Settings.togglePerFile)) {
+      return this.StateCache.get(window.activeTextEditor?.document.uri.path) ?? this.autoFold();
     } else {
-      return state;
+      return this.StateCache.get("global") ?? this.autoFold();
     }
   }
 
