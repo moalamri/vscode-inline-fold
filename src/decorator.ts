@@ -11,7 +11,7 @@ export class Decorator {
   CurrentEditor: TextEditor;
   ParsedRegexString: string;
   SupportedLanguages: string[] = [];
-  Offset: number = 30;
+  Offset: number = 50;
   StartLine: number = 0;
   EndLine: number = 0;
 

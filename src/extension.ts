@@ -32,10 +32,6 @@ export function activate(context: ExtensionContext) {
   });
 
   const changeSelection = window.onDidChangeTextEditorSelection((e) => {
-    // event.kind is undefined when the selection change happens from tab switch or undo/redo
-    // good to limit the number of times the decoration is updated, so no need
-    // to fire the event if it's undefined
-    if (!e.kind) return;
     elimit.Lead();
   });
 
@@ -48,8 +44,8 @@ export function activate(context: ExtensionContext) {
     // e.reason = 1 when undo
     // e.reason = 2 when redo
     // this event gets fired when any change happens to any text document in the workspace
-    // so we will limit it to only update the decoration when the change is caused by undo/redo
-    // also because `changeSelection` gets fired as well while typing.
+    // so to limit the decoration it will fire when the change is caused by undo/redo
+    // since `changeSelection` gets fired as well while typing or moving lines.
     if (e.reason !== 1 && e.reason !== 2) return;
     elimit.Trail();
   });
