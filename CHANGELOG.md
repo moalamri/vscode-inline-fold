@@ -2,6 +2,11 @@
 
 <br/>
 
+> ### v0.2.4:
+- fix: [#108](https://github.com/moalamri/vscode-inline-fold/issues/108)
+- fix: [#112](https://github.com/moalamri/vscode-inline-fold/issues/112)
+- fix: [#111](https://github.com/moalamri/vscode-inline-fold/issues/111)
+
 > ### v0.2.3:
 - feat: add option to change folding toggle to per file or workspace by [@0f1](https://github.com/0f1)
 - fix: [#98](https://github.com/moalamri/vscode-inline-fold/issues/98)
