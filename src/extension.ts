@@ -51,7 +51,6 @@ export function activate(context: ExtensionContext) {
   });
 
   const changeConfiguration = workspace.onDidChangeConfiguration((event) => {
-    console.log('triggered by onDidChangeConfiguration');
     if (event.affectsConfiguration(Settings.identifier)) {
       if (!event.affectsConfiguration(Settings.autoFold)) {
         Cache.ClearCache();
