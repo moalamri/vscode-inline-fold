@@ -105,7 +105,7 @@
 					]
 				},
 				"inlineFold.regexGroup": {
-					"type": "string",
+					"type": ["string", "number"],
 					"scope": "language-overridable",
 					"description": "Regex capture group number for content that will be folded",
 					"default": "6",
