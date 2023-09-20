@@ -52,14 +52,6 @@ export class Decorator {
   }
 
   /**
-  * Set the active state of the decorator (used for command)
-  */
-  toggle() {
-    Cache.ToggleState();
-    this.updateDecorations();
-  }
-
-  /**
   * This method gets triggered when the extension settings are changed
   * @param extConfs: Workspace configs
   */
@@ -100,7 +92,7 @@ export class Decorator {
 
       /* Checking if the toggle command is active or not. without conflicts with default state settings.
          If it is not active, it will remove all decorations. */
-      if (!Cache.State) {
+      if (!Cache.ShouldFold(this.CurrentEditor.document.uri.path)) {
         this.CurrentEditor.setDecorations(plainDecorationType, []);
         break;
       }

@@ -19,11 +19,12 @@ export function activate(context: ExtensionContext) {
   }
 
   const toggleCommand = commands.registerCommand(Commands.InlineFoldToggle, () => {
-    decorator.toggle();
+    Cache.ToggleShouldFold(window.activeTextEditor?.document.uri.path)
+    triggerUpdateDecorations()
   });
 
   const clearCacheCommand = commands.registerCommand(Commands.InlineFoldClearCache, () => {
-    Cache.ClearCache();
+    Cache.Clear();
   });
 
   const changeVisibleTextEditors = window.onDidChangeVisibleTextEditors((editors) => {
@@ -53,7 +54,7 @@ export function activate(context: ExtensionContext) {
   const changeConfiguration = workspace.onDidChangeConfiguration((event) => {
     if (event.affectsConfiguration(Settings.identifier)) {
       if (!event.affectsConfiguration(Settings.autoFold)) {
-        Cache.ClearCache();
+        Cache.Clear();
       }
       decorator.updateConfigs(workspace.getConfiguration(Settings.identifier));
     }

@@ -1,4 +1,3 @@
-import { window } from "vscode";
 import { Settings } from "./enums";
 import { ExtSettings } from "./settings";
 
@@ -8,7 +7,7 @@ class CacheClass {
     this._instance = this._instance ? this._instance : new CacheClass();
     return this._instance;
   }
-  StateCache: Map<string, boolean> = new Map<string, boolean>();
+  CacheMap = new Map<string | undefined, boolean>();
 
   // Get the autoFold setting
   private autoFold() {
@@ -21,31 +20,31 @@ class CacheClass {
   }
 
   // Set the state of the extension
-  set State(_state: boolean) {
+  public SetShouldFold(key: string | undefined, shouldToggle: boolean) {
     if (this.togglePerFile()) {
-      this.StateCache.set(window.activeTextEditor?.document.uri.path, _state);
+      this.CacheMap.set(key, shouldToggle);
     } else {
-      this.StateCache.set("global", _state);
+      this.CacheMap.set("global", shouldToggle);
     }
   }
 
   // Get the state of the extension
-  get State(): boolean {
+  public ShouldFold(key: string | undefined): boolean {
     if (this.togglePerFile()) {
-      return this.StateCache.get(window.activeTextEditor?.document.uri.path) ?? this.autoFold();
+      return this.CacheMap.get(key) ?? this.autoFold();
     } else {
-      return this.StateCache.get("global") ?? this.autoFold();
+      return this.CacheMap.get("global") ?? this.autoFold();
     }
   }
 
   // Toggle the state of the extension
-  public ToggleState() {
-    this.State = !this.State;
+  public ToggleShouldFold(key: string) {
+    this.SetShouldFold(key, !this.ShouldFold(key))
   }
 
   // Clear the state cache
-  public ClearCache() {
-    this.StateCache.clear();
+  public Clear() {
+    this.CacheMap.clear();
   }
 
   constructor () { }
