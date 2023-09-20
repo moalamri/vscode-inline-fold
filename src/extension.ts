@@ -13,9 +13,9 @@ export function activate(context: ExtensionContext) {
   elimit.Lead();
 
   function triggerUpdateDecorations(): void {
-    const textEditor = window.activeTextEditor;
-    if (!textEditor) return;
-    decorator.activeEditor(textEditor);
+    for (const textEditor of window.visibleTextEditors) {
+      decorator.editor(textEditor);
+    }
   }
 
   const toggleCommand = commands.registerCommand(Commands.InlineFoldToggle, () => {
@@ -26,8 +26,8 @@ export function activate(context: ExtensionContext) {
     Cache.ClearCache();
   });
 
-  const activeTextEditor = window.onDidChangeActiveTextEditor((e) => {
-    if (!e) return;
+  const changeVisibleTextEditors = window.onDidChangeVisibleTextEditors((editors) => {
+    if (editors.length < 1) return;
     elimit.Trail();
   });
 
@@ -64,7 +64,7 @@ export function activate(context: ExtensionContext) {
   context.subscriptions.push(changeText);
   context.subscriptions.push(toggleCommand);
   context.subscriptions.push(changeSelection);
-  context.subscriptions.push(activeTextEditor);
+  context.subscriptions.push(changeVisibleTextEditors);
   context.subscriptions.push(clearCacheCommand);
   context.subscriptions.push(changeVisibleRange);
   context.subscriptions.push(changeConfiguration);

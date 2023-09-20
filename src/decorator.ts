@@ -16,12 +16,10 @@ export class Decorator {
   EndLine: number = 0;
 
   /**
-  * To set/update the current working text editor.
-  * It's neccessary to call this method when the active editor changes
-  * because somethimes it return as undefined.
+  * To set/update the current visible text editor.
   * @param textEditor TextEditor
   */
-  activeEditor(textEditor: TextEditor) {
+  editor(textEditor: TextEditor) {
     if (!textEditor) return;
     this.CurrentEditor = textEditor;
     this.startLine(textEditor.visibleRanges[0].start.line);
@@ -72,7 +70,9 @@ export class Decorator {
   }
 
   updateDecorations() {
-    if (!this.SupportedLanguages.includes(this.CurrentEditor.document.languageId)) {
+    const currentLangId = this.CurrentEditor.document.languageId
+
+    if (!this.SupportedLanguages.includes(currentLangId)) {
       return;
     }
 
@@ -110,7 +110,7 @@ export class Decorator {
         continue;
       }
 
-      /* Checking if the range is selected by the user. 
+      /* Checking if the range is selected by the user.
       first check is for single selection, second is for multiple cursor selections.
       or if the user has enabled the unfoldOnLineSelect option. */
       if (this.CurrentEditor.selection.contains(range) ||
