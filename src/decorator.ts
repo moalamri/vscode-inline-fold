@@ -68,13 +68,13 @@ export class Decorator {
       return;
     }
 
-    const regEx: RegExp = ExtSettings.Regex();
-    const unFoldOnLineSelect = ExtSettings.Get<boolean>(Settings.unfoldOnLineSelect);
+    const regEx: RegExp = ExtSettings.Regex(currentLangId);
+    const unFoldOnLineSelect = ExtSettings.Get<boolean>(Settings.unfoldOnLineSelect, currentLangId);
     const text = this.CurrentEditor.document.getText();
-    const regexGroup: number = ExtSettings.Get<number>(Settings.regexGroup) as number | 1;
-    const matchDecorationType = this.DTOs.MaskDecorationTypeCache();
+    const regexGroup: number = ExtSettings.Get<number>(Settings.regexGroup, currentLangId) as number | 1;
+    const matchDecorationType = this.DTOs.MaskDecorationTypeCache(currentLangId);
     const plainDecorationType = this.DTOs.PlainDecorationType();
-    const unfoldDecorationType = this.DTOs.UnfoldDecorationType();
+    const unfoldDecorationType = this.DTOs.UnfoldDecorationType(currentLangId);
     const foldRanges: DecorationOptions[] = [];
     const unfoldRanges: Range[] = [];
 
@@ -92,7 +92,7 @@ export class Decorator {
 
       /* Checking if the toggle command is active or not. without conflicts with default state settings.
          If it is not active, it will remove all decorations. */
-      if (!Cache.ShouldFold(this.CurrentEditor.document.uri.path)) {
+      if (!Cache.ShouldFold(this.CurrentEditor.document.uri.path, currentLangId)) {
         this.CurrentEditor.setDecorations(plainDecorationType, []);
         break;
       }

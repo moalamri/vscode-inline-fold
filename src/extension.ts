@@ -19,7 +19,7 @@ export function activate(context: ExtensionContext) {
   }
 
   const toggleCommand = commands.registerCommand(Commands.InlineFoldToggle, () => {
-    Cache.ToggleShouldFold(window.activeTextEditor?.document.uri.path)
+    Cache.ToggleShouldFold(window.activeTextEditor?.document.uri.path, window.activeTextEditor?.document.languageId)
     triggerUpdateDecorations()
   });
 

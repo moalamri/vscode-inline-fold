@@ -11,7 +11,7 @@ import { ExtSettings } from "./settings";
  * on demand.
  */
 export class DecoratorTypeOptions {
-  private cache = new Map<string, TextEditorDecorationType>();
+  private cache = new Map<string | undefined, TextEditorDecorationType>();
 
   public ClearCache() {
     this.cache.forEach((decOp) => {
@@ -20,21 +20,21 @@ export class DecoratorTypeOptions {
     this.cache.clear();
   }
 
-  public UnfoldDecorationType = (): TextEditorDecorationType => {
+  public UnfoldDecorationType = (langId?: string): TextEditorDecorationType => {
     return window.createTextEditorDecorationType({
       rangeBehavior: DecorationRangeBehavior.ClosedOpen,
-      opacity: ExtSettings.Get<string>(Settings.unfoldedOpacity).toString()
+      opacity: ExtSettings.Get<string>(Settings.unfoldedOpacity, langId).toString()
     })
   }
 
-  public MatchedDecorationType = (): TextEditorDecorationType => {
+  public MatchedDecorationType = (langId?: string): TextEditorDecorationType => {
     return window.createTextEditorDecorationType({
       before: {
-        contentText: ExtSettings.Get<string>(Settings.maskChar),
-        color: ExtSettings.Get<string>(Settings.maskColor),
+        contentText: ExtSettings.Get<string>(Settings.maskChar, langId),
+        color: ExtSettings.Get<string>(Settings.maskColor, langId),
       },
       after: {
-        contentText: ExtSettings.Get<string>(Settings.after),
+        contentText: ExtSettings.Get<string>(Settings.after, langId),
       },
       textDecoration: "none; display: none;"
     });
@@ -43,12 +43,11 @@ export class DecoratorTypeOptions {
 
   public PlainDecorationType = (): TextEditorDecorationType => window.createTextEditorDecorationType({})
 
-  public MaskDecorationTypeCache(): TextEditorDecorationType {
-    const langId = window.activeTextEditor.document.languageId;
+  public MaskDecorationTypeCache(langId?: string): TextEditorDecorationType {
     if (this.cache.has(langId)) {
       return this.cache.get(langId) as TextEditorDecorationType;
     }
-    const decorationType = this.MatchedDecorationType();
+    const decorationType = this.MatchedDecorationType(langId);
     this.cache.set(langId, decorationType);
     return decorationType;
   }

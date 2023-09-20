@@ -10,18 +10,18 @@ class CacheClass {
   CacheMap = new Map<string | undefined, boolean>();
 
   // Get the autoFold setting
-  private autoFold() {
-    return ExtSettings.Get<boolean>(Settings.autoFold);
+  private autoFold(langId?: string) {
+    return ExtSettings.Get<boolean>(Settings.autoFold, langId);
   }
 
   // Get the togglePerFile setting
-  private togglePerFile() {
-    return ExtSettings.Get<boolean>(Settings.togglePerFile)
+  private togglePerFile(langId?: string) {
+    return ExtSettings.Get<boolean>(Settings.togglePerFile, langId)
   }
 
   // Set the state of the extension
-  public SetShouldFold(key: string | undefined, shouldToggle: boolean) {
-    if (this.togglePerFile()) {
+  public SetShouldFold(key: string | undefined, shouldToggle: boolean, langId?: string) {
+    if (this.togglePerFile(langId)) {
       this.CacheMap.set(key, shouldToggle);
     } else {
       this.CacheMap.set("global", shouldToggle);
@@ -29,17 +29,17 @@ class CacheClass {
   }
 
   // Get the state of the extension
-  public ShouldFold(key: string | undefined): boolean {
-    if (this.togglePerFile()) {
-      return this.CacheMap.get(key) ?? this.autoFold();
+  public ShouldFold(key: string | undefined, langId?: string): boolean {
+    if (this.togglePerFile(langId)) {
+      return this.CacheMap.get(key) ?? this.autoFold(langId);
     } else {
-      return this.CacheMap.get("global") ?? this.autoFold();
+      return this.CacheMap.get("global") ?? this.autoFold(langId);
     }
   }
 
   // Toggle the state of the extension
-  public ToggleShouldFold(key: string) {
-    this.SetShouldFold(key, !this.ShouldFold(key))
+  public ToggleShouldFold(key: string | undefined, langId?: string) {
+    this.SetShouldFold(key, !this.ShouldFold(key, langId), langId)
   }
 
   // Clear the state cache
