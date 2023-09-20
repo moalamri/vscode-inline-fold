@@ -11,13 +11,18 @@ class CacheClass {
   StateCache: Map<string, boolean> = new Map<string, boolean>();
 
   // Get the autoFold setting
-  autoFold() {
+  private autoFold() {
     return ExtSettings.Get<boolean>(Settings.autoFold);
+  }
+
+  // Get the togglePerFile setting
+  private togglePerFile() {
+    return ExtSettings.Get<boolean>(Settings.togglePerFile)
   }
 
   // Set the state of the extension
   set State(_state: boolean) {
-    if (ExtSettings.Get<boolean>(Settings.togglePerFile)) {
+    if (this.togglePerFile()) {
       this.StateCache.set(window.activeTextEditor?.document.uri.path, _state);
     } else {
       this.StateCache.set("global", _state);
@@ -26,7 +31,7 @@ class CacheClass {
 
   // Get the state of the extension
   get State(): boolean {
-    if (ExtSettings.Get<boolean>(Settings.togglePerFile)) {
+    if (this.togglePerFile()) {
       return this.StateCache.get(window.activeTextEditor?.document.uri.path) ?? this.autoFold();
     } else {
       return this.StateCache.get("global") ?? this.autoFold();
