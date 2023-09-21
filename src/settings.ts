@@ -1,4 +1,4 @@
-import { window, workspace, WorkspaceConfiguration } from "vscode";
+import { workspace, WorkspaceConfiguration } from "vscode";
 import { Settings } from "./enums";
 
 class ExtensionSettings {
@@ -26,7 +26,7 @@ class ExtensionSettings {
    */
   private getPerLanguage<T>(_section: string, languageId: string) {
     // Get the configuration of the active language id
-    const langConfig: WorkspaceConfiguration = workspace.getConfiguration(Settings.identifier, { languageId});
+    const langConfig: WorkspaceConfiguration = workspace.getConfiguration(Settings.identifier, { languageId });
     // return the configuration for the given section
     return langConfig.get<T>(_section);
   }
