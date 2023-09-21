@@ -70,13 +70,13 @@ export class Decorator {
 
     const disableInDiffEditor = ExtSettings.Get<boolean>(Settings.disableInDiffEditor, currentLangId);
     if (disableInDiffEditor) {
-      const currentURI = this.CurrentEditor.document.uri.toString()
+      const currentURI = this.CurrentEditor.document.uri.path;
       const tabs = window.tabGroups.all.flatMap((tabGroup) => tabGroup.tabs);
       const isDiffEditor = tabs.some(
         (tab) =>
           tab.input instanceof TabInputTextDiff &&
-          (tab.input.modified.toString() === currentURI ||
-            tab.input.original.toString() === currentURI)
+          (tab.input.modified.path === currentURI ||
+            tab.input.original.path === currentURI)
       );
       if (isDiffEditor) {
         return;
