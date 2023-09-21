@@ -1,3 +1,5 @@
+import { window, type TextEditor, TabInputTextDiff, Uri } from "vscode";
+
 /**
 * Extension events limiter.
 * This class is responsible for managing  the  events of the extension to
@@ -54,4 +56,28 @@ export class EventsLimit {
     clearTimeout(this.timeout);
     this.timeout = setTimeout(() => this.func(), this.trailTimer);
   }
+}
+
+/**
+ * Determines whether the provided `editor` is a main editor.
+ *
+ * @returns `true` if the `editor` is a main editor,
+ * otherwise (e.g. embedded editor) `false`.
+ */
+export function isMainEditor(editor: TextEditor): boolean {
+  return editor.viewColumn !== undefined;
+}
+
+/**
+ * Determines whether the provided `uri` is currently opened within a Diff Editor.
+ *
+ * @returns `true` if a tab with the provided `uri` is opened in a Diff Editor, otherwise `false`.
+ */
+export function isOpenedWithDiffEditor(uri: Uri): boolean {
+  const tabs = window.tabGroups.all.flatMap((tabGroup) => tabGroup.tabs);
+  return tabs.some((tab) =>
+    tab.input instanceof TabInputTextDiff &&
+    (tab.input.modified.path === uri.path ||
+      tab.input.original.path === uri.path)
+  );
 }
