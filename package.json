@@ -174,6 +174,12 @@
 					"scope": "language-overridable",
 					"description": "(Optional) unfold the line when any part of the line is selected",
 					"default": false
+				},
+				"inlineFold.disableInDiffEditor": {
+					"type": "boolean",
+					"scope": "language-overridable",
+					"description": "(Optional) disable fold in diff editor",
+					"default": false
 				}
 			},
 			"required": [

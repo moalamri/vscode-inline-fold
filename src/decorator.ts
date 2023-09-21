@@ -1,4 +1,4 @@
-import { Position, Range, TextEditor, WorkspaceConfiguration, DecorationOptions } from "vscode";
+import { Position, Range, TextEditor, WorkspaceConfiguration, DecorationOptions, window, TabInputTextDiff } from "vscode";
 import { Cache } from "./cache";
 import { DecoratorTypeOptions } from "./decoration";
 import { Settings } from "./enums";
@@ -66,6 +66,21 @@ export class Decorator {
 
     if (!this.SupportedLanguages.includes(currentLangId)) {
       return;
+    }
+
+    const disableInDiffEditor = ExtSettings.Get<boolean>(Settings.disableInDiffEditor, currentLangId);
+    if (disableInDiffEditor) {
+      const currentURI = this.CurrentEditor.document.uri.toString()
+      const tabs = window.tabGroups.all.flatMap((tabGroup) => tabGroup.tabs);
+      const isDiffEditor = tabs.some(
+        (tab) =>
+          tab.input instanceof TabInputTextDiff &&
+          (tab.input.modified.toString() === currentURI ||
+            tab.input.original.toString() === currentURI)
+      );
+      if (isDiffEditor) {
+        return;
+      }
     }
 
     const regEx: RegExp = ExtSettings.Regex(currentLangId);
