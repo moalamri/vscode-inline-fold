@@ -16,12 +16,10 @@ export class Decorator {
   EndLine: number = 0;
 
   /**
-  * To set/update the current working text editor.
-  * It's neccessary to call this method when the active editor changes
-  * because somethimes it return as undefined.
+  * To set/update the current visible text editor.
   * @param textEditor TextEditor
   */
-  activeEditor(textEditor: TextEditor) {
+  editor(textEditor: TextEditor) {
     if (!textEditor) return;
     this.CurrentEditor = textEditor;
     this.startLine(textEditor.visibleRanges[0].start.line);
@@ -54,14 +52,6 @@ export class Decorator {
   }
 
   /**
-  * Set the active state of the decorator (used for command)
-  */
-  toggle() {
-    Cache.ToggleState();
-    this.updateDecorations();
-  }
-
-  /**
   * This method gets triggered when the extension settings are changed
   * @param extConfs: Workspace configs
   */
@@ -72,17 +62,19 @@ export class Decorator {
   }
 
   updateDecorations() {
-    if (!this.SupportedLanguages.includes(this.CurrentEditor.document.languageId)) {
+    const currentLangId = this.CurrentEditor.document.languageId
+
+    if (!this.SupportedLanguages.includes(currentLangId)) {
       return;
     }
 
-    const regEx: RegExp = ExtSettings.Regex();
-    const unFoldOnLineSelect = ExtSettings.Get<boolean>(Settings.unfoldOnLineSelect);
+    const regEx: RegExp = ExtSettings.Regex(currentLangId);
+    const unFoldOnLineSelect = ExtSettings.Get<boolean>(Settings.unfoldOnLineSelect, currentLangId);
     const text = this.CurrentEditor.document.getText();
-    const regexGroup: number = ExtSettings.Get<number>(Settings.regexGroup) as number | 1;
-    const matchDecorationType = this.DTOs.MaskDecorationTypeCache();
+    const regexGroup: number = ExtSettings.Get<number>(Settings.regexGroup, currentLangId) as number | 1;
+    const matchDecorationType = this.DTOs.MaskDecorationTypeCache(currentLangId);
     const plainDecorationType = this.DTOs.PlainDecorationType();
-    const unfoldDecorationType = this.DTOs.UnfoldDecorationType();
+    const unfoldDecorationType = this.DTOs.UnfoldDecorationType(currentLangId);
     const foldRanges: DecorationOptions[] = [];
     const unfoldRanges: Range[] = [];
 
@@ -100,7 +92,7 @@ export class Decorator {
 
       /* Checking if the toggle command is active or not. without conflicts with default state settings.
          If it is not active, it will remove all decorations. */
-      if (!Cache.State) {
+      if (!Cache.ShouldFold(this.CurrentEditor.document.uri.path, currentLangId)) {
         this.CurrentEditor.setDecorations(plainDecorationType, []);
         break;
       }
@@ -110,7 +102,7 @@ export class Decorator {
         continue;
       }
 
-      /* Checking if the range is selected by the user. 
+      /* Checking if the range is selected by the user.
       first check is for single selection, second is for multiple cursor selections.
       or if the user has enabled the unfoldOnLineSelect option. */
       if (this.CurrentEditor.selection.contains(range) ||

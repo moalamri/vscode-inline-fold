@@ -2,6 +2,9 @@
 
 <br/>
 
+> ### v0.2.5:
+- feat: trigger folding when the editor is not active by [@nix6839](https://github.com/nix6839)
+
 > ### v0.2.4:
 - fix: [#108](https://github.com/moalamri/vscode-inline-fold/issues/108)
 - fix: [#112](https://github.com/moalamri/vscode-inline-fold/issues/112)

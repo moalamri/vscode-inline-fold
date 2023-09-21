@@ -13,21 +13,22 @@ export function activate(context: ExtensionContext) {
   elimit.Lead();
 
   function triggerUpdateDecorations(): void {
-    const textEditor = window.activeTextEditor;
-    if (!textEditor) return;
-    decorator.activeEditor(textEditor);
+    for (const textEditor of window.visibleTextEditors) {
+      decorator.editor(textEditor);
+    }
   }
 
   const toggleCommand = commands.registerCommand(Commands.InlineFoldToggle, () => {
-    decorator.toggle();
+    Cache.ToggleShouldFold(window.activeTextEditor?.document.uri.path, window.activeTextEditor?.document.languageId)
+    triggerUpdateDecorations()
   });
 
   const clearCacheCommand = commands.registerCommand(Commands.InlineFoldClearCache, () => {
-    Cache.ClearCache();
+    Cache.Clear();
   });
 
-  const activeTextEditor = window.onDidChangeActiveTextEditor((e) => {
-    if (!e) return;
+  const changeVisibleTextEditors = window.onDidChangeVisibleTextEditors((editors) => {
+    if (editors.length < 1) return;
     elimit.Trail();
   });
 
@@ -53,7 +54,7 @@ export function activate(context: ExtensionContext) {
   const changeConfiguration = workspace.onDidChangeConfiguration((event) => {
     if (event.affectsConfiguration(Settings.identifier)) {
       if (!event.affectsConfiguration(Settings.autoFold)) {
-        Cache.ClearCache();
+        Cache.Clear();
       }
       decorator.updateConfigs(workspace.getConfiguration(Settings.identifier));
     }
@@ -64,7 +65,7 @@ export function activate(context: ExtensionContext) {
   context.subscriptions.push(changeText);
   context.subscriptions.push(toggleCommand);
   context.subscriptions.push(changeSelection);
-  context.subscriptions.push(activeTextEditor);
+  context.subscriptions.push(changeVisibleTextEditors);
   context.subscriptions.push(clearCacheCommand);
   context.subscriptions.push(changeVisibleRange);
   context.subscriptions.push(changeConfiguration);

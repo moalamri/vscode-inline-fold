@@ -1,4 +1,3 @@
-import { window } from "vscode";
 import { Settings } from "./enums";
 import { ExtSettings } from "./settings";
 
@@ -8,39 +7,44 @@ class CacheClass {
     this._instance = this._instance ? this._instance : new CacheClass();
     return this._instance;
   }
-  StateCache: Map<string, boolean> = new Map<string, boolean>();
+  CacheMap = new Map<string | undefined, boolean>();
 
   // Get the autoFold setting
-  autoFold() {
-    return ExtSettings.Get<boolean>(Settings.autoFold);
+  private autoFold(langId?: string) {
+    return ExtSettings.Get<boolean>(Settings.autoFold, langId);
+  }
+
+  // Get the togglePerFile setting
+  private togglePerFile(langId?: string) {
+    return ExtSettings.Get<boolean>(Settings.togglePerFile, langId)
   }
 
   // Set the state of the extension
-  set State(_state: boolean) {
-    if (ExtSettings.Get<boolean>(Settings.togglePerFile)) {
-      this.StateCache.set(window.activeTextEditor?.document.uri.path, _state);
+  public SetShouldFold(key: string | undefined, shouldToggle: boolean, langId?: string) {
+    if (this.togglePerFile(langId)) {
+      this.CacheMap.set(key, shouldToggle);
     } else {
-      this.StateCache.set("global", _state);
+      this.CacheMap.set("global", shouldToggle);
     }
   }
 
   // Get the state of the extension
-  get State(): boolean {
-    if (ExtSettings.Get<boolean>(Settings.togglePerFile)) {
-      return this.StateCache.get(window.activeTextEditor?.document.uri.path) ?? this.autoFold();
+  public ShouldFold(key: string | undefined, langId?: string): boolean {
+    if (this.togglePerFile(langId)) {
+      return this.CacheMap.get(key) ?? this.autoFold(langId);
     } else {
-      return this.StateCache.get("global") ?? this.autoFold();
+      return this.CacheMap.get("global") ?? this.autoFold(langId);
     }
   }
 
   // Toggle the state of the extension
-  public ToggleState() {
-    this.State = !this.State;
+  public ToggleShouldFold(key: string | undefined, langId?: string) {
+    this.SetShouldFold(key, !this.ShouldFold(key, langId), langId)
   }
 
   // Clear the state cache
-  public ClearCache() {
-    this.StateCache.clear();
+  public Clear() {
+    this.CacheMap.clear();
   }
 
   constructor () { }
