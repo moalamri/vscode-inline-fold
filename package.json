@@ -3,7 +3,7 @@
 	"displayName": "Inline fold",
 	"description": "A custom decorator that \"fold\" matching content in single line",
 	"icon": "res/icon.png",
-	"version": "0.2.5",
+	"version": "0.2.6",
 	"publisher": "moalamri",
 	"homepage": "https://github.com/moalamri/vscode-inline-fold",
 	"bugs": "https://github.com/moalamri/vscode-inline-fold/issues",
