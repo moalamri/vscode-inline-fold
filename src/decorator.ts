@@ -1,8 +1,9 @@
-import { Position, Range, TextEditor, WorkspaceConfiguration, DecorationOptions, window, TabInputTextDiff } from "vscode";
+import { Position, Range, TextEditor, WorkspaceConfiguration, DecorationOptions } from "vscode";
 import { Cache } from "./cache";
 import { DecoratorTypeOptions } from "./decoration";
 import { Settings } from "./enums";
 import { ExtSettings } from "./settings";
+import { isMainEditor, isOpenedWithDiffEditor } from "./utils";
 
 export class Decorator {
   // DTOs is just a short name for DecoratorTypeOptions,
@@ -70,15 +71,10 @@ export class Decorator {
 
     const disableInDiffEditor = ExtSettings.Get<boolean>(Settings.disableInDiffEditor, currentLangId);
     if (disableInDiffEditor) {
-      const currentURI = this.CurrentEditor.document.uri.path;
-      const tabs = window.tabGroups.all.flatMap((tabGroup) => tabGroup.tabs);
-      const isDiffEditor = tabs.some(
-        (tab) =>
-          tab.input instanceof TabInputTextDiff &&
-          (tab.input.modified.path === currentURI ||
-            tab.input.original.path === currentURI)
-      );
-      if (isDiffEditor) {
+      if (
+        !isMainEditor(this.CurrentEditor) // Idea from: https://github.com/usernamehw/vscode-error-lens/issues/72#issuecomment-1062046817
+        && isOpenedWithDiffEditor(this.CurrentEditor.document.uri)
+      ) {
         return;
       }
     }
