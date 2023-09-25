@@ -2,6 +2,10 @@
 
 <br/>
 
+> ### v0.2.6:
+- fix: [#116](https://github.com/moalamri/vscode-inline-fold/issues/116) by [@nix6839](https://github.com/nix6839)
+- feat: new option to disable extension in diff view by [@nix6839](https://github.com/nix6839)
+
 > ### v0.2.5:
 - feat: trigger folding when the editor is not active by [@nix6839](https://github.com/nix6839)
 

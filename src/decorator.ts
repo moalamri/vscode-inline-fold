@@ -3,6 +3,7 @@ import { Cache } from "./cache";
 import { DecoratorTypeOptions } from "./decoration";
 import { Settings } from "./enums";
 import { ExtSettings } from "./settings";
+import { isMainEditor, isOpenedWithDiffEditor } from "./utils";
 
 export class Decorator {
   // DTOs is just a short name for DecoratorTypeOptions,
@@ -66,6 +67,16 @@ export class Decorator {
 
     if (!this.SupportedLanguages.includes(currentLangId)) {
       return;
+    }
+
+    const disableInDiffEditor = ExtSettings.Get<boolean>(Settings.disableInDiffEditor, currentLangId);
+    if (disableInDiffEditor) {
+      if (
+        !isMainEditor(this.CurrentEditor) // Idea from: https://github.com/usernamehw/vscode-error-lens/issues/72#issuecomment-1062046817
+        && isOpenedWithDiffEditor(this.CurrentEditor.document.uri)
+      ) {
+        return;
+      }
     }
 
     const regEx: RegExp = ExtSettings.Regex(currentLangId);

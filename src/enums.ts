@@ -15,5 +15,6 @@ export enum Settings {
    supportedLanguages = "supportedLanguages",
    unfoldOnLineSelect = "unfoldOnLineSelect",
    useGlobal = "useGlobal",
-   togglePerFile = "togglePerFile"
+   togglePerFile = "togglePerFile",
+   disableInDiffEditor = "disableInDiffEditor",
 }
