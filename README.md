@@ -1,3 +1,8 @@
+> [!WARNING]
+> Sadly this extension is dead... [read more](https://github.com/moalamri/vscode-inline-fold/discussions/132).
+
+
+
 <p align="center">
     <img width="256" alt="preview" src="https://raw.githubusercontent.com/moalamri/vscode-inline-fold/master/res/icon.png">
 </p>
