@@ -83,6 +83,44 @@ Sometimes you have only a couple of short classnames which you don't necessarily
 }
 ```
 
+### Long JSX or HTML tags with a many of attributes (ex. Mantine UI with React, Primevue with Vue)
+You can work with your pages much easier by collapsing tags with a bunch of props passed to them, this makes the code cleaner and hides unnecessary details.
+Keep in mind that you can quickly toggle the extension off when you need to see all of props.
+
+Limitation: This config doesn't collapse multiline tags because that would cause blank lines to appear between the tags and looks hard to read.
+Try to set your prettier "printWidth" to around 130 at least so you can avoid unnecessary tag folding.
+
+```jsonc
+{
+  "inlineFold.regex": "(<[a-zA-Z]*\s)(.{10,})\/?>",
+  "inlineFold.regexFlags": "g",
+  "inlineFold.regexGroup": 2,
+  "inlineFold.unfoldOnLineSelect": true
+}
+```
+
+Also it will only collapse tags that have more than 10 characters after the tag's name (so very short tags aren't folded for no reason)
+
+<p align="center">
+  <img width="30%" src="https://raw.githubusercontent.com/moalamri/vscode-inline-fold/master/res/jsx-html-example-1.png">
+</p>
+
+This variation of the previous config shows the first attribute/prop coming after the tag's name (so you can tell which element you're looking at by seeing the ID if it's passed first):
+
+```jsonc
+{
+  "inlineFold.regex": "((<[a-zA-Z]*\s[a-zA-Z]*=["{].*?["}]\s)(.*)\/?>",
+  "inlineFold.regexFlags": "g",
+  "inlineFold.regexGroup": 2,
+  "inlineFold.unfoldOnLineSelect": true
+}
+```
+
+<p align="center">
+  <img width="30%" src="https://raw.githubusercontent.com/moalamri/vscode-inline-fold/master/res/jsx-html-example-2.png">
+</p>
+
+
 ### SVG
 Embeded SVG also tend to have alot of code, that you just dont wanna focus on.
 So with this settings below you can fold the ugly part.
