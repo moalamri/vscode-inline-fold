@@ -92,7 +92,7 @@ Try to set your prettier "printWidth" to around 130 at least so you can avoid un
 
 ```jsonc
 {
-  "inlineFold.regex": "(<[a-zA-Z]*\s)(.{10,})\/?>",
+  "inlineFold.regex": "(<[a-zA-Z0-9]*\\s)(.{10,})\/?>",
   "inlineFold.regexFlags": "g",
   "inlineFold.regexGroup": 2,
   "inlineFold.unfoldOnLineSelect": true
@@ -105,21 +105,15 @@ Also it will only collapse tags that have more than 10 characters after the tag'
   <img width="30%" src="https://raw.githubusercontent.com/moalamri/vscode-inline-fold/master/res/jsx-html-example-1.png">
 </p>
 
-This variation of the previous config shows the first attribute/prop coming after the tag's name (so you can tell which element you're looking at by seeing the ID if it's passed first):
-
+> This variation of the previous config shows the first attribute/prop coming after the tag's name (so you can tell which element you're looking at by seeing the ID/Class if it's set first):
 ```jsonc
 {
-  "inlineFold.regex": "((<[a-zA-Z]*\s[a-zA-Z]*=["{].*?["}]\s)(.*)\/?>",
+  "inlineFold.regex": "((<[a-zA-Z0-9]*\\s[a-zA-Z0-9-]*=["{].*?["}]\\s)(.*)\/?>",
   "inlineFold.regexFlags": "g",
   "inlineFold.regexGroup": 2,
   "inlineFold.unfoldOnLineSelect": true
 }
 ```
-
-<p align="center">
-  <img width="30%" src="https://raw.githubusercontent.com/moalamri/vscode-inline-fold/master/res/jsx-html-example-2.png">
-</p>
-
 
 ### SVG
 Embeded SVG also tend to have alot of code, that you just dont wanna focus on.
