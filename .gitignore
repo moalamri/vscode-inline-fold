@@ -5,3 +5,4 @@ package-lock.json
 pnpm-lock.yaml
 .vscode/settings.json
 *.vsix
+.vscode-test
