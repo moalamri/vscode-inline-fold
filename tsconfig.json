@@ -1,18 +1,15 @@
 {
 	"compilerOptions": {
-		"module": "commonjs",
+		"module": "Node16",
 		"skipLibCheck": true,
 		"removeComments": true,
-		"target": "es6",
+		"target": "ES2022",
 		"outDir": "out",
 		"lib": [
-			"es6"
+			"ES2022"
 		],
 		"sourceMap": true,
 		"rootDir": "src",
 		"strict": false
-	},
-	"exclude": [
-		"node_modules"
-	]
+	}
 }
