@@ -1,7 +1,7 @@
 {
 	"name": "inline-fold",
-	"displayName": "Inline fold",
-	"description": "A custom decorator that \"fold\" matching content in single line",
+	"displayName": "Inline fold v2",
+	"description": "Folds verbose inline content for better readability. Supports regex to match any content.",
 	"icon": "res/icon.png",
 	"version": "0.2.6",
 	"publisher": "moalamri",
