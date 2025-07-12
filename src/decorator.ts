@@ -21,7 +21,7 @@ export class Decorator {
   * @param textEditor TextEditor
   */
   editor(textEditor: TextEditor) {
-    if (!textEditor) return;
+    if (!textEditor) { return; };
     this.CurrentEditor = textEditor;
     this.startLine(textEditor.visibleRanges[0].start.line);
     this.endLine(textEditor.visibleRanges[0].end.line);
@@ -63,7 +63,7 @@ export class Decorator {
   }
 
   updateDecorations() {
-    const currentLangId = this.CurrentEditor.document.languageId
+    const currentLangId = this.CurrentEditor.document.languageId;
 
     if (!this.SupportedLanguages.includes(currentLangId)) {
       return;
@@ -93,7 +93,9 @@ export class Decorator {
     while (match = regEx.exec(text)) {
 
       // if the matched content is undefined, skip it and continue to the next match
-      if (match && !match[regexGroup]) continue;
+      if (match && !match[regexGroup]) {
+        continue;
+      }
 
       const matched = match[regexGroup];
       const foldIndex = match[0].lastIndexOf(matched);
@@ -129,7 +131,7 @@ export class Decorator {
     this.CurrentEditor.setDecorations(
       matchDecorationType,
       foldRanges
-    )
+    );
   }
 
   startPositionLine(matchIndex: number, startIndex: number): Position {

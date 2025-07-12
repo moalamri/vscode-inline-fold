@@ -31,7 +31,7 @@ export class EventsLimit {
   */
   public Register = (func: Function) => {
     this.func = func;
-  }
+  };
 
   /* Checking if the function is called, if not it calls the registered function
   * and then resets the timer.
@@ -43,8 +43,8 @@ export class EventsLimit {
     }
     setTimeout(() => {
       this.isCalled = false;
-    }, this.leadTimer)
-  }
+    }, this.leadTimer);
+  };
 
   /**
   * Because some events like onDidChangeActiveTextEditor get fired twice when
@@ -55,7 +55,7 @@ export class EventsLimit {
   public Trail = () => {
     clearTimeout(this.timeout);
     this.timeout = setTimeout(() => this.func(), this.trailTimer);
-  }
+  };
 }
 
 /**

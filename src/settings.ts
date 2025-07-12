@@ -56,7 +56,7 @@ class ExtensionSettings {
    */
   public Get<T>(_section: Settings, langId?: string): T {
     // Try to get language scope configuration, otherwise fallback to global configuration
-    const getGlobal = this.configs.get(Settings.useGlobal)
+    const getGlobal = this.configs.get(Settings.useGlobal);
     if (getGlobal || langId === undefined) {
       return this.configs.get<T>(_section) as T;
     }

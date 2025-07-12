@@ -16,7 +16,7 @@ class CacheClass {
 
   // Get the togglePerFile setting
   private togglePerFile(langId?: string) {
-    return ExtSettings.Get<boolean>(Settings.togglePerFile, langId)
+    return ExtSettings.Get<boolean>(Settings.togglePerFile, langId);
   }
 
   // Set the state of the extension
@@ -39,7 +39,7 @@ class CacheClass {
 
   // Toggle the state of the extension
   public ToggleShouldFold(key: string | undefined, langId?: string) {
-    this.SetShouldFold(key, !this.ShouldFold(key, langId), langId)
+    this.SetShouldFold(key, !this.ShouldFold(key, langId), langId);
   }
 
   // Clear the state cache

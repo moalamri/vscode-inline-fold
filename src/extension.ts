@@ -19,8 +19,8 @@ export function activate(context: ExtensionContext) {
   }
 
   const toggleCommand = commands.registerCommand(Commands.InlineFoldToggle, () => {
-    Cache.ToggleShouldFold(window.activeTextEditor?.document.uri.path, window.activeTextEditor?.document.languageId)
-    triggerUpdateDecorations()
+    Cache.ToggleShouldFold(window.activeTextEditor?.document.uri.path, window.activeTextEditor?.document.languageId);
+    triggerUpdateDecorations();
   });
 
   const clearCacheCommand = commands.registerCommand(Commands.InlineFoldClearCache, () => {
@@ -28,7 +28,7 @@ export function activate(context: ExtensionContext) {
   });
 
   const changeVisibleTextEditors = window.onDidChangeVisibleTextEditors((editors) => {
-    if (editors.length < 1) return;
+    if (editors.length < 1) { return; }
     elimit.Trail();
   });
 
@@ -37,7 +37,7 @@ export function activate(context: ExtensionContext) {
   });
 
   const changeVisibleRange = window.onDidChangeTextEditorVisibleRanges((e) => {
-    if (!e.textEditor) return;
+    if (!e.textEditor) { return; }
     elimit.Trail();
   });
 
@@ -47,7 +47,7 @@ export function activate(context: ExtensionContext) {
     // this event gets fired when any change happens to any text document in the workspace
     // so to limit the decoration it will fire when the change is caused by undo/redo
     // since `changeSelection` gets fired as well while typing or moving lines.
-    if (e.reason !== 1 && e.reason !== 2) return;
+    if (e.reason !== 1 && e.reason !== 2) { return; }
     elimit.Trail();
   });
 

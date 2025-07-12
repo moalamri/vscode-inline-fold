@@ -24,8 +24,8 @@ export class DecoratorTypeOptions {
     return window.createTextEditorDecorationType({
       rangeBehavior: DecorationRangeBehavior.ClosedOpen,
       opacity: ExtSettings.Get<string>(Settings.unfoldedOpacity, langId).toString()
-    })
-  }
+    });
+  };
 
   public MatchedDecorationType = (langId?: string): TextEditorDecorationType => {
     return window.createTextEditorDecorationType({
@@ -41,7 +41,7 @@ export class DecoratorTypeOptions {
 
   };
 
-  public PlainDecorationType = (): TextEditorDecorationType => window.createTextEditorDecorationType({})
+  public PlainDecorationType = (): TextEditorDecorationType => window.createTextEditorDecorationType({});
 
   public MaskDecorationTypeCache(langId?: string): TextEditorDecorationType {
     if (this.cache.has(langId)) {
