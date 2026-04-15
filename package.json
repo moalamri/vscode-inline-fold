@@ -4,7 +4,7 @@
       "description": "Folds verbose inline content for better readability. Supports regex to match any content.",
       "icon": "res/icon.png",
       "version": "2.0.0",
-      "publisher": "mohammed-alamri",
+      "publisher": "moalamri",
       "homepage": "https://github.com/moalamri/vscode-inline-fold",
       "bugs": "https://github.com/moalamri/vscode-inline-fold/issues",
       "license": "MIT",
