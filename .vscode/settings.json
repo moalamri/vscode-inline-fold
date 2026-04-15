@@ -1,0 +1,10 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+      "files.exclude": {
+            "out": true, // set this to true to hide the "out" folder with the compiled JS files
+            ".vscode-test": true // set this to true to hide the ".vscode-test" folder with the test extension
+      },
+      "search.exclude": {
+            "out": true // set this to false to include "out" folder in search results
+      }
+}

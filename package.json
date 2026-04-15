@@ -1,225 +1,224 @@
 {
-	"name": "inline-fold",
-	"displayName": "Inline fold v2",
-	"description": "Folds verbose inline content for better readability. Supports regex to match any content.",
-	"icon": "res/icon.png",
-	"version": "0.2.6",
-	"publisher": "mohammed-alamri",
-	"homepage": "https://github.com/moalamri/vscode-inline-fold",
-	"bugs": "https://github.com/moalamri/vscode-inline-fold/issues",
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/moalamri/vscode-inline-fold"
-	},
-	"engines": {
-		"vscode": "^1.102.0"
-	},
-	"categories": [
-		"Visualization",
-		"Other"
-	],
-	"activationEvents": [
-		"onStartupFinished"
-	],
-	"main": "./out/extension.js",
-	"contributes": {
-		"commands": [
-			{
-				"command": "inlineFold.toggle",
-				"title": "Inline Fold: Toggle"
-			},
-			{
-				"command": "inlineFold.clearCache",
-				"title": "Inline Fold: Clear session cache"
-			}
-		],
-		"configuration": {
-			"type": "object",
-			"title": "Inline Fold",
-			"properties": {
-				"inlineFold.autoFold": {
-					"type": "boolean",
-					"scope": "language-overridable",
-					"description": "Set the default state of inline fold when opening a file",
-					"default": true
-				},
-				"inlineFold.togglePerFile": {
-					"type": "boolean",
-					"scope": "language-overridable",
-					"description": "Toggle inline fold per file, instead of per workspace",
-					"default": true
-				},
-				"inlineFold.useGlobal": {
-					"type": "boolean",
-					"scope": "language-overridable",
-					"description": "Change the order to use global configuration before language-specific",
-					"default": false
-				},
-				"inlineFold.supportedLanguages": {
-					"type": "array",
-					"description": "Supported languages",
-					"items": {
-						"type": "string",
-						"description": "Language Ids: https://code.visualstudio.com/docs/languages/identifiers#_known-language-identifiers"
-					},
-					"minItems": 1,
-					"default": [
-						"astro",
-						"vue",
-						"html",
-						"svelte",
-						"vue-html",
-						"php",
-						"blade",
-						"erb",
-						"twig",
-						"nunjucks",
-						"django-html",
-						"jinja-html",
-						"javascript",
-						"typescript",
-						"javascriptreact",
-						"typescriptreact"
-					]
-				},
-				"inlineFold.regex": {
-					"type": "string",
-					"description": "Regex to match",
-					"scope": "language-overridable",
-					"default": "(class|className)=(({(`|))|(['\"`]))(.*?)(\\2|(\\4)})",
-					"examples": [
-						"(class|className)=(({(`|))|(['\"`]))(.*?)(\\2|(\\4)})",
-						"(class|className)=[`'{\"]([^`'\"}]+)[`'\"}]",
-						"id=\"([a-zA-Z0-9-\\s]+)(?=\")"
-					]
-				},
-				"inlineFold.regexFlags": {
-					"type": "string",
-					"scope": "language-overridable",
-					"description": "Regex flags",
-					"default": "g",
-					"examples": [
-						"g",
-						"gi"
-					]
-				},
-				"inlineFold.regexGroup": {
-					"type": ["string", "number"],
-					"scope": "language-overridable",
-					"description": "Regex capture group number for content that will be folded",
-					"default": "6",
-					"examples": [
-						"1",
-						"2",
-						"3",
-						"4",
-						"5",
-						"6"
-					]
-				},
-				"inlineFold.maskChar": {
-					"type": "string",
-					"scope": "language-overridable",
-					"description": "The mask that covers the folded text",
-					"default": "◦◦◦",
-					"examples": [
-						"◦◦◦",
-						"▶▶▶",
-						"⌨"
-					]
-				},
-				"inlineFold.maskColor": {
-					"type": "string",
-					"scope": "language-overridable",
-					"description": "The color of the covering mask in hex",
-					"default": "#68D7AC",
-					"examples": [
-						"#68D7AC",
-						"#FF0000"
-					]
-				},
-				"inlineFold.unfoldedOpacity": {
-					"type": "number",
-					"scope": "language-overridable",
-					"description": "The opacity of the unfolded text (from 0 to 1)",
-					"default": 0.7,
-					"enum": [
-						0,
-						0.1,
-						0.2,
-						0.3,
-						0.4,
-						0.5,
-						0.6,
-						0.7,
-						0.8,
-						0.9,
-						1
-					]
-				},
-				"inlineFold.after": {
-					"type": "string",
-					"scope": "language-overridable",
-					"description": "(Optional) Add any text/character to be appended to the folded text",
-					"default": "",
-					"examples": [
-						"+",
-						"<-",
-						"<<"
-					]
-				},
-				"inlineFold.unfoldOnLineSelect": {
-					"type": "boolean",
-					"scope": "language-overridable",
-					"description": "(Optional) unfold the line when any part of the line is selected",
-					"default": false
-				},
-				"inlineFold.disableInDiffEditor": {
-					"type": "boolean",
-					"scope": "language-overridable",
-					"description": "(Optional) disable fold in diff editor",
-					"default": false
-				}
-			},
-			"required": [
-				"inlineFold.regex",
-				"inlineFold.regexFlags",
-				"inlineFold.regexGroup",
-				"inlineFold.maskChar",
-				"inlineFold.supportedLanguages"
-			]
-		}
-	},
-	"scripts": {
-		"vscode:prepublish": "pnpm run compile",
-		"package": "vsce package",
-		"publish": "vsce publish",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"pretest": "pnpm run compile && pnpm run lint",
-		"lint": "eslint src",
-		"test": "vscode-test"
-	},
-	"devDependencies": {
-		"@types/vscode": "^1.102.0",
-		"@types/mocha": "^10.0.10",
-		"@types/node": "20.x",
-		"@typescript-eslint/eslint-plugin": "^8.36.0",
-		"@typescript-eslint/parser": "^8.36.0",
-		"eslint": "^9.31.0",
-		"typescript": "^5.8.3",
-		"@vscode/test-cli": "^0.0.11",
-		"@vscode/test-electron": "^2.5.2"
-	},
-	"__metadata": {
-		"id": "4dc4b505-dda3-4ac6-b839-397f8cf0adcc",
-		"publisherDisplayName": "Alamri",
-		"publisherId": "4b757094-d011-6968-816e-7257445a6afd",
-		"isPreReleaseVersion": false,
-		"targetPlatform": "undefined",
-		"updated": true,
-		"preRelease": false,
-		"installedTimestamp": 1657117103571
-	}
+      "name": "inline-fold",
+      "displayName": "Inline fold v2",
+      "description": "Folds verbose inline content for better readability. Supports regex to match any content.",
+      "icon": "res/icon.png",
+      "version": "2.0.0",
+      "publisher": "mohammed-alamri",
+      "homepage": "https://github.com/moalamri/vscode-inline-fold",
+      "bugs": "https://github.com/moalamri/vscode-inline-fold/issues",
+      "license": "MIT",
+      "repository": {
+            "type": "git",
+            "url": "https://github.com/moalamri/vscode-inline-fold"
+      },
+      "engines": {
+            "vscode": "^1.116.0"
+      },
+      "categories": [
+            "Visualization",
+            "Other"
+      ],
+      "activationEvents": [
+            "onStartupFinished"
+      ],
+      "main": "./out/extension.js",
+      "contributes": {
+            "commands": [
+                  {
+                        "command": "inlineFold.toggle",
+                        "title": "Inline Fold: Toggle"
+                  },
+                  {
+                        "command": "inlineFold.clearCache",
+                        "title": "Inline Fold: Clear session cache"
+                  }
+            ],
+            "configuration": {
+                  "type": "object",
+                  "title": "Inline Fold",
+                  "properties": {
+                        "inlineFold.autoFold": {
+                              "type": "boolean",
+                              "scope": "language-overridable",
+                              "description": "Set the default state of inline fold when opening a file",
+                              "default": true
+                        },
+                        "inlineFold.togglePerFile": {
+                              "type": "boolean",
+                              "scope": "language-overridable",
+                              "description": "Toggle inline fold per file, instead of per workspace",
+                              "default": true
+                        },
+                        "inlineFold.useGlobal": {
+                              "type": "boolean",
+                              "scope": "language-overridable",
+                              "description": "Change the order to use global configuration before language-specific",
+                              "default": false
+                        },
+                        "inlineFold.supportedLanguages": {
+                              "type": "array",
+                              "description": "Supported languages",
+                              "items": {
+                                    "type": "string",
+                                    "description": "Language Ids: https://code.visualstudio.com/docs/languages/identifiers#_known-language-identifiers"
+                              },
+                              "minItems": 1,
+                              "default": [
+                                    "astro",
+                                    "vue",
+                                    "html",
+                                    "svelte",
+                                    "vue-html",
+                                    "php",
+                                    "blade",
+                                    "erb",
+                                    "twig",
+                                    "nunjucks",
+                                    "django-html",
+                                    "jinja-html",
+                                    "javascript",
+                                    "typescript",
+                                    "javascriptreact",
+                                    "typescriptreact"
+                              ]
+                        },
+                        "inlineFold.regex": {
+                              "type": "string",
+                              "description": "Regex to match",
+                              "scope": "language-overridable",
+                              "default": "(class|className)=(({(`|))|(['\"`]))(.*?)(\\2|(\\4)})",
+                              "examples": [
+                                    "(class|className)=(({(`|))|(['\"`]))(.*?)(\\2|(\\4)})",
+                                    "(class|className)=[`'{\"]([^`'\"}]+)[`'\"}]",
+                                    "id=\"([a-zA-Z0-9-\\s]+)(?=\")"
+                              ]
+                        },
+                        "inlineFold.regexFlags": {
+                              "type": "string",
+                              "scope": "language-overridable",
+                              "description": "Regex flags",
+                              "default": "g",
+                              "examples": [
+                                    "g",
+                                    "gi"
+                              ]
+                        },
+                        "inlineFold.regexGroup": {
+                              "type": [
+                                    "string",
+                                    "number"
+                              ],
+                              "scope": "language-overridable",
+                              "description": "Regex capture group number for content that will be folded",
+                              "default": "6",
+                              "examples": [
+                                    "1",
+                                    "2",
+                                    "3",
+                                    "4",
+                                    "5",
+                                    "6"
+                              ]
+                        },
+                        "inlineFold.maskChar": {
+                              "type": "string",
+                              "scope": "language-overridable",
+                              "description": "The mask that covers the folded text",
+                              "default": "◦◦◦",
+                              "examples": [
+                                    "◦◦◦",
+                                    "▶▶▶",
+                                    "⌨"
+                              ]
+                        },
+                        "inlineFold.maskColor": {
+                              "type": "string",
+                              "scope": "language-overridable",
+                              "description": "The color of the covering mask in hex",
+                              "default": "#68D7AC",
+                              "examples": [
+                                    "#68D7AC",
+                                    "#FF0000"
+                              ]
+                        },
+                        "inlineFold.unfoldedOpacity": {
+                              "type": "number",
+                              "scope": "language-overridable",
+                              "description": "The opacity of the unfolded text (from 0 to 1)",
+                              "default": 0.7,
+                              "enum": [
+                                    0,
+                                    0.1,
+                                    0.2,
+                                    0.3,
+                                    0.4,
+                                    0.5,
+                                    0.6,
+                                    0.7,
+                                    0.8,
+                                    0.9,
+                                    1
+                              ]
+                        },
+                        "inlineFold.after": {
+                              "type": "string",
+                              "scope": "language-overridable",
+                              "description": "(Optional) Add any text/character to be appended to the folded text",
+                              "default": "",
+                              "examples": [
+                                    "+",
+                                    "<-",
+                                    "<<"
+                              ]
+                        },
+                        "inlineFold.unfoldOnLineSelect": {
+                              "type": "boolean",
+                              "scope": "language-overridable",
+                              "description": "(Optional) unfold the line when any part of the line is selected",
+                              "default": false
+                        },
+                        "inlineFold.disableInDiffEditor": {
+                              "type": "boolean",
+                              "scope": "language-overridable",
+                              "description": "(Optional) disable fold in diff editor",
+                              "default": false
+                        }
+                  },
+                  "required": [
+                        "inlineFold.regex",
+                        "inlineFold.regexFlags",
+                        "inlineFold.regexGroup",
+                        "inlineFold.maskChar",
+                        "inlineFold.supportedLanguages"
+                  ]
+            }
+      },
+      "scripts": {
+            "vscode:prepublish": "npm run compile",
+            "package": "vsce package",
+            "publish": "vsce publish",
+            "compile": "tsc -p ./",
+            "watch": "tsc -watch -p ./",
+            "test": "npm run compile && vscode-test",
+            "prettier": "prettier --write \"src/**/*.{ts,js,json,md}\""
+      },
+      "devDependencies": {
+            "@types/mocha": "^10.0.10",
+            "@types/node": "22.19.17",
+            "@types/vscode": "^1.116.0",
+            "@vscode/test-cli": "^0.0.12",
+            "@vscode/test-electron": "^2.5.2",
+            "typescript": "^6.0.2",
+            "prettier": "^3.8.3"
+      },
+      "__metadata": {
+            "id": "4dc4b505-dda3-4ac6-b839-397f8cf0adcc",
+            "publisherDisplayName": "Alamri",
+            "publisherId": "4b757094-d011-6968-816e-7257445a6afd",
+            "isPreReleaseVersion": false,
+            "updated": true,
+            "preRelease": false,
+            "installedTimestamp": 1657117103571
+      }
 }

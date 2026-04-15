@@ -1,15 +1,14 @@
 {
-	"compilerOptions": {
-		"module": "Node16",
-		"skipLibCheck": true,
-		"removeComments": true,
-		"target": "ES2022",
-		"outDir": "out",
-		"lib": [
-			"ES2022"
-		],
-		"sourceMap": true,
-		"rootDir": "src",
-		"strict": false
-	}
+      "compilerOptions": {
+            "module": "Node16",
+            "skipLibCheck": true,
+            "removeComments": true,
+            "target": "ES2022",
+            "outDir": "out",
+            "lib": ["ES2022"],
+            "sourceMap": true,
+            "rootDir": "src",
+            "strict": false,
+            "types": ["node", "vscode", "mocha"]
+      }
 }
