@@ -1,57 +1,52 @@
-import { DecorationRangeBehavior, TextEditorDecorationType, window } from "vscode";
-import { Settings } from "./enums";
-import { ExtSettings } from "./settings";
+import { DecorationRangeBehavior, TextEditorDecorationType, window } from 'vscode';
+import { SETTINGS } from './enums';
+import { getConfig } from './config';
 
 /**
- * With each time the decorator is triggered, and the method setDecoration is called,
- * The extension will create a new decoration type with sequential numbers. This will
- * Create large number of decoration types which will overlapse each other.
- * This class DecoratorTypeOptions is used to cache the decoration type for each trigger
- * To only have single applied set of decoration type per language id.
- * on demand.
+ * Caches decoration types to avoid creating overlapping types on each trigger.
+ * Manages fold, unfold, and plain decoration types for different languages.
  */
-export class DecoratorTypeOptions {
-  private cache = new Map<string | undefined, TextEditorDecorationType>();
+export class DecorationType {
+      private cache = new Map<string | undefined, TextEditorDecorationType>();
 
-  public ClearCache() {
-    this.cache.forEach((decOp) => {
-      decOp.dispose();
-    });
-    this.cache.clear();
-  }
+      public resetTypeCache() {
+            this.cache.forEach(option => {
+                  option.dispose();
+            });
+            this.cache.clear();
+      }
 
-  public UnfoldDecorationType = (langId?: string): TextEditorDecorationType => {
-    return window.createTextEditorDecorationType({
-      rangeBehavior: DecorationRangeBehavior.ClosedOpen,
-      opacity: ExtSettings.Get<string>(Settings.unfoldedOpacity, langId).toString()
-    })
-  }
+      public unfoldDecorationType = (langId: string): TextEditorDecorationType => {
+            return window.createTextEditorDecorationType({
+                  rangeBehavior: DecorationRangeBehavior.ClosedOpen,
+                  opacity: getConfig<string>(SETTINGS.UNFOLDED_OPACITY, langId).toString()
+            });
+      };
 
-  public MatchedDecorationType = (langId?: string): TextEditorDecorationType => {
-    return window.createTextEditorDecorationType({
-      before: {
-        contentText: ExtSettings.Get<string>(Settings.maskChar, langId),
-        color: ExtSettings.Get<string>(Settings.maskColor, langId),
-      },
-      after: {
-        contentText: ExtSettings.Get<string>(Settings.after, langId),
-      },
-      textDecoration: "none; display: none;"
-    });
+      public plainDecorationType = (): TextEditorDecorationType => {
+            return window.createTextEditorDecorationType({});
+      };
 
-  };
-
-  public PlainDecorationType = (): TextEditorDecorationType => window.createTextEditorDecorationType({})
-
-  public MaskDecorationTypeCache(langId?: string): TextEditorDecorationType {
-    if (this.cache.has(langId)) {
-      return this.cache.get(langId) as TextEditorDecorationType;
-    }
-    const decorationType = this.MatchedDecorationType(langId);
-    this.cache.set(langId, decorationType);
-    return decorationType;
-  }
-
-  constructor () { }
-
+      /**
+       * Get the cached fold (mask) decoration type for a specific language.
+       * @param langId The language id to get the decoration type for.
+       * @returns The fold (mask) TextEditorDecorationType
+       */
+      public foldDecorationType(langId: string): TextEditorDecorationType {
+            if (this.cache.has(langId)) {
+                  return this.cache.get(langId) as TextEditorDecorationType;
+            }
+            const decorationType = window.createTextEditorDecorationType({
+                  before: {
+                        contentText: getConfig<string>(SETTINGS.MASK_CHAR, langId),
+                        color: getConfig<string>(SETTINGS.MASK_COLOR, langId)
+                  },
+                  after: {
+                        contentText: getConfig<string>(SETTINGS.AFTER, langId)
+                  },
+                  textDecoration: 'none; display: none;'
+            });
+            this.cache.set(langId, decorationType);
+            return decorationType;
+      }
 }

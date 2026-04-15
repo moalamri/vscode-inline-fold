@@ -1,148 +1,202 @@
-import { Position, Range, TextEditor, WorkspaceConfiguration, DecorationOptions } from "vscode";
-import { Cache } from "./cache";
-import { DecoratorTypeOptions } from "./decoration";
-import { Settings } from "./enums";
-import { ExtSettings } from "./settings";
-import { isMainEditor, isOpenedWithDiffEditor } from "./utils";
+import { Position, Range, TextEditor, DecorationOptions, window } from 'vscode';
+import * as vscode from 'vscode';
+import FoldState from './state';
+import { DecorationType } from './decoration';
+import { SETTINGS } from './enums';
+import { isMainEditor, isOpenedWithDiffEditor } from './utils';
+import { getConfig, getRegexConfig, getSupportedLanguages } from './config';
 
-export class Decorator {
-  // DTOs is just a short name for DecoratorTypeOptions,
-  // nothing to do with data transfer objects.
-  DTOs = new DecoratorTypeOptions();
-  CurrentEditor: TextEditor;
-  ParsedRegexString: string;
-  SupportedLanguages: string[] = [];
-  Offset: number = 50;
-  StartLine: number = 0;
-  EndLine: number = 0;
+export class Decorator extends DecorationType {
+      private foldState: FoldState;
+      currentEditor: TextEditor;
+      offset: number = 50;
+      startLine: number = 0;
+      endLine: number = 0;
 
-  /**
-  * To set/update the current visible text editor.
-  * @param textEditor TextEditor
-  */
-  editor(textEditor: TextEditor) {
-    if (!textEditor) return;
-    this.CurrentEditor = textEditor;
-    this.startLine(textEditor.visibleRanges[0].start.line);
-    this.endLine(textEditor.visibleRanges[0].end.line);
-    this.updateDecorations();
-  }
-
-  /**
-  * Set the number of the starting line of where the decoration should be applied.
-  * @param n number
-  */
-  startLine(n: number) {
-    if (n - this.Offset < 0) {
-      this.StartLine = 0;
-    } else {
-      this.StartLine = n - this.Offset;
-    }
-  }
-
-  /**
-  * Set the number of the ending line of where the decoration should be applied.
-  * @param n number
-  */
-  endLine(n: number) {
-    if (n + this.Offset > this.CurrentEditor.document.lineCount) {
-      this.EndLine = this.CurrentEditor.document.lineCount;
-    } else {
-      this.EndLine = n + this.Offset;
-    }
-  }
-
-  /**
-  * This method gets triggered when the extension settings are changed
-  * @param extConfs: Workspace configs
-  */
-  updateConfigs(extConfs: WorkspaceConfiguration) {
-    ExtSettings.Update(extConfs);
-    this.SupportedLanguages = ExtSettings.GetSupportedLanguages();
-    this.DTOs.ClearCache();
-  }
-
-  updateDecorations() {
-    const currentLangId = this.CurrentEditor.document.languageId
-
-    if (!this.SupportedLanguages.includes(currentLangId)) {
-      return;
-    }
-
-    const disableInDiffEditor = ExtSettings.Get<boolean>(Settings.disableInDiffEditor, currentLangId);
-    if (disableInDiffEditor) {
-      if (
-        !isMainEditor(this.CurrentEditor) // Idea from: https://github.com/usernamehw/vscode-error-lens/issues/72#issuecomment-1062046817
-        && isOpenedWithDiffEditor(this.CurrentEditor.document.uri)
-      ) {
-        return;
+      /**
+       * To set/update the current visible text editor.
+       * @param textEditor TextEditor
+       */
+      editor(textEditor: TextEditor) {
+            if (!textEditor) {
+                  return;
+            }
+            this.currentEditor = textEditor;
+            this.setStartLine(textEditor.visibleRanges[0].start.line);
+            this.setEndLine(textEditor.visibleRanges[0].end.line);
+            this.updateDecorations();
       }
-    }
 
-    const regEx: RegExp = ExtSettings.Regex(currentLangId);
-    const unFoldOnLineSelect = ExtSettings.Get<boolean>(Settings.unfoldOnLineSelect, currentLangId);
-    const text = this.CurrentEditor.document.getText();
-    const regexGroup: number = ExtSettings.Get<number>(Settings.regexGroup, currentLangId) as number | 1;
-    const matchDecorationType = this.DTOs.MaskDecorationTypeCache(currentLangId);
-    const plainDecorationType = this.DTOs.PlainDecorationType();
-    const unfoldDecorationType = this.DTOs.UnfoldDecorationType(currentLangId);
-    const foldRanges: DecorationOptions[] = [];
-    const unfoldRanges: Range[] = [];
+      /**
+       * Set the number of the starting line of where the decoration should be applied.
+       * @param n number
+       */
+      setStartLine(n: number) {
+            if (n - this.offset < 0) {
+                  this.startLine = 0;
+            } else {
+                  this.startLine = n - this.offset;
+            }
+      }
 
-    let match;
-    while (match = regEx.exec(text)) {
+      /**
+       * Set the number of the ending line of where the decoration should be applied.
+       * @param n number
+       */
+      setEndLine(n: number) {
+            if (n + this.offset > this.currentEditor.document.lineCount) {
+                  this.endLine = this.currentEditor.document.lineCount;
+            } else {
+                  this.endLine = n + this.offset;
+            }
+      }
 
-      // if the matched content is undefined, skip it and continue to the next match
-      if (match && !match[regexGroup]) continue;
+      /**
+       * This method gets triggered when the extension settings are changed
+       */
+      resetDecorationType() {
+            this.resetTypeCache();
+      }
 
-      const matched = match[regexGroup];
-      const foldIndex = match[0].lastIndexOf(matched);
-      const startPosition = this.startPositionLine(match.index, foldIndex);
-      const endPosition = this.endPositionLine(match.index, foldIndex, matched.length);
-      const range: Range = new Range(startPosition, endPosition);
+      updateDecorations() {
+            const currentLangId = this.currentEditor.document.languageId;
+
+            if (!getSupportedLanguages().includes(currentLangId)) {
+                  return;
+            }
+
+            const disableInDiffEditor = getConfig<boolean>(
+                  SETTINGS.DISABLE_IN_DIFF_EDITOR,
+                  currentLangId
+            );
+            if (disableInDiffEditor) {
+                  if (
+                        !isMainEditor(this.currentEditor) && // Idea from: https://github.com/usernamehw/vscode-error-lens/issues/72#issuecomment-1062046817
+                        isOpenedWithDiffEditor(this.currentEditor.document.uri)
+                  ) {
+                        return;
+                  }
+            }
+
+            const regEx: RegExp = getRegexConfig(currentLangId);
+            const text = this.currentEditor.document.getText();
+            const regexGroup: number = getConfig<number>(SETTINGS.REGEX_GROUPS, currentLangId) as
+                  | number
+                  | 1;
+            const matchDecorationType = this.foldDecorationType(currentLangId);
+            const plainDecorationType = this.plainDecorationType();
+            const unfoldDecorationType = this.unfoldDecorationType(currentLangId);
+            const foldRanges: DecorationOptions[] = [];
+            const unfoldRanges: Range[] = [];
+
+            let match: RegExpExecArray | null;
+            while ((match = regEx.exec(text))) {
+                  // if the matched content is undefined, skip it and continue to the next match
+                  if (match && !match[regexGroup]) {
+                        continue;
+                  }
+
+                  const matched = match[regexGroup];
+                  const foldIndex = match[0].lastIndexOf(matched);
+                  const startPosition = this.startPositionLine(match.index, foldIndex);
+                  const endPosition = this.endPositionLine(match.index, foldIndex, matched.length);
+                  const range: Range = new Range(startPosition, endPosition);
+
+                  /* Checking if the fold state is enabled for the current language id. if not, remove all decorations */
+                  if (!this.foldingEnabled(currentLangId)) {
+                        this.currentEditor.setDecorations(plainDecorationType, []);
+                        break;
+                  }
+
+                  /* Checking if the range is not within the visible area. */
+                  if (this.notVisibleRange(range)) {
+                        continue;
+                  }
+
+                  if (this.rangeToFold(range)) {
+                        foldRanges.push({
+                              range,
+                              hoverMessage: 'Content **' + matched + '**'
+                        });
+                  } else {
+                        unfoldRanges.push(range);
+                  }
+            }
+
+            this.currentEditor.setDecorations(unfoldDecorationType, unfoldRanges);
+            this.currentEditor.setDecorations(matchDecorationType, foldRanges);
+      }
+
+      startPositionLine(matchIndex: number, startIndex: number): Position {
+            return this.currentEditor.document.positionAt(matchIndex + startIndex);
+      }
+
+      endPositionLine(matchIndex: number, startIndex: number, length: number): Position {
+            return this.currentEditor.document.positionAt(matchIndex + startIndex + length);
+      }
 
       /* Checking if the toggle command is active or not. without conflicts with default state settings.
-         If it is not active, it will remove all decorations. */
-      if (!Cache.ShouldFold(this.CurrentEditor.document.uri.path, currentLangId)) {
-        this.CurrentEditor.setDecorations(plainDecorationType, []);
-        break;
+   If it is not active, it will remove all decorations. */
+      foldingEnabled(currentLangId: string): boolean {
+            return this.foldState.shouldFold(this.currentEditor.document.uri.path, currentLangId);
       }
 
-      /* Checking if the range is within the visible area of the editor plus a specified offset for a head decoration. */
-      if (!(this.StartLine <= range.start.line && range.end.line <= this.EndLine)) {
-        continue;
+      notVisibleRange(range: Range): boolean {
+            return this.startLine > range.start.line && this.endLine < range.end.line;
       }
 
-      /* Checking if the range is selected by the user.
-      first check is for single selection, second is for multiple cursor selections.
-      or if the user has enabled the unfoldOnLineSelect option. */
-      if (this.CurrentEditor.selection.contains(range) ||
-        this.CurrentEditor.selections.find(s => range.contains(s)) ||
-        unFoldOnLineSelect && this.CurrentEditor.selections.find(s => s.start.line === range.start.line)) {
-        unfoldRanges.push(range);
-      } else {
-        foldRanges.push({ range, hoverMessage: "Content **" + matched + "**" });
+      isWrapped(range: Range): boolean {
+            const editorConfigs = vscode.workspace.getConfiguration('editor');
+            const wordWrap: 'on' | 'off' = editorConfigs.get('wordWrap');
+            if (wordWrap === 'off') {
+                  return false;
+            }
+            const wordWrapColumn: number = editorConfigs.get('wordWrapColumn');
+            console.log(
+                  `End character: ${range.end.character}, Word wrap column: ${wordWrapColumn}`
+            );
+            if (range.end.character > wordWrapColumn) {
+                  // If the end character is beyond the line length, it means the line is wrapped
+                  return true;
+            }
+            return false;
       }
-    }
 
-    this.CurrentEditor.setDecorations(unfoldDecorationType, unfoldRanges);
-    this.CurrentEditor.setDecorations(
-      matchDecorationType,
-      foldRanges
-    )
-  }
+      rangeToFold(range: Range): boolean {
+            const currentLangId = this.currentEditor.document.languageId;
+            const unfoldOnLineSelect =
+                  getConfig<boolean>(SETTINGS.UNFOLD_ON_LINE_SELECT, currentLangId) === true &&
+                  this.currentEditor.selections.find(s => s.start.line === range.start.line) !==
+                        undefined;
 
-  startPositionLine(matchIndex: number, startIndex: number): Position {
-    return this.CurrentEditor.document.positionAt(
-      matchIndex + startIndex
-    );
-  }
+            /* Checking if the range is selected by the user. first check is for single selection,
+             * second is for multiple cursor selections */
+            if (
+                  this.isWrapped(range) ||
+                  this.currentEditor.selection.contains(range) ||
+                  this.currentEditor.selections.find(s => range.contains(s)) ||
+                  unfoldOnLineSelect
+            ) {
+                  // If the range is selected or unfoldOnLineSelect is enabled, return false to indicate it should not be folded
+                  return false;
+            }
+            return true;
+      }
 
-  endPositionLine(matchIndex: number, startIndex: number, length: number): Position {
-    return this.CurrentEditor.document.positionAt(
-      matchIndex + startIndex + length
-    );
-  }
+      /* reset the fold state cache */
+      resetFoldState() {
+            this.foldState.reset();
+      }
 
-  constructor () { }
+      toggleFoldState() {
+            this.foldState.toggleShouldFold(
+                  window.activeTextEditor?.document.uri.path,
+                  window.activeTextEditor?.document.languageId
+            );
+      }
+
+      constructor() {
+            super();
+            this.foldState = new FoldState();
+      }
 }

@@ -1,18 +1,14 @@
 {
-	"compilerOptions": {
-		"module": "commonjs",
-		"skipLibCheck": true,
-		"removeComments": true,
-		"target": "es6",
-		"outDir": "out",
-		"lib": [
-			"es6"
-		],
-		"sourceMap": true,
-		"rootDir": "src",
-		"strict": false
-	},
-	"exclude": [
-		"node_modules"
-	]
+      "compilerOptions": {
+            "module": "Node16",
+            "skipLibCheck": true,
+            "removeComments": true,
+            "target": "ES2022",
+            "outDir": "out",
+            "lib": ["ES2022"],
+            "sourceMap": true,
+            "rootDir": "src",
+            "strict": false,
+            "types": ["node", "vscode", "mocha"]
+      }
 }
